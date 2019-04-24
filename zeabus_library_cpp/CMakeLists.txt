@@ -13,3 +13,15 @@ project( zeabus_library_cpp )
 #   That make us to ensure which package has been make or build before us
 
 find_package( catkin REQUIRED )
+
+set( zeabus_library_include_path "${PROJECT_SOURCE_DIR}/include")
+
+include_directories(
+    "${zeabus_library_include_path}"
+)
+
+message("CMAKE_CXX_FLAGS is ${CMAKE_CXX_FLAGS}")
+message("CMAKE_CXX_FLAGS_DEBUG is ${CMAKE_CXX_FLAGS_DEBUG}")
+message("CMAKE_CXX_FLAGS_RELEASE is ${CMAKE_CXX_FLAGS_RELEASE}")
+
+add_subdirectory( src/zeabus )
