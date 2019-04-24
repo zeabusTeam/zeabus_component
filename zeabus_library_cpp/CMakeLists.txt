@@ -16,6 +16,8 @@ find_package( catkin REQUIRED )
 
 set( zeabus_library_include_path "${PROJECT_SOURCE_DIR}/include")
 
+set( CMAKE_CXX_FLAGS "-Wall -std=c++14")
+
 include_directories(
     "${zeabus_library_include_path}"
 )
