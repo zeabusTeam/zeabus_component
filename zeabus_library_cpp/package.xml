@@ -11,4 +11,7 @@
 
     <buildtool_depend>catkin</buildtool_depend>
 
+    <build_depend>Boost</build_depend>
+    <exec_depend>Boost</exec_depend>
+
 </package>

@@ -13,6 +13,8 @@ project( zeabus_library_cpp )
 #   That make us to ensure which package has been make or build before us
 
 find_package( catkin REQUIRED )
+find_package( Boost REQUIRED COMPONENTS )
+
 
 set( zeabus_library_include_path "${PROJECT_SOURCE_DIR}/include")
 
