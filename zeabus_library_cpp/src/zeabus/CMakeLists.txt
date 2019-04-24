@@ -12,3 +12,6 @@ add_subdirectory( convert )
 
 # Add library about serial
 add_subdirectory( serial )
+
+# Add library about apply from serial library
+add_subdirectory( sensor )

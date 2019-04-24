@@ -1,6 +1,7 @@
-// File         : decode_string.hpp
-// Author       : Supasan Komonlit
-// Create on    : 2019, APRIL 09
+// FILE         : decode_string.hpp
+// AUTHOR       : Supasan Komonlit
+// CREATE ON    : 2019, APRIL 25
+// MAINTAINER   : Supasan Komonlit
 
 #include    <iostream>
 
