@@ -17,6 +17,8 @@
 #include    <iostream>
 #include    <vector>
 
+#include    <sensor_msgs/Imu.h>
+
 #include    <zeabus/escape_code.hpp>
 
 namespace Asio = boost::asio;
@@ -25,7 +27,7 @@ namespace IMUProtocal = zeabus::sensor::IMU::LORD_MICROSTRAIN;
 int main( int argv , char** argc )
 {
     zeabus::sensor::IMU::Connector imu("/dev/microstrain/3dm_gx5_45_0000__6251.65903" , 100 );
-    rclcpp::init( argv , argc , "imu_node"); // use one time only
+    ros::init( argv , argc , "imu_node"); // use one time only
 
     ros::NodeHandle nh("");
 
@@ -63,7 +65,7 @@ int main( int argv , char** argc )
 #endif // _DECLARE_PROCESS_
 
     round = 0; // set init value counter is 0 for start process
-    while( ( ! skip_process ) && rclcpp::ok() )
+    while( ( ! skip_process ) && nh.ok() )
     {
         round++;
         status_file = imu.set_idle(); // try to set imu to idle state
@@ -83,7 +85,7 @@ int main( int argv , char** argc )
     }
 
     round = 0; // set init value counter is 0 for start process
-    while( ( ! skip_process ) && rclcpp::ok() )
+    while( ( ! skip_process ) && nh.ok() )
     {
         round++;
         status_file = imu.ping();
@@ -105,7 +107,7 @@ int main( int argv , char** argc )
     imu.set_IMU_rate( 100 ); // send in mode Rate Decimation = IMU Base Rate / Desired Data Rate
 
     round = 0;
-    while( ( ! skip_process ) && rclcpp::ok() )
+    while( ( ! skip_process ) && nh.ok() )
     {
         round++;
         status_file = imu.set_IMU_message_format( 
@@ -129,7 +131,7 @@ int main( int argv , char** argc )
     // we not save because we have new set up always want to use
 
     round = 0;
-    while( ( ! skip_process ) && rclcpp::ok() )
+    while( ( ! skip_process ) && nh.ok() )
     {
         round++;
         status_file = imu.enable_IMU_data_stream();
@@ -149,7 +151,7 @@ int main( int argv , char** argc )
     }
 
     round = 0;
-    while( ( ! skip_process ) && rclcpp::ok() )
+    while( ( ! skip_process ) && nh.ok() )
     {
         round++;
         status_file = imu.resume();
@@ -233,7 +235,7 @@ int main( int argv , char** argc )
                     skip_process = true;
                     break;
                 }
-                message.header.stamp = rclcpp::Time(); 
+                message.header.stamp = ros::Time(); 
             } // loop for of get data
         } // condition have packet of data stream
         else

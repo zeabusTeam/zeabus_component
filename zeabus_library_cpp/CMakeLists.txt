@@ -15,8 +15,17 @@ project( zeabus_library_cpp )
 find_package( catkin REQUIRED COMPONENTS geometry_msgs )
 find_package( Boost REQUIRED COMPONENTS )
 
+set( SHARED_LIBS 
+    Convert
+    General
+    IMUConnector
+    DVLConnector
+    SynchronousPort
+)
+
 catkin_package(
     INCLUDE_DIRS include
+    LIBRARIES ${SHARED_LIBS}
     CATKIN_DEPENDS 
     DEPENDS Boost
 )
