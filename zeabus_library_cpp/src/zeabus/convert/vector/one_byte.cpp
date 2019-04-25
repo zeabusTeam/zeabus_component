@@ -1,0 +1,54 @@
+// FILE         : one_byte.cpp
+// AUTHOR       : Supasan Komonlit
+// CREATE ON    : 2019, APRIL 25
+// MAINTAINER   : Supasan Komonlit
+
+#include    <zeabus/convert/vector/one_byte.hpp>
+
+// This file we confident user to ensure have size ok to convert
+
+namespace zeabus
+{
+namespace convert
+{
+namespace vector
+{
+namespace one_byte
+{
+
+    void vector3( std::vector<unsigned char>* data 
+            , geometry_msgs::Vector3* message , unsigned int offset )
+    {
+        // zeabus::convert::bytes::vector_to_float( std::vector< unsgined char>* source)
+        //      , float* result , unsigned int offset );
+        float result; // float is 32 bit
+        // because we don't ensure about size bit of data type
+        (void)zeabus::convert::bytes::vector_to_float( data , &(result) , offset ); 
+        message->x = result;  // this copy value don't copy bits to bits
+        (void)zeabus::convert::bytes::vector_to_float( data , &(result) , offset + 4); 
+        message->y = result;  // this copy value don't copy bits to bits 
+        (void)zeabus::convert::bytes::vector_to_float( data , &(result) , offset + 8); 
+        message->z = result;  // this copy value don't copy bits to bits 
+    }
+
+    void quaternion( std::vector<unsigned char>* data , geometry_msgs::Quaternion* message 
+            , unsigned int offset )
+    {
+        float result;
+        (void)zeabus::convert::bytes::vector_to_float( data , &(result) , offset ); 
+        message->w = result;  // this copy value don't copy bits to bits
+        (void)zeabus::convert::bytes::vector_to_float( data , &(result) , offset + 4); 
+        message->x = result;  // this copy value don't copy bits to bits
+        (void)zeabus::convert::bytes::vector_to_float( data , &(result) , offset + 8); 
+        message->y = result;  // this copy value don't copy bits to bits
+        (void)zeabus::convert::bytes::vector_to_float( data , &(result) , offset + 12); 
+        message->z = result;  // this copy value don't copy bits to bits 
+    }
+
+} // namespace one_byte
+
+} // namespace vector
+
+} // namespace convert
+
+} // namespace zeabus

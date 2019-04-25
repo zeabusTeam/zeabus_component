@@ -12,9 +12,14 @@ project( zeabus_library_cpp )
 ## find_package this importance
 #   That make us to ensure which package has been make or build before us
 
-find_package( catkin REQUIRED )
+find_package( catkin REQUIRED COMPONENTS geometry_msgs )
 find_package( Boost REQUIRED COMPONENTS )
 
+catkin_package(
+    INCLUDE_DIRS include
+    CATKIN_DEPENDS geometry_msgs
+    DEPENDS Boost
+)
 
 set( zeabus_library_include_path "${PROJECT_SOURCE_DIR}/include")
 
@@ -22,6 +27,7 @@ set( CMAKE_CXX_FLAGS "-Wall -std=c++14")
 
 include_directories(
     "${zeabus_library_include_path}"
+    ${catkin_INCLUDE_DIRS}
 )
 
 message("CMAKE_CXX_FLAGS is ${CMAKE_CXX_FLAGS}")
