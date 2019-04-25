@@ -25,7 +25,6 @@ include_directories(
 )
 
 add_executable( imu_node src/imu_node.cpp)
-add_dependencies( imu_node ${zeabus_library_cpp_LIBRARIES} ${catkin_LIBRARIES} )
 target_link_libraries( imu_node 
     ${zeabus_library_cpp_LIBRARIES} 
     ${catkin_LIBRARIES}
