@@ -104,8 +104,6 @@ namespace DVL
     bool Connector::set_heading( std::string data ) // formate EAsnnnnn
     {
         std::string message = "EA" + data + "\n";
-        unsigned int size = this->write_data( &message );
-        bool result = false;
         return this->send_message( &message , 9 );
     } // function set_heading
 
