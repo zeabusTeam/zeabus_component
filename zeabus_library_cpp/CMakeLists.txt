@@ -17,7 +17,7 @@ find_package( Boost REQUIRED COMPONENTS )
 
 catkin_package(
     INCLUDE_DIRS include
-    CATKIN_DEPENDS geometry_msgs
+    CATKIN_DEPENDS 
     DEPENDS Boost
 )
 
@@ -27,7 +27,8 @@ set( CMAKE_CXX_FLAGS "-Wall -std=c++14")
 
 include_directories(
     "${zeabus_library_include_path}"
-    ${catkin_INCLUDE_DIRS}
+    ${catkin_INCLUDE_DIRS} # this line will link to catkin_header
+    ${Boost_INCLUDE_DIR}
 )
 
 message("CMAKE_CXX_FLAGS is ${CMAKE_CXX_FLAGS}")

@@ -5,4 +5,3 @@ add_library( Convert SHARED
     vector/one_byte.cpp
     string/integer_type.cpp
 )
-add_dependencies( Convert geometry_msgs )
