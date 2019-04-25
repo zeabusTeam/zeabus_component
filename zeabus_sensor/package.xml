@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package format="2">
+
+    <name>zeabus_sensor</name>
+    <version>0.0.0</version>
+    <description>This will collect library of CPP language to use in component part</description>
+
+    <maintainer email="supasan.k@ku.th">Supasan Komonlit</maintainer>
+
+    <license>MIT</license>
+
+    <buildtool_depend>catkin</buildtool_depend>
+
+    <build_depend>zeabus_library_cpp</build_depend>
+    <exec_depend>zeabus_library_cpp</exec_depend>
+
+    <build_depend>roscpp</build_depend>
+    <exec_depend>roscpp</exec_depend>
+
+</package>

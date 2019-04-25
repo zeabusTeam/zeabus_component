@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+
+# Adding by user
+*.swp

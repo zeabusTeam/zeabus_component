@@ -34,5 +34,6 @@ include_directories(
 message("CMAKE_CXX_FLAGS is ${CMAKE_CXX_FLAGS}")
 message("CMAKE_CXX_FLAGS_DEBUG is ${CMAKE_CXX_FLAGS_DEBUG}")
 message("CMAKE_CXX_FLAGS_RELEASE is ${CMAKE_CXX_FLAGS_RELEASE}")
+message("CMAKE_CXX_STANDARD is ${CMAKE_CXX_STANDARD}")
 
 add_subdirectory( src/zeabus )
