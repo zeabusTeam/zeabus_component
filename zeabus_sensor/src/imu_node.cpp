@@ -15,6 +15,7 @@
 #include    <zeabus/convert/vector/one_byte.hpp>
 
 #include    <zeabus/ros_interfaces/single_thread.hpp>
+#include    <zeabus/service/get_single_data/sensor_imu.hpp>
 
 #include    <iostream>
 #include    <vector>
@@ -23,15 +24,14 @@
 
 #include    <zeabus/escape_code.hpp>
 
+// FINSISH SETUP IMU LINE 180
+
 namespace Asio = boost::asio;
 namespace IMUProtocal = zeabus::sensor::IMU::LORD_MICROSTRAIN;
 
 int main( int argv , char** argc )
 {
     zeabus::sensor::IMU::Connector imu("/dev/microstrain/3dm_gx5_45_0000__6251.65903" , 100 );
-    zeabus::ros_interfaces::SingleThread( argv , argc , "imu_node");
-
-    ros::NodeHandle nh("");
 
 #ifdef _DECLARE_PROCESS_
     std::cout << "Finish declare imu object\n";
@@ -67,7 +67,7 @@ int main( int argv , char** argc )
 #endif // _DECLARE_PROCESS_
 
     round = 0; // set init value counter is 0 for start process
-    while( ( ! skip_process ) && nh.ok() )
+    while( ( ! skip_process ) && ptr_node_handle->ok() )
     {
         round++;
         status_file = imu.set_idle(); // try to set imu to idle state
@@ -87,7 +87,7 @@ int main( int argv , char** argc )
     }
 
     round = 0; // set init value counter is 0 for start process
-    while( ( ! skip_process ) && nh.ok() )
+    while( ( ! skip_process ) && ptr_node_handle->ok() )
     {
         round++;
         status_file = imu.ping();
@@ -109,7 +109,7 @@ int main( int argv , char** argc )
     imu.set_IMU_rate( 100 ); // send in mode Rate Decimation = IMU Base Rate / Desired Data Rate
 
     round = 0;
-    while( ( ! skip_process ) && nh.ok() )
+    while( ( ! skip_process ) && ptr_node_handle->ok() )
     {
         round++;
         status_file = imu.set_IMU_message_format( 
@@ -133,7 +133,7 @@ int main( int argv , char** argc )
     // we not save because we have new set up always want to use
 
     round = 0;
-    while( ( ! skip_process ) && nh.ok() )
+    while( ( ! skip_process ) && ptr_node_handle->ok() )
     {
         round++;
         status_file = imu.enable_IMU_data_stream();
@@ -153,7 +153,7 @@ int main( int argv , char** argc )
     }
 
     round = 0;
-    while( ( ! skip_process ) && nh.ok() )
+    while( ( ! skip_process ) && ptr_node_handle->ok() )
     {
         round++;
         status_file = imu.resume();
@@ -175,15 +175,39 @@ int main( int argv , char** argc )
 #ifdef _DECLARE_PROCESS_
     printf( "Now setup object for ROS Mode\n");
 #endif // _DECLARE_PROCESS_
+
     sensor_msgs::Imu message;
     message.header.frame_id = "imu";
+
+    zeabus::ros_interfaces::SingleThread imu_node( argv , argc , "imu_node");
+
+    std::shared_ptr< ros::NodeHandle > ptr_node_handle = 
+            std::make_shared< ros::NodeHandle >("");
+
+    zeabus::service::get_single_data::SensorImu imu_server( ptr_node_handle , "imu" );
+    imu_server.register_data( &message );
+    bool result = imu_server.setup_server_service( "/sensor/imu" );
+    if( ! result )
+    {
+        std::cout   << "Failure setup service\n";
+        skip_process = true;
+    }
+
+    result = imu_node.spin();
+    if( ! result )
+    {
+        std::cout   << "Unsucess spin\n";
+        skip_process = true;
+    }
+
+    
 
 #ifdef _DECLARE_PROCESS_
     printf( "Now start streaming data\n" );
 #endif // _DECLARE_PROCESS_
 
     unsigned int limit_number;    
-    while( ( nh.ok() && ( ! skip_process ) ) )
+    while( ( ptr_node_handle->ok() && ( ! skip_process ) ) )
     {
 #ifdef _PRINT_DATA_STREAM_
         printf("Read data form IMU\n");
