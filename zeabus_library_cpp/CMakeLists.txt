@@ -12,7 +12,7 @@ project( zeabus_library_cpp )
 ## find_package this importance
 #   That make us to ensure which package has been make or build before us
 
-find_package( catkin REQUIRED COMPONENTS geometry_msgs )
+find_package( catkin REQUIRED COMPONENTS geometry_msgs roscpp )
 find_package( Boost REQUIRED COMPONENTS )
 
 set( SHARED_LIBS 
