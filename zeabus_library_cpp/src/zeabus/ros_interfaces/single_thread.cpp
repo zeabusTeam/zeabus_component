@@ -10,20 +10,22 @@ namespace zeabus
 
 namespace ros_interfaces
 {
-    SingleThread::SingleThread( int argv , char** argc , std::string node_name  ) 
+    SingleThread::SingleThread( int argv , char** argc , std::string node_name  )  
     {
+        std::cout   << "ros::init function\n";
         ros::init( argv , argc , node_name );
         this->status_thread = false;
         this->node_name = node_name;
-        this->node_handle = ros::NodeHandle("");
+        std::cout   << "create node handle\n";
+//        this->node_handle = ros::NodeHandle("");
     } // function constructor object SingleThread parameter prefix_name
 
     bool SingleThread::spin()
     {
         bool result = false;
-        if( (this->node_handle).ok() )
-        {
-            if( this->status_thread )
+//        if( (this->node_handle).ok() )
+//        {
+            if( ! this->status_thread )
             {
                 this->thread_id = std::thread( std::bind( 
                         &zeabus::ros_interfaces::SingleThread::thread_spin , this )
@@ -32,13 +34,13 @@ namespace ros_interfaces
             } // that mean you ever run or finish run spin
             else
             {
-                std::cout   << "Now thread are spinning\n";
+                std::cout   << "Thread spining already spin and active now\n";
             }
-        } // that mean ros node are ok
-        else
-        {
-            std::cout   << "Node handle doesn't ok\n";
-        }
+//        } // that mean ros node are ok
+//        else
+//        {
+//            std::cout   << "Node handle doesn't ok\n";
+//        }
         return result;
     } // function SingleThread::spin
 
@@ -49,18 +51,18 @@ namespace ros_interfaces
 
     void SingleThread::thread_spin()
     {
-        if( (this->node_handle).ok() )
-        {
+//        if( (this->node_handle).ok() )
+//        {
             this->status_thread = true;
             std::cout   << node_name << "start spin thread\n";
             ros::spin();
             std::cout   << node_name << "end spin thread\n";
             this->status_thread = false;
-        }
-        else
-        {
-            std::cout   << "Can't spin node handle doesn't ok\n";
-        }
+//        }
+//        else
+//        {
+//            std::cout   << "Can't spin node handle doesn't ok\n";
+//        }
     } // function SingleThread::thread_spin()
 
 } // namespace ros_interfaces

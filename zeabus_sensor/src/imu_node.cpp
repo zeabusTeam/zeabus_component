@@ -33,8 +33,10 @@ int main( int argv , char** argc )
 {
     zeabus::sensor::IMU::Connector imu("/dev/microstrain/3dm_gx5_45_0000__6251.65903" , 100 );
 
+    std::cout   << "<IMU NODE> Before init single thread\n";
     zeabus::ros_interfaces::SingleThread imu_node( argv , argc , "imu_node");
 
+    std::cout   << "<IMU NODE> Before init create node\n";
     std::shared_ptr< ros::NodeHandle > ptr_node_handle = 
             std::make_shared< ros::NodeHandle >("");
 

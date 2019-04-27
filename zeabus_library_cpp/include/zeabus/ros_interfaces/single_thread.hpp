@@ -39,7 +39,7 @@ namespace ros_interfaces
 
             std::string node_name;
 
-            ros::NodeHandle node_handle;
+//            ros::NodeHandle node_handle;
 
     }; // namespace SingleThread
 
