@@ -12,20 +12,44 @@ project( zeabus_library_cpp )
 ## find_package this importance
 #   That make us to ensure which package has been make or build before us
 
-find_package( catkin REQUIRED )
+find_package( catkin REQUIRED geometry_msgs roscpp sensor_msgs zeabus_utility )
 find_package( Boost REQUIRED COMPONENTS )
 
+set( SHARED_LIBS 
+    Convert
+    General
+    IMUConnector
+    DVLConnector
+    ROSInterfaces
+    SynchronousPort
+    ServiceGetSingleData
+)
 
-set( zeabus_library_include_path "${PROJECT_SOURCE_DIR}/include")
+set( zeabus_library_include_path 
+    "${PROJECT_SOURCE_DIR}/include"
+    "${PROJECT_SOURCE_DIR}/dynamic_src"
+)
+
+catkin_package(
+    # INCLUDE_DIRS will help you to export header
+    INCLUDE_DIRS ${zeabus_library_include_path} 
+    # LIBRARIES will help you to export library
+    LIBRARIES ${SHARED_LIBS}
+    CATKIN_DEPENDS 
+    DEPENDS Boost
+)
 
 set( CMAKE_CXX_FLAGS "-Wall -std=c++14")
 
 include_directories(
     "${zeabus_library_include_path}"
+    ${catkin_INCLUDE_DIRS} # this line will link to catkin_header
+    ${Boost_INCLUDE_DIR}
 )
 
 message("CMAKE_CXX_FLAGS is ${CMAKE_CXX_FLAGS}")
 message("CMAKE_CXX_FLAGS_DEBUG is ${CMAKE_CXX_FLAGS_DEBUG}")
 message("CMAKE_CXX_FLAGS_RELEASE is ${CMAKE_CXX_FLAGS_RELEASE}")
+message("CMAKE_CXX_STANDARD is ${CMAKE_CXX_STANDARD}")
 
 add_subdirectory( src/zeabus )
