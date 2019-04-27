@@ -22,7 +22,7 @@ namespace get_single_data
         {
             this->setup_ptr_node_handle( ptr_node_handle );
         }
-        this->setup_frame_id( frame_id );
+        this->frame_id = frame_id;
     } //  function constructor BaseClass
 
     template< class data_type >

@@ -33,6 +33,11 @@ int main( int argv , char** argc )
 {
     zeabus::sensor::IMU::Connector imu("/dev/microstrain/3dm_gx5_45_0000__6251.65903" , 100 );
 
+    zeabus::ros_interfaces::SingleThread imu_node( argv , argc , "imu_node");
+
+    std::shared_ptr< ros::NodeHandle > ptr_node_handle = 
+            std::make_shared< ros::NodeHandle >("");
+
 #ifdef _DECLARE_PROCESS_
     std::cout << "Finish declare imu object\n";
 #endif // _DECLARE_PROCESS_
@@ -178,11 +183,6 @@ int main( int argv , char** argc )
 
     sensor_msgs::Imu message;
     message.header.frame_id = "imu";
-
-    zeabus::ros_interfaces::SingleThread imu_node( argv , argc , "imu_node");
-
-    std::shared_ptr< ros::NodeHandle > ptr_node_handle = 
-            std::make_shared< ros::NodeHandle >("");
 
     zeabus::service::get_single_data::SensorImu imu_server( ptr_node_handle , "imu" );
     imu_server.register_data( &message );

@@ -36,8 +36,6 @@ namespace get_single_data
 
             bool check_setup_service();
 
-            virtual void setup_frame_id( std::string frame_id ) = 0 ;
-
             ros::ServiceServer service_server;
 
         protected:

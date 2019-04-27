@@ -14,6 +14,7 @@ project( zeabus_library_cpp )
 
 find_package( catkin REQUIRED geometry_msgs roscpp sensor_msgs zeabus_utility )
 find_package( Boost REQUIRED COMPONENTS )
+find_package( zeabus_utility REQUIRED )
 
 set( SHARED_LIBS 
     Convert
@@ -35,7 +36,7 @@ catkin_package(
     INCLUDE_DIRS ${zeabus_library_include_path} 
     # LIBRARIES will help you to export library
     LIBRARIES ${SHARED_LIBS}
-    CATKIN_DEPENDS 
+    CATKIN_DEPENDS zeabus_utility 
     DEPENDS Boost
 )
 
@@ -43,6 +44,7 @@ set( CMAKE_CXX_FLAGS "-Wall -std=c++14")
 
 include_directories(
     "${zeabus_library_include_path}"
+    "${zeabus_utility_INCLUDE_DIRS}"
     ${catkin_INCLUDE_DIRS} # this line will link to catkin_header
     ${Boost_INCLUDE_DIR}
 )
@@ -51,5 +53,8 @@ message("CMAKE_CXX_FLAGS is ${CMAKE_CXX_FLAGS}")
 message("CMAKE_CXX_FLAGS_DEBUG is ${CMAKE_CXX_FLAGS_DEBUG}")
 message("CMAKE_CXX_FLAGS_RELEASE is ${CMAKE_CXX_FLAGS_RELEASE}")
 message("CMAKE_CXX_STANDARD is ${CMAKE_CXX_STANDARD}")
+
+message("zeabus_utility_INCLUDE_DIRS is ${zeabus_utility_INCLUDE_DIRS}")
+message("zeabus_LIBRARYS is ${zeabus_LIBRARYS}  ")
 
 add_subdirectory( src/zeabus )
