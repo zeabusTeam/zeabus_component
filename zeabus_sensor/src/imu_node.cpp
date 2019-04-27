@@ -14,6 +14,8 @@
 
 #include    <zeabus/convert/vector/one_byte.hpp>
 
+#include    <zeabus/ros_interfaces/single_thread.hpp>
+
 #include    <iostream>
 #include    <vector>
 
@@ -27,7 +29,7 @@ namespace IMUProtocal = zeabus::sensor::IMU::LORD_MICROSTRAIN;
 int main( int argv , char** argc )
 {
     zeabus::sensor::IMU::Connector imu("/dev/microstrain/3dm_gx5_45_0000__6251.65903" , 100 );
-    ros::init( argv , argc , "imu_node"); // use one time only
+    zeabus::ros_interfaces::SingleThread( argv , argc , "imu_node");
 
     ros::NodeHandle nh("");
 
