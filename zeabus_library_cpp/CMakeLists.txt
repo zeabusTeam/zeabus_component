@@ -21,6 +21,7 @@ set( SHARED_LIBS
     IMUConnector
     DVLConnector
     SynchronousPort
+    ROSInterfaces
 )
 
 catkin_package(
