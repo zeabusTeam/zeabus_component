@@ -10,9 +10,9 @@ namespace zeabus
 
 namespace ros_interfaces
 {
-    SingleThread::SingleThread( int argv , char** argc , std::sring node_name  ) 
-            : ros::init( argv , argc , node_name )
+    SingleThread::SingleThread( int argv , char** argc , std::string node_name  ) 
     {
+        ros::init( argv , argc , node_name );
         this->status_thread = false;
         this->node_name = node_name;
         this->node_handle = ros::NodeHandle("");
@@ -26,7 +26,7 @@ namespace ros_interfaces
             if( this->status_thread )
             {
                 this->thread_id = std::thread( std::bind( 
-                        &zeabus::ros_interfaces::SingleThread::callback , this )
+                        &zeabus::ros_interfaces::SingleThread::thread_spin , this )
                 ); // declare or init start thread
                 result = true;
             } // that mean you ever run or finish run spin
@@ -53,7 +53,7 @@ namespace ros_interfaces
         {
             this->status_thread = true;
             std::cout   << node_name << "start spin thread\n";
-            ros::spin()
+            ros::spin();
             std::cout   << node_name << "end spin thread\n";
             this->status_thread = false;
         }

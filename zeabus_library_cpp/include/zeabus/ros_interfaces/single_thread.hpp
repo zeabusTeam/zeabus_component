@@ -18,7 +18,7 @@ namespace zeabus
 namespace ros_interfaces
 {
 
-    class SingleThread :: ros::init
+    class SingleThread 
     {
         public :
             SingleThread( int argv , char** argc , std::string node_name );
@@ -37,11 +37,11 @@ namespace ros_interfaces
 
             bool status_thread;
 
-            std::stirng node_name;
+            std::string node_name;
 
             ros::NodeHandle node_handle;
 
-    } // namespace SingleThread
+    }; // namespace SingleThread
 
 } // namespace ros_interfaces
 
