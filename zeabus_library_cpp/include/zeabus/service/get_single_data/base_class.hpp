@@ -25,7 +25,8 @@ namespace get_single_data
     class BaseClass
     {
         public:
-            BaseClass( std::shared_ptr< ros::NodeHandle > ptr_node_handle = NULL );
+            BaseClass( std::shared_ptr< ros::NodeHandle > ptr_node_handle = NULL 
+                    , std::string frame_id = "");
 
             void setup_ptr_node_handle( std::shared_ptr< ros::NodeHandle > ptr_node_handle );
 
@@ -34,6 +35,8 @@ namespace get_single_data
             bool setup_server_service( std::string service_topic );
 
             void check_setup_service();
+
+            virtual void setup_frame_id( std::string frame_id ) = 0 ;
 
             ros::ServiceServer service_server;
 
@@ -48,6 +51,8 @@ namespace get_single_data
             bool already_setup_ptr_data;
 
             bool already_setup_ptr_node_handle;
+
+            std::string frame_id;
 
     }; // BaseClass object
 

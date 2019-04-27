@@ -18,3 +18,6 @@ add_subdirectory( sensor )
 
 # Add library about interface of ros1 system
 add_subdirectory( ros_interfaces )
+
+# Add library about servier
+add_subdirectory( service )
