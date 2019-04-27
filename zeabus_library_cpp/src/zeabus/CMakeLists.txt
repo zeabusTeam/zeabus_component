@@ -15,3 +15,6 @@ add_subdirectory( serial )
 
 # Add library about apply from serial library
 add_subdirectory( sensor )
+
+# Add library about interface of ros1 system
+add_subdirectory( ros_interfaces )

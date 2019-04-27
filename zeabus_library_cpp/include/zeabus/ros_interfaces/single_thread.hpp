@@ -18,14 +18,16 @@ namespace zeabus
 namespace ros_interfaces
 {
 
-    class SingleThread :: ros::NodeHandle
+    class SingleThread :: ros::init
     {
         public :
-            SingleThread( std::string prefix_name );
+            SingleThread( int argv , char** argc , std::string node_name );
 
             // User use this function to spin thread
             // If return true success spin in otherwise false
             bool spin();
+
+            bool status();
 
             std::thread thread_id;
 
@@ -34,6 +36,10 @@ namespace ros_interfaces
             void thread_spin();
 
             bool status_thread;
+
+            std::stirng node_name;
+
+            ros::NodeHandle node_handle;
 
     } // namespace SingleThread
 
