@@ -24,7 +24,9 @@ set( SHARED_LIBS
 )
 
 catkin_package(
+    # INCLUDE_DIRS will help you to export header
     INCLUDE_DIRS include
+    # LIBRARIES will help you to export library
     LIBRARIES ${SHARED_LIBS}
     CATKIN_DEPENDS 
     DEPENDS Boost

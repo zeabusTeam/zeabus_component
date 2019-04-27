@@ -16,9 +16,6 @@ catkin_package(
 message("zeabus_library_cpp_INCLUDE_DIRS is ${zeabus_library_cpp_INCLUDE_DIRS}")
 message("catkin_INCLUDE_DIRS is ${catkin_INCLUDE_DIRS}")
 
-message("zeabus_library_cpp_LIBRARIES is ${zeabus_library_cpp_LIBRARIES}")
-message("catkin_LIBRARIES is ${catkin_LIBRARIES}")
-
 include_directories(
     ${catkin_INCLUDE_DIRS}
     ${zeabus_library_cpp_INCLUDE_DIRS}
