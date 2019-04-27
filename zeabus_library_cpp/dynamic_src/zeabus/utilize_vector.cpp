@@ -1,4 +1,4 @@
-// FILE         : utilize_vector.hpp
+// FILE         : utilize_vector.cpp
 // ATUHOR       : Supasan Komonlit
 // CREATE ON    : 2019, MARCH 30
 
@@ -19,15 +19,20 @@ namespace variadic
 {
 
     template< typename vector_type , typename single_type >
-    void push_data( std::vector< vector_type >* buffer , single_type data );
+    void push_data( std::vector< vector_type >* buffer , single_type data )
+    {
+        buffer->push_back( (vector_type)data );
+    }
 
     template< typename vector_type , typename single_type , typename... type_pack >
-    void push_data( std::vector< vector_type >* buffer , single_type data , type_pack... pack );
+    void push_data( std::vector< vector_type >* buffer , single_type data , type_pack... pack )
+    {
+        push_data( buffer , data );
+        push_data( buffer , pack... );
+    }
 
 } // namespace variadic
 
 } // namespace zeabus
-
-#include    <zeabus/variadic/utilize_vector.cpp>
 
 #endif // _ZEABUS_VARIADIC_UTILIZE_VECTOR_HPP__

@@ -21,7 +21,7 @@ namespace service
 namespace get_single_data
 {
 
-    template< class message_type >
+    template< class data_type >
     class BaseClass
     {
         public:
@@ -29,9 +29,11 @@ namespace get_single_data
 
             void setup_ptr_node_handle( std::shared_ptr< ros::NodeHandle > ptr_node_handle );
 
-            void register_message( message_type* message );
+            void register_data( data_type* ptr_data );
 
             bool setup_server_service( std::string service_topic );
+
+            void check_setup_service();
 
         protected:
 
@@ -39,7 +41,11 @@ namespace get_single_data
 
             std::shared_ptr< ros::NodeHnalde > ptr_node_handle;
 
-            bool can_setup_service;
+            data_type* ptr_message;
+
+            bool already_setup_ptr_data;
+
+            bool already_setup_ptr_node_handle;
         
     }; // BaseClass object
 
@@ -49,5 +55,6 @@ namespace get_single_data
  
 } // namespace zeabus
 
+#include    <zeabus/service/get_single_data/base_class.cpp>
 
 #endif // _ZEABUS_SERVICE_GET_SINGLE_DATA_BASE_CLASS_HPP__
