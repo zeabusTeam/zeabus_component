@@ -35,6 +35,8 @@ namespace get_single_data
 
             void check_setup_service();
 
+            ros::ServiceServer service_server;
+
         protected:
 
             virtual void ensure_setup_service( std::string service_topic ) = 0;
@@ -46,7 +48,7 @@ namespace get_single_data
             bool already_setup_ptr_data;
 
             bool already_setup_ptr_node_handle;
-        
+
     }; // BaseClass object
 
 } // name get_single_data
