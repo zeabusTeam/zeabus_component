@@ -28,10 +28,12 @@ namespace get_single_data
                     , std::string frame_id = "imu" );
 
         protected:
+
+            void setup_frame_id( std::string frame_id );
         
             void ensure_setup_service( std::string service_topic );
 
-            void callback( zeabus_utility::GetSensorImu::Request& request 
+            bool callback( zeabus_utility::GetSensorImu::Request& request 
                     , zeabus_utility::GetSensorImu::Response& response );
 
     }; // class SensorImu

@@ -13,8 +13,8 @@ namespace get_single_data
 {
 
     template< class data_type >
-    BaseClass<data_type>::BaseClass( std::shared_ptr< ros::NodeHandle > ptr_node_handle 
-            , std::string frame_id = "")
+    BaseClass< data_type >::BaseClass( std::shared_ptr< ros::NodeHandle > ptr_node_handle 
+            , std::string frame_id )
     {
         this->already_setup_ptr_node_handle = false;
         this->already_setup_ptr_data = false;
@@ -27,7 +27,7 @@ namespace get_single_data
 
     template< class data_type >
     void BaseClass<data_type>::setup_ptr_node_handle( 
-            std::shared_ptr< rps::NodeHandle > ptr_node_handle )
+            std::shared_ptr< ros::NodeHandle > ptr_node_handle )
     {
         this->ptr_node_handle = ptr_node_handle;
         this->already_setup_ptr_node_handle = true;
@@ -46,13 +46,13 @@ namespace get_single_data
         bool result = this->check_setup_service();
         if( result )
         {
-            this->ensure_setup_service( std::string service_topic );
+            this->ensure_setup_service( service_topic );
         } // that mean you can set up
         return result;
     } // function setup_server_service
 
     template< class data_type >
-    void BaseClass<data_type>::check_setup_service()
+    bool BaseClass<data_type>::check_setup_service()
     {
         unsigned int count_case = 0;
         bool result = false;

@@ -34,7 +34,7 @@ namespace get_single_data
 
             bool setup_server_service( std::string service_topic );
 
-            void check_setup_service();
+            bool check_setup_service();
 
             virtual void setup_frame_id( std::string frame_id ) = 0 ;
 
@@ -44,9 +44,9 @@ namespace get_single_data
 
             virtual void ensure_setup_service( std::string service_topic ) = 0;
 
-            std::shared_ptr< ros::NodeHnalde > ptr_node_handle;
+            std::shared_ptr< ros::NodeHandle > ptr_node_handle;
 
-            data_type* ptr_message;
+            data_type* ptr_data;
 
             bool already_setup_ptr_data;
 
