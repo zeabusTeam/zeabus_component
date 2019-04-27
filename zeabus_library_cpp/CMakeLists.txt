@@ -24,16 +24,19 @@ set( SHARED_LIBS
     ROSInterfaces
 )
 
+set( zeabus_library_include_path 
+    "${PROJECT_SOURCE_DIR}/include"
+    "${PROJECT_SOURCE_DIR}/dynamic_src"
+)
+
 catkin_package(
     # INCLUDE_DIRS will help you to export header
-    INCLUDE_DIRS include
+    INCLUDE_DIRS ${zeabus_library_include_path} 
     # LIBRARIES will help you to export library
     LIBRARIES ${SHARED_LIBS}
     CATKIN_DEPENDS 
     DEPENDS Boost
 )
-
-set( zeabus_library_include_path "${PROJECT_SOURCE_DIR}/include")
 
 set( CMAKE_CXX_FLAGS "-Wall -std=c++14")
 

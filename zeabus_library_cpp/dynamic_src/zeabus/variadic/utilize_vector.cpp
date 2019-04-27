@@ -4,14 +4,6 @@
 
 // This file will use pattern template an varidic for utilize and apply with vector
 
-#include    <vector>
-
-#include    <stdio.h>
-#include    <iostream>
-
-#ifndef _ZEABUS_VARIADIC_UTILIZE_VECTOR_HPP__
-#define _ZEABUS_VARIADIC_UTILIZE_VECTOR_HPP__
-
 namespace zeabus
 {
 
@@ -35,4 +27,3 @@ namespace variadic
 
 } // namespace zeabus
 
-#endif // _ZEABUS_VARIADIC_UTILIZE_VECTOR_HPP__
