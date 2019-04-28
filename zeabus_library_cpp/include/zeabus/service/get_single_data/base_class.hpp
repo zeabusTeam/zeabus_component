@@ -7,7 +7,9 @@
 
 #include    <iostream> // include standard library of cpp
 
-#include    <ros/ros.h> // include library about ros for CXX language  
+#include    <ros/ros.h> // include library about ros for CXX language 
+
+#include    <mutex> 
 
 #ifndef _ZEABUS_SERVICE_GET_SINGLE_DATA_BASE_CLASS_HPP__
 #define _ZEABUS_SERVICE_GET_SINGLE_DATA_BASE_CLASS_HPP__
@@ -30,6 +32,8 @@ namespace get_single_data
 
             void setup_ptr_node_handle( std::shared_ptr< ros::NodeHandle > ptr_node_handle );
 
+            void setup_ptr_mutex_data( std::shared_ptr< std::mutex > ptr_mutex_data ); 
+
             void register_data( data_type* ptr_data );
 
             bool setup_server_service( std::string service_topic );
@@ -48,9 +52,13 @@ namespace get_single_data
 
             bool already_setup_ptr_data;
 
+            bool already_setup_ptr_mutex_data;
+
             bool already_setup_ptr_node_handle;
 
             std::string frame_id;
+
+            std::shared_ptr< std::mutex > ptr_mutex_data;
 
     }; // BaseClass object
 

@@ -17,6 +17,7 @@ namespace get_single_data
             , std::string frame_id )
     {
         this->already_setup_ptr_node_handle = false;
+        this->already_setup_ptr_mutex_data = false;
         this->already_setup_ptr_data = false;
         if( ptr_node_handle != NULL )
         {
@@ -33,6 +34,14 @@ namespace get_single_data
         this->already_setup_ptr_node_handle = true;
     } // function setup_ptr_node_handle 
 
+    template< class data_type >
+    void BaseClass<data_type>::setup_ptr_mutex_data(
+            std::shared_ptr< std::mutex > ptr_mutex_data )
+    {
+        this->ptr_mutex_data = ptr_mutex_data;
+        this->already_setup_ptr_mutex_data = true;
+    }
+    
     template< class data_type >
     void BaseClass<data_type>::register_data( data_type* ptr_data )
     {
@@ -74,6 +83,15 @@ namespace get_single_data
             std::cout   << "Please setup ptr data\n";
         }
 
+        if( this->already_setup_ptr_mutex_data )
+        {
+            count_case++;
+        }
+        else
+        {
+            std::cout   << "Please setup ptr mutex data\n"
+        }
+
         if( this->already_setup_ptr_node_handle )
         {
             count_case++;
@@ -83,7 +101,7 @@ namespace get_single_data
             std::cout   << "Please setup ptr node handle\n";
         }
         
-        if( count_case == 3 )
+        if( count_case == 4 )
         {
             result = true;
         }
