@@ -291,5 +291,9 @@ int main( int argv , char** argc )
     printf("Now close port of imu\n");
     imu.close_port();
 
+    // We wnat to ensure other thread have been close defence core dump
+    std::cout   << "Wait join from thread\n";
+    imu_node.thread_id.join();
+
     return 0;
 }

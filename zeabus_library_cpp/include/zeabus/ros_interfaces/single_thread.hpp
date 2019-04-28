@@ -9,6 +9,8 @@
 
 #include    <thread>
 
+#include    <zeabus/escape_code.hpp>
+
 #ifndef _ZEABUS_ROS_INTERFACES_SINGLE_THREAD_HPP__
 #define _ZEABUS_ROS_INTERFACES_SINGLE_THREAD_HPP__
 
@@ -22,6 +24,8 @@ namespace ros_interfaces
     {
         public :
             SingleThread( int argv , char** argc , std::string node_name );
+
+            ~SingleThread();
 
             // User use this function to spin thread
             // If return true success spin in otherwise false
