@@ -38,6 +38,8 @@ int main( int argv , char** argc )
     std::shared_ptr< ros::NodeHandle > ptr_node_handle = 
             std::make_shared< ros::NodeHandle >("");
 
+    std::shared_ptr< std::mutex > ptr_mutex_data = std::make_shared< std::mutex >();
+
 #ifdef _DECLARE_PROCESS_
     std::cout   << "Finish declare basic object of IMU node\n";
 #endif // _DECLARE_PROCESS_
@@ -182,10 +184,12 @@ int main( int argv , char** argc )
 #endif // _DECLARE_PROCESS_
 
     sensor_msgs::Imu message;
+    sensor_msgs::Imu temporary_message;
     message.header.frame_id = "imu";
 
     zeabus::service::get_single_data::SensorImu imu_server( ptr_node_handle , "imu" );
     imu_server.register_data( &message );
+    imu_server.setup_ptr_mutex_data( ptr_mutex_data );
     bool result = imu_server.setup_server_service( "/sensor/imu" );
     if( ! result )
     {
@@ -235,7 +239,7 @@ int main( int argv , char** argc )
                 {
                 case IMUProtocal::DATA::IMU_DATA_SET::SCALED_ACCELEROMETER_VECTOR :
                     zeabus::convert::vector::one_byte::vector3( &(imu.data) 
-                            , &(message.linear_acceleration) , run + 1);
+                            , &(temporary_message.linear_acceleration) , run + 1);
                     run += 14 ; // skip to point start data < 1 byte >
                                 // skip to point legth data 3 floats < 12 bytes >
                                 // skip for next field length < 1 byte>
@@ -243,7 +247,7 @@ int main( int argv , char** argc )
                     break;
                 case IMUProtocal::DATA::IMU_DATA_SET::SCALED_GYRO_VECTOR :
                     zeabus::convert::vector::one_byte::vector3( &(imu.data) 
-                            , &(message.angular_velocity) , run + 1);
+                            , &(temporary_message.angular_velocity) , run + 1);
                     run += 14 ; // skip to point start data < 1 byte >
                                 // skip to point legth data 3 floats < 12 bytes >
                                 // skip for next field length < 1 byte>
@@ -251,7 +255,7 @@ int main( int argv , char** argc )
                     break;
                 case IMUProtocal::DATA::IMU_DATA_SET::CF_QUATERNION :
                     zeabus::convert::vector::one_byte::quaternion( &(imu.data) 
-                            , &(message.orientation) , run + 1);
+                            , &(temporary_message.orientation) , run + 1);
                     run += 18 ; // skip to point start data < 1 byte >
                                 // skip to point legth data 4 floats < 12 bytes >
                                 // skip for next field length < 1 byte>
@@ -262,7 +266,17 @@ int main( int argv , char** argc )
                     skip_process = true;
                     break;
                 }
-                message.header.stamp = ros::Time(); 
+                temporary_message.header.stamp = ros::Time();
+                if( ptr_mutex_data->try_lock() )
+                {
+                    message = temporary_message;
+                    ptr_mutex_data->unlock();
+                }
+                else
+                {
+                    std::cout   << zeabus::escape_code::bold_red 
+                                << "Did't update IMU data\n";
+                } 
             } // loop for of get data
         } // condition have packet of data stream
         else

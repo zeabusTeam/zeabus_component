@@ -34,7 +34,9 @@ namespace get_single_data
     bool SensorImu::callback( zeabus_utility::GetSensorImu::Request& request 
             , zeabus_utility::GetSensorImu::Response& response )
     {
+        this->ptr_mutex_data->lock();
         response.data = *(this->ptr_data);
+        this->ptr_mutex_data->unlock();
         response.header.stamp = ros::Time();
         response.header.frame_id = this->frame_id; 
         return true;

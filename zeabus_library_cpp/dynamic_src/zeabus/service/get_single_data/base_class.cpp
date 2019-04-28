@@ -89,7 +89,7 @@ namespace get_single_data
         }
         else
         {
-            std::cout   << "Please setup ptr mutex data\n"
+            std::cout   << "Please setup ptr mutex data\n";
         }
 
         if( this->already_setup_ptr_node_handle )
