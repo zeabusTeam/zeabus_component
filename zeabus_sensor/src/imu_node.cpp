@@ -80,11 +80,11 @@ int main( int argv , char** argc )
         status_file = imu.set_idle(); // try to set imu to idle state
         if( ! status_file )
         {
-            printf("round %d : Failure command set idle\n" , round );
+            std::cout   << "round " << round << " : Failure command set idle\n";
         }
         else
         {
-            printf("round %d : Success command set idle\n\n" , round );
+            std::cout   << "round " << round << " : Success command set idle\n\n";
             break; // jump success this process
         }
         if( round == (limit_round * 20) )
@@ -100,11 +100,11 @@ int main( int argv , char** argc )
         status_file = imu.ping();
         if( ! status_file )
         {
-            printf("round %d : Failure command ping\n" , round );
+            std::cout   << "round " << round << " : Failure command ping\n";
         }
         else
         {
-            printf("round %d : Success command ping\n\n" , round );
+            std::cout   << "round " << round << " : Success command ping\n\n";
             break; // jump sunccess this process
         }
         if( round == limit_round )
@@ -125,11 +125,11 @@ int main( int argv , char** argc )
                 , IMUProtocal::DATA::IMU_DATA_SET::CF_QUATERNION );
         if( ! status_file )
         {
-            printf("round %d : Failure command set IMU message format\n" , round );
+            std::cout   << "round " << round " : Failure command set IMU message format\n";
         }
         else
         {
-            printf("round %d : Success command set IMU message format\n" , round );
+            std::cout   << "round " << round " : Success command set IMU message format\n";
             break;
         }
         if( round == limit_round )
@@ -146,11 +146,11 @@ int main( int argv , char** argc )
         status_file = imu.enable_IMU_data_stream();
         if( ! status_file )
         {
-            printf("round %d : Failure command set enable IMU data stream\n" , round );
+            std::cout   << "round " << round " : Failure command set enable IMU data stream\n";
         }
         else
         {   
-            printf("round %d : Success command set enable IMU data stream\n" , round );
+            std::cout   << "round " << round " : Success command set enable IMU data stream\n";
             break;
         }
         if( round == limit_round )
@@ -166,11 +166,11 @@ int main( int argv , char** argc )
         status_file = imu.resume();
         if( ! status_file )
         {
-            printf("round %d : Failure command resume data stream\n" , round );
+            std::cout   << "round " << round " : Failure command resume data stream\n";
         }
         else
         {
-            printf("round %d : Success command resume data stream\n" , round );
+            std::cout   << "round " << round " : Success command resume data stream\n";
             break;
         }
         if( round == limit_round )
@@ -180,7 +180,7 @@ int main( int argv , char** argc )
     }
 
 #ifdef _DECLARE_PROCESS_
-    printf( "Now setup object for ROS Mode\n");
+    std::cout   <<  "Now setup object for ROS Mode\n";
 #endif // _DECLARE_PROCESS_
 
     sensor_msgs::Imu message;
@@ -208,14 +208,14 @@ int main( int argv , char** argc )
     }
 
 #ifdef _DECLARE_PROCESS_
-    printf( "Now start streaming data\n" );
+    std::cout   << "Now start streaming data\n";
 #endif // _DECLARE_PROCESS_
 
     unsigned int limit_number;    
     while( ( ptr_node_handle->ok() && ( ! skip_process ) ) )
     {
 #ifdef _PRINT_DATA_STREAM_
-        printf("Read data form IMU\n");
+        std::cout   << "Read data form IMU\n";
 #endif // _PRINT_DATA_STREAM_
         status_file = imu.read_stream();
         if( status_file )
@@ -228,7 +228,6 @@ int main( int argv , char** argc )
                 std::cout << "This not packet for data stream skip out\n";
                 continue;
             }
-            printf( "<--- IMU ---> GOOD DATA\n\n");
             // start at position 5 indent 0 1 2 3  
             // because 0 - 4 is header and description of data packet
             // pattern of packet for 0 1 2 3 4 are u e DESC_Packet Payload_length Field_length
@@ -262,7 +261,7 @@ int main( int argv , char** argc )
                                 // this will make run will point to next descriptor
                     break;
                 default :
-                    printf("Switch case error for convert bits data to ros message\n");
+                    std::cout   << "Switch case error for convert bits data to ros message\n";
                     skip_process = true;
                     break;
                 }
@@ -271,17 +270,19 @@ int main( int argv , char** argc )
                 {
                     message = temporary_message;
                     ptr_mutex_data->unlock();
+                    std::cout   << zeabus::escape_code::bold_yellow
+                                << "Update IMU data\n" << zeabus::escape_code::normal_white;
                 }
                 else
                 {
-                    std::cout   << zeabus::escape_code::bold_red 
-                                << "Did't update IMU data\n";
+                    std::cout   << zeabus::escape_code::bold_red  << "Did't update IMU data\n" 
+                                << zeabus::escape_code::normal_white;
                 } 
             } // loop for of get data
         } // condition have packet of data stream
         else
         {
-            printf( "<--- IMU ---> BAD DATA\n\n");
+            std::cout   << "<--- IMU ---> BAD DATA\n\n";
         }
     } // loop while for doing in ros system
 
@@ -292,16 +293,16 @@ int main( int argv , char** argc )
         status_file = imu.set_idle(); // try to set imu to idle state
         if( ! status_file )
         {
-            printf("round %d : Failure command set idle\n" , round );
+            std::cout   << "round " << round << " : Failure command set idle\n";
         }
         else
         {
-            printf("round %d : Success command set idle\n\n" , round );
+            std::cout   << "round " << round << " : Success command set idle\n\n";
             break; // jump success this process
         }
     }
 
-    printf("Now close port of imu\n");
+    std::cout   << "Now close port of imu\n";
     imu.close_port();
 
     // We wnat to ensure other thread have been close defence core dump
