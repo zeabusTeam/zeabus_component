@@ -33,15 +33,13 @@ int main( int argv , char** argc )
 {
     zeabus::sensor::IMU::Connector imu("/dev/microstrain/3dm_gx5_45_0000__6251.65903" , 100 );
 
-    std::cout   << "<IMU NODE> Before init single thread\n";
     zeabus::ros_interfaces::SingleThread imu_node( argv , argc , "imu_node");
 
-    std::cout   << "<IMU NODE> Before init create node\n";
     std::shared_ptr< ros::NodeHandle > ptr_node_handle = 
             std::make_shared< ros::NodeHandle >("");
 
 #ifdef _DECLARE_PROCESS_
-    std::cout << "Finish declare imu object\n";
+    std::cout   << "Finish declare basic object of IMU node\n";
 #endif // _DECLARE_PROCESS_
 
     bool status_file = true ; // use collect response of function
@@ -195,14 +193,15 @@ int main( int argv , char** argc )
         skip_process = true;
     }
 
-    result = imu_node.spin();
+    if( ! skip_process ){
+        result = imu_node.spin();
+    }
+
     if( ! result )
     {
         std::cout   << "Unsucess spin\n";
         skip_process = true;
     }
-
-    
 
 #ifdef _DECLARE_PROCESS_
     printf( "Now start streaming data\n" );
@@ -293,7 +292,7 @@ int main( int argv , char** argc )
 
     // We wnat to ensure other thread have been close defence core dump
     std::cout   << "Wait join from thread\n";
-    imu_node.thread_id.join();
+    imu_node.join();
 
     return 0;
 }

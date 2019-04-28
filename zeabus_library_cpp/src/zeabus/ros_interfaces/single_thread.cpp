@@ -42,6 +42,17 @@ namespace ros_interfaces
         return result;
     } // function SingleThread::spin
 
+    void SingleThread::join()
+    {
+        this->mutex_lock.lock();
+        bool current_status = this->status_thread;
+        this->mutex_lock.unlock();
+        if( current_status )
+        {
+            (this->thread_id).join();
+        }
+    }
+
     bool SingleThread::status()
     {
         return this->status_thread;
@@ -49,13 +60,17 @@ namespace ros_interfaces
 
     void SingleThread::thread_spin()
     {
+        (this->mutex_lock).lock();
         this->status_thread = true;
+        (this->mutex_lock).unlock();
         std::cout   << zeabus::escape_code::normal_red << node_name 
                     << " start spin thread\n" << zeabus::escape_code::normal_white;
         ros::spin();
         std::cout   << zeabus::escape_code::bold_red << node_name 
                     << " end spin thread\n" << zeabus::escape_code::normal_white;
+        (this->mutex_lock).lock();
         this->status_thread = false;
+        (this->mutex_lock).unlock();
     } // function SingleThread::thread_spin()
 
 } // namespace ros_interfaces

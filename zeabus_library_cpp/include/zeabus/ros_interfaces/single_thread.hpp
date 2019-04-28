@@ -11,6 +11,8 @@
 
 #include    <zeabus/escape_code.hpp>
 
+#include    <mutex>
+
 #ifndef _ZEABUS_ROS_INTERFACES_SINGLE_THREAD_HPP__
 #define _ZEABUS_ROS_INTERFACES_SINGLE_THREAD_HPP__
 
@@ -33,7 +35,7 @@ namespace ros_interfaces
 
             bool status();
 
-            std::thread thread_id;
+            void join();
 
         protected:
             // Use this to spilt thread processs
@@ -43,7 +45,9 @@ namespace ros_interfaces
 
             std::string node_name;
 
-//            ros::NodeHandle node_handle;
+            std::mutex mutex_lock;
+
+            std::thread thread_id;
 
     }; // namespace SingleThread
 
