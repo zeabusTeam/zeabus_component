@@ -1,6 +1,8 @@
 cmake_minimum_required( VERSION 2.8.3 )
 project( zeabus_sensor )
 
+set( CMAKE_CXX_FLAGS "-Wall -std=c++14 -pthread" )
+
 find_package( catkin REQUIRED COMPONENTS 
     roscpp
     geometry_msgs
@@ -23,6 +25,12 @@ include_directories(
 
 add_executable( imu_node src/imu_node.cpp)
 target_link_libraries( imu_node 
+    ${zeabus_library_cpp_LIBRARIES} 
+    ${catkin_LIBRARIES}
+)
+
+add_executable( dvl_node src/dvl_node.cpp)
+target_link_libraries( dvl_node 
     ${zeabus_library_cpp_LIBRARIES} 
     ${catkin_LIBRARIES}
 )

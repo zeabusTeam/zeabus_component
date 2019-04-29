@@ -8,16 +8,19 @@
 
 #include    <zeabus/sensor/DVL/decode_string.hpp>
 
-#include    <zeabus/service/get_single_data/sensor_imu.hpp>
+#include    <zeabus/service/get_single_data/geometry_vector3_stamped.hpp>
 
 #include    <zeabus/ros_interfaces/single_thread.hpp>
 
 #include    <memory>
 
-#include    <ros/ros.h>
-#include    <geometry_msgs/Vector3Stamped.hpp>
+#include    <thread>
 
-void thread_copy_data( )
+#include    <ros/ros.h>
+#include    <geometry_msgs/Vector3Stamped.h>
+
+void thread_copy_data( geometry_msgs::Vector3Stamped* source 
+        , geometry_msgs::Vector3Stamped* target , std::shared_ptr< std::mutex > lock_data );
 
 int main( int argv , char** argc )
 {
@@ -43,7 +46,7 @@ int main( int argv , char** argc )
     }
 
     // idle in importance process because if can help guaruntee success setup
-    status_file = dvl.set_idle()
+    status_file = dvl.set_idle();
     if( status_file )
     {
         std::cout   << "Succress to set idle\n";
@@ -70,6 +73,7 @@ int main( int argv , char** argc )
 
     std::string raw_data; // collect data line from port
     std::string type_line; // collect only type of raw_data
+    std::thread thread_id;
     geometry_msgs::Vector3Stamped message;
     geometry_msgs::Vector3Stamped temp_message;
     message.header.frame_id = "dvl";
@@ -99,10 +103,12 @@ int main( int argv , char** argc )
             if( ok_data == 'A' ) // if data BS is ok
             {
                 std::cout << "DVL GOOD DATA\n";
-                message.vector.x = temp_velocity[0];
-                message.vector.y = temp_velocity[1];
-                message.vector.z = temp_velocity[2];
-                message.header.stamp = rclcpp::Time();
+                temp_message.vector.x = temp_velocity[0];
+                temp_message.vector.y = temp_velocity[1];
+                temp_message.vector.z = temp_velocity[2];
+                temp_message.header.stamp = ros::Time();
+                thread_id =  std::thread( thread_copy_data , &temp_message 
+                        , &message , ptr_mutex_data ); 
             }
             else
             {
@@ -117,3 +123,13 @@ int main( int argv , char** argc )
     
     return 0;
 } // function main
+
+void thread_copy_data( geometry_msgs::Vector3Stamped* source 
+        , geometry_msgs::Vector3Stamped* target , std::shared_ptr< std::mutex > lock_data )
+{
+    std::cout   << "Start copy thread\n";
+    lock_data->lock();
+    *target = *source;
+    lock_data->unlock();
+    std::cout   << "Finish copy thread\n";
+}
