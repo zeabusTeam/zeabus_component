@@ -13,8 +13,11 @@ add_subdirectory( convert )
 # Add library about serial
 add_subdirectory( serial )
 
-# Add library about apply from serial library
+# Add library about apply from serial library for sensor part
 add_subdirectory( sensor )
+
+# Add library about apply from serial library for hardware part
+add_subdirectory( hardware )
 
 # Add library about interface of ros1 system
 add_subdirectory( ros_interfaces )

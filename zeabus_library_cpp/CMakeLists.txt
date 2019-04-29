@@ -23,6 +23,7 @@ set( SHARED_LIBS
     DVLConnector
     ROSInterfaces
     SynchronousPort
+    MAESTROConnector
     ServiceGetSingleData
 )
 
