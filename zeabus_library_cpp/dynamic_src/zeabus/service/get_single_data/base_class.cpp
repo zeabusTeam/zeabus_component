@@ -23,8 +23,14 @@ namespace get_single_data
         {
             this->setup_ptr_node_handle( ptr_node_handle );
         }
-        this->frame_id = frame_id;
+        this->setup_frame_id( std::string frame_id );
     } //  function constructor BaseClass
+
+    template< class data_type >
+    void BaseClass< data_type >::setup_frame_id( std::string frame_id )
+    {
+        this->frame_id = frame_id;
+    } // function setup_frame_id
 
     template< class data_type >
     void BaseClass<data_type>::setup_ptr_node_handle( 

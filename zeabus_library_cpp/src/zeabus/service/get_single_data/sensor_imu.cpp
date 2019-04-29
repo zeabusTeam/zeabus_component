@@ -26,11 +26,6 @@ namespace get_single_data
                 , &zeabus::service::get_single_data::SensorImu::callback , this );
     } // function ensure_setup_service
 
-    void SensorImu::setup_frame_id( std::string frame_id )
-    {
-        this->frame_id = frame_id;
-    } // function setup_frame_id
-
     bool SensorImu::callback( zeabus_utility::GetSensorImu::Request& request 
             , zeabus_utility::GetSensorImu::Response& response )
     {

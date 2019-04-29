@@ -29,14 +29,12 @@ namespace get_single_data
 
         protected:
 
-            void setup_frame_id( std::string frame_id );
-        
             void ensure_setup_service( std::string service_topic );
 
             bool callback( zeabus_utility::GetGeometryVector3Stamped::Request& request 
                     , zeabus_utility::GetGeometryVector3Stamped::Response& response );
 
-    }; // class SensorImu
+    }; // class GeometryVector3Stamped
 
 } // namespace get_single_data
 

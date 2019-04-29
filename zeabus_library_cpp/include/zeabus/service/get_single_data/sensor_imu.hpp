@@ -29,8 +29,6 @@ namespace get_single_data
 
         protected:
 
-            void setup_frame_id( std::string frame_id );
-        
             void ensure_setup_service( std::string service_topic );
 
             bool callback( zeabus_utility::GetSensorImu::Request& request 

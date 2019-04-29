@@ -30,6 +30,8 @@ namespace get_single_data
             BaseClass( std::shared_ptr< ros::NodeHandle > ptr_node_handle = NULL 
                     , std::string frame_id = "");
 
+            void setup_frame_id( std::string frame_id );
+
             void setup_ptr_node_handle( std::shared_ptr< ros::NodeHandle > ptr_node_handle );
 
             void setup_ptr_mutex_data( std::shared_ptr< std::mutex > ptr_mutex_data ); 
