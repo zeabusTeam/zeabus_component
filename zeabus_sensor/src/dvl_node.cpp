@@ -10,14 +10,25 @@
 
 #include    <zeabus/service/get_single_data/sensor_imu.hpp>
 
-#include   <memory>
+#include    <zeabus/ros_interfaces/single_thread.hpp>
+
+#include    <memory>
 
 #include    <ros/ros.h>
 #include    <geometry_msgs/Vector3Stamped.hpp>
 
+void thread_copy_data( )
+
 int main( int argv , char** argc )
 {
     zeabus::sensor::DVL::Connector dvl("/dev/usb2serial/ftdi_FT2VR5PM_02");
+
+    zeabus::ros_interfaces::SingleThread dvl_node( argv , argc , "dvl_node" );
+
+    std::shared_ptr< ros::NodeHandle > ptr_node_handle = 
+            std::make_shared< ros::NodeHandle >("");
+
+    std::shared_ptr< std::mutex > ptr_mutex_data = std::make_shared< std::mutex >();
 
     bool status_file = true; // if true that mean not status are ok
 
@@ -59,21 +70,22 @@ int main( int argv , char** argc )
 
     std::string raw_data; // collect data line from port
     std::string type_line; // collect only type of raw_data
-    ()geometry_msgs::msg::Vector3Stamped message;
+    geometry_msgs::Vector3Stamped message;
+    geometry_msgs::Vector3Stamped temp_message;
     message.header.frame_id = "dvl";
+    zeabus::service::get_single_data::GeometryVector3Stamped dvl_server( ptr_node_handle 
+            , "dvl" );
+    dvl_server.register_data( &message );
+    dvl_server.setup_ptr_mutex_data( ptr_mutex_data );
     int temp_velocity[4] = { 0 , 0 , 0 , 0 }; // for collect data from function
     char ok_data;
-    
-    rclcpp::init( argv , argc );
-    
-    std::shared_ptr< zeabus::service::get_data::GeometryVector3Stamped > ptr_dvl_node
-        = std::make_shared< zeabus::service::get_data::GeometryVector3Stamped >( "dvl_node");
-    ptr_dvl_node->regis_message( &message );
-    ptr_dvl_node->setup_service( "/sensor/dvl" );
-    ptr_dvl_node->self_point( ptr_dvl_node );
-    ptr_dvl_node->spin();
 
-    while( status_file )
+    if( status_file )
+    {
+        dvl_node.spin();
+    }
+    
+    while( status_file && ptr_node_handle->ok() )
     {
         (void)dvl.read_data( &raw_data );
         type_line.clear() ; // make string are empty
@@ -98,9 +110,10 @@ int main( int argv , char** argc )
             }
         } // condition BS data
     } // while loop of ros operating system
-    rclcpp::shutdown();
 
     dvl.close_port();
+
+    dvl_node.join();
     
     return 0;
 } // function main
