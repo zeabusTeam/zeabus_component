@@ -125,11 +125,11 @@ int main( int argv , char** argc )
                 , IMUProtocal::DATA::IMU_DATA_SET::CF_QUATERNION );
         if( ! status_file )
         {
-            std::cout   << "round " << round " : Failure command set IMU message format\n";
+            std::cout   << "round " << round << " : Failure command set IMU message format\n";
         }
         else
         {
-            std::cout   << "round " << round " : Success command set IMU message format\n";
+            std::cout   << "round " << round << " : Success command set IMU message format\n";
             break;
         }
         if( round == limit_round )
@@ -146,11 +146,13 @@ int main( int argv , char** argc )
         status_file = imu.enable_IMU_data_stream();
         if( ! status_file )
         {
-            std::cout   << "round " << round " : Failure command set enable IMU data stream\n";
+            std::cout   << "round " << round 
+                        << " : Failure command set enable IMU data stream\n";
         }
         else
         {   
-            std::cout   << "round " << round " : Success command set enable IMU data stream\n";
+            std::cout   << "round " << round 
+                        << " : Success command set enable IMU data stream\n";
             break;
         }
         if( round == limit_round )
@@ -166,11 +168,13 @@ int main( int argv , char** argc )
         status_file = imu.resume();
         if( ! status_file )
         {
-            std::cout   << "round " << round " : Failure command resume data stream\n";
+            std::cout   << "round " << round 
+                        << " : Failure command resume data stream\n";
         }
         else
         {
-            std::cout   << "round " << round " : Success command resume data stream\n";
+            std::cout   << "round " << round 
+                        << " : Success command resume data stream\n";
             break;
         }
         if( round == limit_round )
