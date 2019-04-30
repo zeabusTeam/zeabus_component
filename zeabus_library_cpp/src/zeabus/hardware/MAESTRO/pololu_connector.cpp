@@ -1,4 +1,4 @@
-// FILE         : plololu_connector.cpp
+// FILE         : pololu_connector.cpp
 // AUTHOR       : Supasan Komonlit
 // CREATE ON    : 2019, APRIL 11
 

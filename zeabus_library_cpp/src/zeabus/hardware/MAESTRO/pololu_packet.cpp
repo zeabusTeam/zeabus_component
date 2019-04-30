@@ -50,7 +50,7 @@ namespace POLOLU
                 point != data->end() ; point++ )
         {
             low_bits = ( *point ) & 0x7F; // we want data 7 bits in 1 bytes
-            high_bits = ( ( *point ) >> 7 ) & 0x7F; // shift right 7 bits get low_bits out
+            high_bits = ( ( *point ) >> 7 ) & 0x7F; // shift right 7 bits make low_bits out
                     // and use only 7 bits in 1 bytes
             zeabus::variadic::push_data( &(this->data) , low_bits , high_bits );
         } // end for loop 
