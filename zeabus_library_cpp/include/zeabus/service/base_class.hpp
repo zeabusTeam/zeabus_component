@@ -11,6 +11,8 @@
 
 #include    <mutex>
 
+#include    <zeabus/escape_code.hpp>
+
 #ifndef _ZEABUS_SERVICE_BASE_CLASS_HPP__
 #define _ZEABUS_SERVICE_BASE_CLASS_HPP__
 

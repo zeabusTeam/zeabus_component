@@ -5,7 +5,7 @@
 
 #include    <zeabus/service/base_class.hpp>
 
-#include    <zeabus/SendUInt16Array.h>
+#include    <zeabus_utility/SendUInt16Array.h>
 
 #include    <vector>
 // Because we must push data in to vector type unsigned short int 16 bits
@@ -32,7 +32,7 @@ namespace service
         public:
             Pololu( std::shared_ptr< ros::NodeHandle > ptr_node_handle );
 
-            bool setup_server_sevice( std::string service_topic );
+            bool setup_server_service( std::string service_topic );
 
             // setup ptr data have 2 arguments to use
             //  First is ptr_buffer is pointer to buffer
@@ -43,6 +43,10 @@ namespace service
         protected:
             bool callback( zeabus_utility::SendUInt16Array::Request& request
                     , zeabus_utility::SendUInt16Array::Response& response );
+
+            bool already_setup_ptr_data;
+
+            ros::ServiceServer server_service;
 
         private:
             std::vector< unsigned short int >* ptr_buffer;
