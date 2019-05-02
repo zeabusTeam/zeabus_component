@@ -33,7 +33,7 @@ namespace service
         this->already_setup_ptr_node_handle = true;  
     }
 
-    void BaseClass::setup_ptr_mutex_data( std::shared_ptr< ros::NodeHandle > ptr_mutex_data )
+    void BaseClass::setup_ptr_mutex_data( std::shared_ptr< std::mutex > ptr_mutex_data )
     {
         this->ptr_mutex_data = ptr_mutex_data;
         this->already_setup_ptr_mutex_data = true;

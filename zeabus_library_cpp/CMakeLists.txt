@@ -22,6 +22,7 @@ set( SHARED_LIBS
     IMUConnector
     DVLConnector
     ROSInterfaces
+    GeneralService
     SynchronousPort
     MAESTROConnector
     ServiceGetSingleData
@@ -37,6 +38,7 @@ catkin_package(
     INCLUDE_DIRS ${zeabus_library_include_path} 
     # LIBRARIES will help you to export library
     LIBRARIES ${SHARED_LIBS}
+    # We help you link on syntex of catkin_EXPORTE_TARGEETS
     CATKIN_DEPENDS zeabus_utility 
     DEPENDS Boost
 )
@@ -50,12 +52,12 @@ include_directories(
     ${Boost_INCLUDE_DIR}
 )
 
-message("CMAKE_CXX_FLAGS is ${CMAKE_CXX_FLAGS}")
-message("CMAKE_CXX_FLAGS_DEBUG is ${CMAKE_CXX_FLAGS_DEBUG}")
-message("CMAKE_CXX_FLAGS_RELEASE is ${CMAKE_CXX_FLAGS_RELEASE}")
-message("CMAKE_CXX_STANDARD is ${CMAKE_CXX_STANDARD}")
+#message("CMAKE_CXX_FLAGS is ${CMAKE_CXX_FLAGS}")
+#message("CMAKE_CXX_FLAGS_DEBUG is ${CMAKE_CXX_FLAGS_DEBUG}")
+#message("CMAKE_CXX_FLAGS_RELEASE is ${CMAKE_CXX_FLAGS_RELEASE}")
+#message("CMAKE_CXX_STANDARD is ${CMAKE_CXX_STANDARD}")
 
-message("zeabus_utility_INCLUDE_DIRS is ${zeabus_utility_INCLUDE_DIRS}")
-message("zeabus_LIBRARYS is ${zeabus_LIBRARYS}  ")
+#message("zeabus_utility_INCLUDE_DIRS is ${zeabus_utility_INCLUDE_DIRS}")
+#message("zeabus_LIBRARYS is ${zeabus_LIBRARYS}  ")
 
 add_subdirectory( src/zeabus )
