@@ -37,7 +37,7 @@ namespace ros_interfaces
         } // that mean you ever run or finish run spin
         else
         {
-            std::cout   << "Thread spining already spin and active now\n";
+            std::cout   << "Thread spinning already spin and active now\n";
         }
         return result;
     } // function SingleThread::spin

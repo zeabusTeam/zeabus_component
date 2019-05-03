@@ -38,7 +38,7 @@ namespace service
             //  First is ptr_buffer is pointer to buffer
             //  Seconde is size of buffer you should to received
             void setup_ptr_data( std::vector< unsigned short int >* ptr_buffer 
-                    , unsigned int size_target );
+                    , unsigned int size_target , ros::Time* ptr_time_updated );
 
         protected:
             bool callback( zeabus_utility::SendUInt16Array::Request& request
@@ -51,6 +51,7 @@ namespace service
         private:
             std::vector< unsigned short int >* ptr_buffer;
             unsigned int size_target;
+            ros::Time* ptr_time_updated;
         
     }; // class Pololu
 

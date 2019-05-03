@@ -18,11 +18,12 @@ namespace service
     } // constructor of object Pololu
 
     void Pololu::setup_ptr_data( std::vector< unsigned short int >* ptr_buffer , 
-            unsigned int size_target )
+            unsigned int size_target , ros::Time* ptr_time_updated )
     {
         this->ptr_buffer = ptr_buffer;
         this->size_target = size_target;
         this->already_setup_ptr_data = true;
+        this->ptr_time_updated = ptr_time_updated;
     } // function setup_ptr_data
 
     bool Pololu::setup_server_service( std::string service_topic )
@@ -75,8 +76,13 @@ namespace service
             {
                 this->ptr_buffer->push_back( (request.data)[run] );
             }
+            *(this->ptr_time_updated) = request.header.time;
         } // condition ok data
-            else
+        else
+        {
+            std::cout   << zeabus::escape_code::bold_red << "Wrong size array of PWM\n"
+                        << zeabus::escape_code::normal_white << "\n";
+        }
         this->ptr_mutex_data->unlock();
 #ifdef _SENDER_DETAIL_
         ros::Time temp_time = ros::Time::now();
