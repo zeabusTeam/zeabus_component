@@ -36,16 +36,10 @@ namespace POLOLU
     class Connector : public Packet , public zeabus::serial::SynchronousPort 
     {
         public:
-            Connector( std::string port_name ); // case only data for serial port
-            // In case data for packet
-            Connector( unsigned char init_byte 
-                    = zeabus::hardware::MAESTRO::protocol::POLOLU::BASE_PROTOCOL 
-                    , unsigned char device_number = 0x0C , unsigned int reserve_size = 100 );
             // In case data for all
             Connector( std::string port_name , unsigned char init_byte 
                     = zeabus::hardware::MAESTRO::protocol::POLOLU::BASE_PROTOCOL 
                     , unsigned char device_number = 0x0C , unsigned int reserve_size = 100 );
-            Connector(); // Case not have data to init
 
             bool set_multiple_targets( std::vector<unsigned short int >* target_bits 
                     , unsigned char first_channel = 0 );
