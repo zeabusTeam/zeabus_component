@@ -25,7 +25,7 @@
 // _PRINT_PROCESS_      : will print all process of in function main of this node
 // _PRINT_DATA_WRITING_ : will print all PWM have been write to serial
 
-namespace SerialPortBase = boost::asio::serial_port_base;
+namespace Asio = boost::asio;
 
 void reset_value( std::vector< unsigned short int >* buffer , unsigned short int value 
         , unsigned int size );
@@ -34,13 +34,13 @@ int main( int argv , char** argc )
 {
 
     // Below line will init_node and object spin in new thread
-    zeabus::ros_interfaces::SingledTheread maestro_node( argv , argc , "maestro_node" );
+    zeabus::ros_interfaces::SingleThread maestro_node( argv , argc , "maestro_node" );
  
     std::shared_ptr< ros::NodeHandle > ptr_node_handle = std::make_shared< ros::NodeHandle>("");
 
     std::shared_ptr< std::mutex > ptr_mutex_data = std::make_shared< std::mutex >();
 
-    static const std::string port_name = "/dev/pololu/maestro/0096161"
+    static const std::string port_name = "/dev/pololu/maestro/0096161";
 
     zeabus::hardware::MAESTRO::POLOLU::Connector maestro_port( port_name );
 
@@ -64,23 +64,23 @@ int main( int argv , char** argc )
     #endif // _PRINT_PROCESS_
     if( status_node )
     {
-        (void)maestro_port.set_option_port( SerialPortBase::flow_control(
-                SerialPortBase::flow_control::none ) );
-        (void)maestro_port.set_option_port( SerialPortBase::parity(
-                SerialPortBase::parity::none ) );
-        (void)maestro_port.set_option_port( SerialPortBase::stop_bits(
-                SerialPortBase::stop_bits::one ) );
-        (void)maestro_port.set_option_port( SerialPortBase::character_size( (unsigned char) 8) );
-        (void)maestro_port.set_option_port( SerialPortBase::baud_rate( 115200 ) );
+        (void)maestro_port.set_option_port( Asio::serial_port_base::flow_control(
+                Asio::serial_port_base::flow_control::none ) );
+        (void)maestro_port.set_option_port( Asio::serial_port_base::parity(
+                Asio::serial_port_base::parity::none ) );
+        (void)maestro_port.set_option_port( Asio::serial_port_base::stop_bits(
+                Asio::serial_port_base::stop_bits::one ) );
+        (void)maestro_port.set_option_port( Asio::serial_port_base::character_size( (unsigned char) 8) );
+        (void)maestro_port.set_option_port( Asio::serial_port_base::baud_rate( 115200 ) );
 #ifdef _PRINT_PROCESS_
         std::cout   << "Finish setup port pololu\n";
 #endif // _PRINT_PROCESS_
     } // condition for set up port
 
+    std::vector< unsigned short int> target_pwm;
+    std::vector< unsigned short int> temp_target_pwm;
     if( status_node )
     {
-        std::vector< unsigned short > target_pwm;
-        std::vector< unsigned short > temp_target_pwm;
         reset_value( &target_pwm , 1500 , thruster_size );
         reset_value( &temp_target_pwm , 1500 , thruster_size );
         maestro_port.set_multiple_targets( &target_pwm );
@@ -155,7 +155,7 @@ int main( int argv , char** argc )
         maestro_port.set_multiple_targets( &target_pwm );
     } // while ros loop
 
-    std::cout   << "Now close port of maestro\n"
+    std::cout   << "Now close port of maestro\n";
     maestro_port.close_port();
 
     if( status_node )

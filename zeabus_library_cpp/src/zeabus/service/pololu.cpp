@@ -76,7 +76,7 @@ namespace service
             {
                 this->ptr_buffer->push_back( (request.data)[run] );
             }
-            *(this->ptr_time_updated) = request.header.time;
+            *(this->ptr_time_updated) = request.header.stamp;
         } // condition ok data
         else
         {

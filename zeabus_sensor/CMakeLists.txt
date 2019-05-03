@@ -15,8 +15,8 @@ catkin_package(
     CATKIN_DEPENDS roscpp
 )
 
-message("zeabus_library_cpp_INCLUDE_DIRS is ${zeabus_library_cpp_INCLUDE_DIRS}")
-message("catkin_INCLUDE_DIRS is ${catkin_INCLUDE_DIRS}")
+#message("zeabus_library_cpp_INCLUDE_DIRS is ${zeabus_library_cpp_INCLUDE_DIRS}")
+#message("catkin_INCLUDE_DIRS is ${catkin_INCLUDE_DIRS}")
 
 include_directories(
     ${catkin_INCLUDE_DIRS}

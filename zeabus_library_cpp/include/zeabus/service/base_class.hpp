@@ -31,7 +31,7 @@ namespace service
 
             void setup_ptr_mutex_data( std::shared_ptr< std::mutex > ptr_mutex_data );
 
-            virtual bool setup_server_sevice( std::string service_topic ) = 0 ;
+            virtual bool setup_server_service( std::string service_topic ) = 0 ;
 
         protected:
             std::shared_ptr< ros::NodeHandle > ptr_node_handle;
