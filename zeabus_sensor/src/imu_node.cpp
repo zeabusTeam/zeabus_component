@@ -3,8 +3,17 @@
 // CREATE ON    : 2019, APRIL 25
 // MAINTAINER   : Supasan Komonlit
 
-#define _DECLARE_PROCESS_
-#define _PRINT_DATA_STREAM_
+// MACRO DETAIL
+//  _DECLARE_PROCESS_   : this macro will declare your process for debug about setting part
+//  _PRINT_DATA_STREAM_ : this macro will declare process about data stream after you have 
+//                          ability to read data from IMU
+//  _DECLARE_UPDATED_    : this macro will declate you can't update data or not
+
+//#define _DECLARE_PROCESS_ 
+
+//#define _PRINT_DATA_STREAM_
+
+#define _DECLARE_UPDATED_
 
 #include    <ros/ros.h>
 
@@ -113,7 +122,7 @@ int main( int argv , char** argc )
         }
     }
 
-    imu.set_IMU_rate( 100 ); // send in mode Rate Decimation = IMU Base Rate / Desired Data Rate
+    imu.set_IMU_rate( 50 ); // send in mode Rate Decimation = IMU Base Rate / Desired Data Rate
 
     round = 0;
     while( ( ! skip_process ) && ptr_node_handle->ok() )
@@ -275,19 +284,26 @@ int main( int argv , char** argc )
             {
                 message = temporary_message;
                 ptr_mutex_data->unlock();
+#ifdef _DECLARE_UPDATED_
                 std::cout   << zeabus::escape_code::bold_yellow
                             << "Update IMU data\n" << zeabus::escape_code::normal_white;
+#endif // _DECLARE_UPDATED_
             }
+#ifdef _DECLARE_UPDATED_
             else
             {
                 std::cout   << zeabus::escape_code::bold_red  << "Did't update IMU data\n" 
                             << zeabus::escape_code::normal_white;
-            } 
+            }
+#endif //  _DECLARE_UPDATED_ 
         } // condition have packet of data stream
+#ifdef _DECLARE_UPDATED_
         else
         {
-            std::cout   << "<--- IMU ---> BAD DATA\n\n";
+            std::cout   << zeabus::escape_code::bold_red << "<--- IMU ---> BAD DATA\n\n"
+                        << zeabus::escape_code::normal_white;
         }
+#endif // _DECLARE_UPDATED_
     } // loop while for doing in ros system
 
     round = 0; // set init value counter is 0 for start process
