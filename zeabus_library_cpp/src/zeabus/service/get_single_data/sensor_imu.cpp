@@ -32,7 +32,7 @@ namespace get_single_data
         this->ptr_mutex_data->lock();
         response.data = *(this->ptr_data);
         this->ptr_mutex_data->unlock();
-        response.header.stamp = ros::Time();
+        response.header.stamp = ros::Time::now();
         response.header.frame_id = this->frame_id; 
         return true;
     } // function callback

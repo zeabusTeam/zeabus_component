@@ -278,7 +278,7 @@ int main( int argv , char** argc )
                     skip_process = true;
                     break;
                 }
-                temporary_message.header.stamp = ros::Time();
+                temporary_message.header.stamp = ros::Time::now();
             } // loop for of get data
             if( ptr_mutex_data->try_lock() )
             {
