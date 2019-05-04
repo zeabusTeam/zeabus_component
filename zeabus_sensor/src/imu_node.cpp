@@ -270,19 +270,19 @@ int main( int argv , char** argc )
                     break;
                 }
                 temporary_message.header.stamp = ros::Time();
-                if( ptr_mutex_data->try_lock() )
-                {
-                    message = temporary_message;
-                    ptr_mutex_data->unlock();
-                    std::cout   << zeabus::escape_code::bold_yellow
-                                << "Update IMU data\n" << zeabus::escape_code::normal_white;
-                }
-                else
-                {
-                    std::cout   << zeabus::escape_code::bold_red  << "Did't update IMU data\n" 
-                                << zeabus::escape_code::normal_white;
-                } 
             } // loop for of get data
+            if( ptr_mutex_data->try_lock() )
+            {
+                message = temporary_message;
+                ptr_mutex_data->unlock();
+                std::cout   << zeabus::escape_code::bold_yellow
+                            << "Update IMU data\n" << zeabus::escape_code::normal_white;
+            }
+            else
+            {
+                std::cout   << zeabus::escape_code::bold_red  << "Did't update IMU data\n" 
+                            << zeabus::escape_code::normal_white;
+            } 
         } // condition have packet of data stream
         else
         {
@@ -313,5 +313,6 @@ int main( int argv , char** argc )
     std::cout   << "Wait join from thread\n";
     imu_node.join();
 
+    std::cout   << "finish join from thread\n";
     return 0;
 }
