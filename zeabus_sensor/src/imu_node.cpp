@@ -313,6 +313,4 @@ int main( int argv , char** argc )
     std::cout   << "Wait join from thread\n";
     imu_node.join();
 
-    std::cout   << "finish join from thread\n";
-    return 0;
 }
