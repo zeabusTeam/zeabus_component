@@ -52,6 +52,12 @@ namespace POLOLU
             low_bits = ( *point ) & 0x7F; // we want data 7 bits in 1 bytes
             high_bits = ( ( *point ) >> 7 ) & 0x7F; // shift right 7 bits make low_bits out
                     // and use only 7 bits in 1 bytes
+#ifdef _PRINT_CONVERT_
+            std::cout   << "Original data " << (0xFF & *point) << std::hex 
+                        << "New data " << ( 0xFF & high_bits) << " : " 
+                        << ( 0xFF & low_bits ) << std::dec << "\n"; 
+                        << "----------------------------------------------------------------\n"
+#endif // _PRINT_CONVERT_
             zeabus::variadic::push_data( &(this->data) , low_bits , high_bits );
         } // end for loop 
     } // function push_vector_2_bytes
