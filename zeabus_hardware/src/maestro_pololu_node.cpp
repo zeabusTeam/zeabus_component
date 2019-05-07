@@ -24,6 +24,10 @@
 // MACRO_DEATAIL
 // _PRINT_PROCESS_      : will print all process of in function main of this node
 // _PRINT_DATA_WRITING_ : will print all PWM have been write to serial
+// _PRINT_SUCCESS_WRITE_: will print if you success writing data to serial port 
+
+#define _PRINT_DATA_WRITING_
+#define _PRINT_SUCCESS_WRITE_
 
 namespace Asio = boost::asio;
 
@@ -118,7 +122,11 @@ int main( int argv , char** argc )
         std::cout   << "Success open node spin\n";
     }
 #endif // _PRINT_PROCESS_
-    
+   
+#ifdef _PRINT_SUCCESS_WRITE_
+    bool write_success;
+#endif // _PRINT_SUCCESS_WRITE_
+ 
     while( ptr_node_handle->ok() && node_status )
     {
         rate.sleep();
@@ -141,7 +149,7 @@ int main( int argv , char** argc )
                         << timeout << " now go home\n" << zeabus::escape_code::normal_white;
         }
 #ifdef _PRINT_DATA_WRITING_
-        std::cout   << "------------------------------------------------------------\n"
+        std::cout   << "------------------------------------------------------------\n";
         for( unsigned int run = 0 ; run < thruster_size ; run++ )
         {
             std::cout   << "\t" << target_pwm[ run ];
@@ -150,9 +158,22 @@ int main( int argv , char** argc )
                 std::cout << "\n";
             }
         }
-        std::cout   << "\n------------------------------------------------------------\n"
+        std::cout   << "\n------------------------------------------------------------\n";
 #endif
-        maestro_port.set_multiple_targets( &target_pwm );
+#ifdef _PRINT_SUCCESS_WRITE_
+        write_success = maestro_port.set_multiple_targets( &target_pwm );
+        if( write_success )
+        {
+            std::cout   << "Success writing data\n";
+        }
+        else
+        {
+            std::cout   << zeabus::escape_code::bold_red << "Failure writing data\n"
+                        << zeabus::escape_code::normal_white;
+        }
+#else
+        (void)maestro_port.set_multiple_targets( &target_pwm );
+#endif
     } // while ros loop
 
     std::cout   << "Now close port of maestro\n";
