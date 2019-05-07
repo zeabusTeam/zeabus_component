@@ -54,7 +54,7 @@ namespace MAESTRO
         for( std::vector<unsigned char>::iterator point = (this->data).begin() ; 
                 point != (this->data).end() ; point++ )
         {   
-            std::cout << *point << " ";
+            std::cout << ( 0xFF & (*point) ) << " ";
         }   
         std::cout << std::dec << std::endl;
     } // function print_data

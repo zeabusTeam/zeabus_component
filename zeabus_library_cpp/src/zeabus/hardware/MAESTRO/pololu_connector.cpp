@@ -37,8 +37,11 @@ namespace POLOLU
             std::cout   << "  " << (*target_bits)[ run ];
         }
         std::cout   << "\n============================================================\n";
-#endif
+#endif // _PRINT_INPUT_
         this->push_vector_2_bytes( target_bits );
+#ifdef _PRINT_BEFORE_WRITE_
+        this->print_data( "set multiple targets");
+#endif // _PRINT_BEFORE_WRITER_
         unsigned int num_check = this->write_data( &(this->data) , (this->data).size() );
         if( num_check == (this->data).size() )
         {

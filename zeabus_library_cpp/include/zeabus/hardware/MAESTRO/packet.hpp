@@ -18,8 +18,6 @@
 // MACRO DETAIL 
 //  _PRINT_CONVERT_ : will print original data and last data after convert
 
-#define _PRINT_CONVERT_
-
 // This file will make packet protocol for connect to pololu
 // Reference packet :
 //      link 1 command protocol : https://www.pololu.com/docs/0J40/5.c 
