@@ -14,6 +14,8 @@
 //  _SENDER_DETAIL_     --> This macro will print detail about sender when callback been call
 //  _CALLBACK_CALLED_   --> Print when callback have been called
 
+#define _SENDER_DETAIL_
+
 #ifdef _SENDER_DETAIL_
     #define _CALLBACK_CALLED_
 #endif // _SENDER_DETAIL_

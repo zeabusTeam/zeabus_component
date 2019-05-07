@@ -61,11 +61,12 @@ namespace service
     bool Pololu::callback( zeabus_utility::SendUInt16Array::Request& request
             , zeabus_utility::SendUInt16Array::Response& response )
     {
+    response.result = false;
 #ifdef _CALLBACK_CALLED_
         std::cout   << "callback of pololu have been called\n";
     #ifdef _SENDER_DETAIL_
-        std::cout   << "Sender at time " << request.header.stamp._sec << "."
-                    << request.header.stamp._nsec << "\n";
+        std::cout   << "Sender at time " << request.header.stamp.sec << "."
+                    << request.header.stamp.nsec << "\n";
     #endif // _SENDER_DETAIL_
 #endif // _CALLBACK_CALLED_
         this->ptr_mutex_data->lock();
@@ -76,7 +77,8 @@ namespace service
             {
                 this->ptr_buffer->push_back( (request.data)[run] );
             }
-            *(this->ptr_time_updated) = request.header.stamp;
+            *(this->ptr_time_updated) = ros::Time::now();
+            response.result = true;
         } // condition ok data
         else
         {
@@ -86,7 +88,7 @@ namespace service
         this->ptr_mutex_data->unlock();
 #ifdef _SENDER_DETAIL_
         ros::Time temp_time = ros::Time::now();
-        std::cout   << "End service at time" << temp_time._sec << "." << temp_time._nsec << "\n";
+        std::cout   << "End service at time " << temp_time.sec << "." << temp_time.nsec << "\n";
 #endif // _SENDER_DETAIL_
         return true;
     } // function callback
