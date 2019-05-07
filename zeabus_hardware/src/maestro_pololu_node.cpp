@@ -40,7 +40,7 @@ int main( int argv , char** argc )
 
     std::shared_ptr< std::mutex > ptr_mutex_data = std::make_shared< std::mutex >();
 
-    static const std::string port_name = "/dev/pololu/maestro/0096161";
+    static const std::string port_name = "/dev/pololu/maestro/00185168";
 
     zeabus::hardware::MAESTRO::POLOLU::Connector maestro_port( port_name );
 
