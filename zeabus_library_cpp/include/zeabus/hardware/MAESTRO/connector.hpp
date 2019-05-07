@@ -22,8 +22,8 @@
 // _PRINT_INPUT_    : use to print std::vector
 // _PRINT_BEFORE_WRITE_
 
-#define _PRINT_INPUT_
-#define _PRINT_BEFORE_WRITE_
+//#define _PRINT_INPUT_
+//#define _PRINT_BEFORE_WRITE_
 
 #ifndef _ZEABUS_HARDWARE_MAESTRO_CONNECTOR_HPP__
 #define _ZEABUS_HARDWARE_MAESTRO_CONNECTOR_HPP__
