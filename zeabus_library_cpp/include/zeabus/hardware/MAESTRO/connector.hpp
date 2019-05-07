@@ -18,6 +18,11 @@
 // This file will prepare packet and write packet
 // reference https://www.pololu.com/docs/0J40/5.e
 
+// MACRO_DETAIL
+// _PRINT_INPUT_    : use to print std::vector
+
+#define _PRINT_INPUT_
+
 #ifndef _ZEABUS_HARDWARE_MAESTRO_CONNECTOR_HPP__
 #define _ZEABUS_HARDWARE_MAESTRO_CONNECTOR_HPP__
 

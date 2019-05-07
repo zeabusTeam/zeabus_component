@@ -25,9 +25,11 @@
 // _PRINT_PROCESS_      : will print all process of in function main of this node
 // _PRINT_DATA_WRITING_ : will print all PWM have been write to serial
 // _PRINT_SUCCESS_WRITE_: will print if you success writing data to serial port 
+// _PRINT_BEFORE_SET_   : will print array of target PWM before set value
 
 #define _PRINT_DATA_WRITING_
 #define _PRINT_SUCCESS_WRITE_
+#define _PRINT_BEFORE_SET_
 
 namespace Asio = boost::asio;
 
@@ -159,7 +161,15 @@ int main( int argv , char** argc )
             }
         }
         std::cout   << "\n------------------------------------------------------------\n";
-#endif
+#endif // _PRINT_DATA_WRITING_
+#ifdef _PRINT_BEFORE_SET_
+        std::cout   << "---------------------TARGET PWM--------------------------------\n";
+        for( unsigned int run = 0 ; run < thruster_size ; run++ )
+        {
+            std::cout   << "  " << target_pwm[run]; 
+        }
+        std::cout   << "\n---------------------------------------------------------------\n";
+#endif // _PRINT_BEFORE_SET_ 
 #ifdef _PRINT_SUCCESS_WRITE_
         write_success = maestro_port.set_multiple_targets( &target_pwm );
         if( write_success )
@@ -173,7 +183,7 @@ int main( int argv , char** argc )
         }
 #else
         (void)maestro_port.set_multiple_targets( &target_pwm );
-#endif
+#endif // _PRINT_SUCCESS_WRITE_
     } // while ros loop
 
     std::cout   << "Now close port of maestro\n";

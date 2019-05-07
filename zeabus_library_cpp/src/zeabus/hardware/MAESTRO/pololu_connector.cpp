@@ -30,6 +30,14 @@ namespace POLOLU
         this->init_header( 
                 zeabus::hardware::MAESTRO::protocol::POLOLU::COMMAND_SET_MULTIPLE_TARGETS );
         zeabus::variadic::push_data( &(this->data) , target_bits->size() , first_channel );
+#ifdef _PRINT_INPUT_
+        std::cout   << "================ SET MULTIPLE TARGETS ======================\n";
+        for( unsigned int run = 0 ; run < target_bits->size() ; run++ )
+        {
+            std::cout   << "  " << (*target_bits)[ run ];
+        }
+        std::cout   << "\n============================================================\n";
+#endif
         this->push_vector_2_bytes( target_bits );
         unsigned int num_check = this->write_data( &(this->data) , (this->data).size() );
         if( num_check == (this->data).size() )
