@@ -3,7 +3,7 @@
 // CREATE ON    : 2019, APRIL 8
 // MAINTAINER   : K.Supasan
 
-#include    <zeabus/sort/bubble.h>
+#include    <zeabus/sort/bubble.hpp>
 
 namespace zeabus
 {
@@ -58,7 +58,7 @@ namespace sort
             {
                 if( source[ compare_point ] < source[ compare_point - 1 ] )
                 {
-                    zeabus::swap( &(result[compare_point]) , &(result[compare_point-1]) );
+                    zeabus::swap( &(source[compare_point]) , &(source[compare_point-1]) );
                 }
                 else
                 {

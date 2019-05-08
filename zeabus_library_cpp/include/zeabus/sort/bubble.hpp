@@ -5,9 +5,9 @@
 
 #include    <iostream>
 
-#include    <zeabus/swap.h>
+#include    <zeabus/swap.hpp>
 
-#include    <zeabus/print_array.h>
+#include    <zeabus/print_array.hpp>
 
 // MACRO_DETAIL 
 // _PRINT_ARRAY_        : This macro will print array after and before source array

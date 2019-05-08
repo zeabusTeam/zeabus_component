@@ -3,7 +3,7 @@
 // CREATE ON    : 2019, APRIL 8
 // MAINTAINER   : K.Supasan
 
-#include    <iostrem>
+#include    <iostream>
 
 #ifndef _ZEABUS_SWAP_HPP_
 #define _ZEABUS_SWAP_HPP_
