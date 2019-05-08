@@ -9,7 +9,7 @@ namespace zeabus
 namespace print_array
 {
 
-    template< type_array >
+    template< typename type_array >
     void template_type( type_array* array, unsigned int data, std::string message )
     {
         if( message == "")

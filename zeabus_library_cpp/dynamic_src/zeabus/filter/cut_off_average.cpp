@@ -39,6 +39,10 @@ namespace filter
         (this->original_buffer)[ this->current_point ] = data;
         this->current_point++;
         this->current_point %= this->size_buffer;
+#ifdef _PRINT_ARRAY_
+        zeabus::print_array::template_type( this->original_buffer , this->size_buffer , "CURRENT BUFFER" );
+        std::cout   << "Current sum is " << this->type_buffer;
+#endif
     } // function push
 
     type_buffer CutOffAverage< type_buffer , size >::get_result()
@@ -46,16 +50,24 @@ namespace filter
         zeabus::sort::bubble( this->original_buffer , this->temp_buffer );
 #ifdef _PRINT_ARRAY_
         zeabus::print_array::template_type( this->original_buffer , this->size_buffer 
-                , "ORIGINAL SIZE") 
+                , "ORIGINAL BUFFER") 
+        zeabus::print_array::template_type( this->template_type , this->size_buffer 
+                , "NEW BUFFER") 
 #endif
         type_buffer temp_sum = this->sum_buffer;
         for( unsigned int run = 0 ; run < this->size_cuttoff ; run++ )
         {
             temp_sum -= (this->temp_buffer)[run]; // cutoff minimum
             temp_sum -= (this->temp_buffer)[ this->size_buffer - run - 1 ]; // cutoff maximum
+#ifdef _PRINT_PROCESS_
+        std::cout   << "run_number " << run << " have order to cut "
+                    << (this->temp_buffer)[run] << " and " 
+                    << (this->temp_buffer)[ this->size_buffer - run - 1] << "\n";
+#endif
         }
         return temp_sum;
     } // function get_result
+
 
 } // namespace filter
 

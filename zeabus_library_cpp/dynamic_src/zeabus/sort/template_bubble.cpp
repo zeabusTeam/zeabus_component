@@ -17,7 +17,7 @@ namespace sort
             result[0] = source[0];
         }
 #ifdef _PRINT_ARRAY_
-        zeabus::print_array::integer_type( source , size , "SOURCE DATA" );
+        zeabus::print_array::template_type( source , size , "SOURCE DATA" );
 #endif // _PRINT_ARRAY_
 
         // We will start at order 1. (Indent 0 1 2 3 4 5...)
@@ -40,7 +40,7 @@ namespace sort
 
         } // first loop to run current_point
 #ifdef _PRINT_ARRAY_
-        zeabus::print_array::integer_type( result , size );
+        zeabus::print_array::template_type( result , size );
 #endif        
 
     } // bubble function 3 parameter
@@ -49,7 +49,7 @@ namespace sort
     void bubble( array_type* source , unsigned int size )
     {
 #ifdef _PRINT_ARRAY_
-        zeabus::print_array::integer_type( source , size , "SOURCE DATA" );
+        zeabus::print_array::template_type( source , size , "SOURCE DATA" );
 #endif // _PRINT_ARRAY_
         for( unsigned int current_point = 1 ; current_point < size ; current_point++ )
         {
@@ -66,7 +66,7 @@ namespace sort
             }  // second lopp to run compare_point
         } // first loop to run current_point
 #ifdef _PRINT_ARRAY_
-        zeabus::print_array::integer_type( result , size );
+        zeabus::print_array::template_type( result , size );
 #endif        
     } // bubble function 2 parameter
 

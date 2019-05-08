@@ -10,7 +10,15 @@
 #include    <zeabus/sort/bubble.hpp>
 
 // MACRO_DETAIL 
-// _PRINT_ARRAY_    :   
+// _PRINT_ARRAY_    :   show array before and after sort 
+// _PRINT_PROCESS_  :   show process calculate
+
+//#define _PRINT_ARRAY_
+#define _PRINT_PROCESS_
+
+#ifdef _PRINT_PROCESS_
+    #define _PRINT_ARRAY_
+#endif
 
 #ifndef _ZEABUS_FILTER_CUT_OFF_AVERAGE_HPP__
 #define _ZEABUS_FILTER_CUT_OFF_AVERAGE_HPP__
