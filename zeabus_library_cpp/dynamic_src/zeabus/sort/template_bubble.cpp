@@ -12,10 +12,7 @@ namespace sort
     void bubble( array_type* source , array_type* result , unsigned int size )
     {
         // If you array only one don't care to sort. Can't sort.
-        if( size == 1 )
-        {
-            result[0] = source[0];
-        }
+        result[0] = source[0];
 #ifdef _PRINT_ARRAY_
         zeabus::print_array::template_type( source , size , "SOURCE DATA" );
 #endif // _PRINT_ARRAY_
@@ -40,7 +37,7 @@ namespace sort
 
         } // first loop to run current_point
 #ifdef _PRINT_ARRAY_
-        zeabus::print_array::template_type( result , size );
+        zeabus::print_array::template_type( result , size , "RESULT DATA");
 #endif        
 
     } // bubble function 3 parameter
@@ -66,7 +63,7 @@ namespace sort
             }  // second lopp to run compare_point
         } // first loop to run current_point
 #ifdef _PRINT_ARRAY_
-        zeabus::print_array::template_type( result , size );
+        zeabus::print_array::template_type( source , size , "AFTER SORT");
 #endif        
     } // bubble function 2 parameter
 

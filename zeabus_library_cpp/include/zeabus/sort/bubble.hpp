@@ -19,6 +19,8 @@
 //  Our function don't have to protected about size of array to access data.
 //  Please sure your array have lenght more or equal size arguments.
 
+//#define _PRINT_ARRAY_
+
 #ifndef _ZEABUS_SORT_BUBBLE_HPP__
 #define _ZEABUS_SORT_BUBBLE_HPP__
 

@@ -10,7 +10,7 @@ namespace print_array
 {
 
     template< typename type_array >
-    void template_type( type_array* array, unsigned int data, std::string message )
+    void template_type( type_array* array, unsigned int size, std::string message )
     {
         if( message == "")
         {
@@ -20,7 +20,7 @@ namespace print_array
         {
             std::cout   << message << " :";
         }
-        for( unsigned int run = 0; run < data ; run++ )
+        for( unsigned int run = 0; run < size ; run++ )
         {
             std::cout   << " " << array[run];
         }

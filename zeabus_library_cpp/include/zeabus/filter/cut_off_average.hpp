@@ -10,14 +10,20 @@
 #include    <zeabus/sort/bubble.hpp>
 
 // MACRO_DETAIL 
-// _PRINT_ARRAY_    :   show array before and after sort 
+// _PRINT_FILTER_   :   show array before and after sort 
 // _PRINT_PROCESS_  :   show process calculate
+// _DEBUG_CODE_     :   show all activity for find debug code
 
-//#define _PRINT_ARRAY_
-#define _PRINT_PROCESS_
+//#define _PRINT_FILTER_
+//#define _PRINT_PROCESS_
+//#define _DEBUG_CODE_
+
+#ifdef _DEBUG_CODE_
+    #define _PRINT_PROCESS_
+#endif
 
 #ifdef _PRINT_PROCESS_
-    #define _PRINT_ARRAY_
+    #define _PRINT_FILTER_
 #endif
 
 #ifndef _ZEABUS_FILTER_CUT_OFF_AVERAGE_HPP__
@@ -33,7 +39,7 @@ namespace filter
     class CutOffAverage
     {
         public:
-            CutOffAverage( unsigned int size_cutoff = 2 );
+            CutOffAverage( unsigned int size_cutoff = 1 );
             
             bool setup_cutoff( unsigned int size_cutoff );
             
