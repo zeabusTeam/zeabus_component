@@ -20,8 +20,13 @@ namespace print_array
 
     void integer_type( int* array , unsigned int size , std::string message = "");
 
+    template< typename type_array >
+    void template_type( type_array* array , unsigned int size , std::string message = "");
+
 } // namespace print_array
 
 } // namespace zeabus
+
+#include    <zeabus/print_array.cpp>
 
 #endif // _ZEABUS_PRINT_ARRAY_HPP__
