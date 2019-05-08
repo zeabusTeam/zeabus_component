@@ -35,8 +35,15 @@ namespace sort
 
     void bubble( int* source , unsigned int size );
 
+    template<typename array_type >
+    void bubble( array_type* source , array_type* result , unsigned int size );
+
+    template<typename array_type >
+    void bubble( array_type* source , unsigned int size );
+
 } // namespace sort
 
 } // namespace zeabus
 
+#include    <zeabus/sort/template_bubble.cpp>
 #endif // _ZEABUS_SORT_BUBBLE_HPP__

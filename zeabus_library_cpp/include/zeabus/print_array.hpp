@@ -27,6 +27,6 @@ namespace print_array
 
 } // namespace zeabus
 
-#include    <zeabus/print_array.cpp>
+#include    <zeabus/template_print_array.cpp>
 
 #endif // _ZEABUS_PRINT_ARRAY_HPP__

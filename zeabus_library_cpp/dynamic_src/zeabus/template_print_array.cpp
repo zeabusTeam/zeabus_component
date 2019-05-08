@@ -1,4 +1,4 @@
-// FILE         : print_array.cpp
+// FILE         : template_print_array.cpp
 // AUTHOR       : K.Supasan
 // CREATE ON    : 2019, APRIL 8
 // MAINTAINER   : K.Supasan
