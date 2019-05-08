@@ -17,6 +17,7 @@ find_package( Boost REQUIRED COMPONENTS )
 find_package( zeabus_utility REQUIRED )
 
 set( SHARED_LIBS 
+    Sort
     Convert
     General
     IMUConnector

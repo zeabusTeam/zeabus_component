@@ -11,7 +11,7 @@ namespace zeabus
 namespace print_array
 {
 
-    void integet_type( int* array, unsigned int size, std::string message )
+    void integer_type( int* array, unsigned int size, std::string message )
     {
         if( message == "")
         {
