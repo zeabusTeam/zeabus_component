@@ -28,3 +28,6 @@ add_subdirectory( ros_interfaces )
 
 # Add library about servier
 add_subdirectory( service )
+
+# Add library about client
+add_subdirectory( client )

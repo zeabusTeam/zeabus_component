@@ -41,11 +41,10 @@ namespace client
 
             void thread_join();
 
-            virtual void thread_call() = 0;
-
         protected:
             std::shared_ptr< ros::NodeHandle > ptr_node_handle;
             std::thread thread_id[ size_thread ];
+            bool thread_status[ size_thread ];
 
     }; // class BaseClass
  

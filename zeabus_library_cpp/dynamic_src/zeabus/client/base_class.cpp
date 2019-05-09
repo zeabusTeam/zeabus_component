@@ -16,6 +16,10 @@ namespace client
         {
             this->setup_ptr_node_handle( ptr_node_handle );
         }
+        for( unsigned int run = 0 ; run < size_thread ; run++ )
+        {
+            (this->thread_status)[run] = false;
+        }
     } // function constructor
 
     template<unsigned int size_thread>
