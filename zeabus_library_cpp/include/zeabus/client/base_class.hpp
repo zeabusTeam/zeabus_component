@@ -46,6 +46,8 @@ namespace client
             std::thread thread_id[ size_thread ];
             bool thread_status[ size_thread ];
 
+            bool already_setup_ptr_node_handle;
+
     }; // class BaseClass
  
 } // namespace client

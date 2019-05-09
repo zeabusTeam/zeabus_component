@@ -12,6 +12,7 @@ namespace client
     template<unsigned int size_thread>
     BaseClass< size_thread >::BaseClass( std::shared_ptr< ros::NodeHandle > ptr_node_handle )
     {
+        this->already_setup_ptr_node_handle = false;
         if( ptr_node_handle != NULL )
         {
             this->setup_ptr_node_handle( ptr_node_handle );
@@ -27,6 +28,7 @@ namespace client
             std::shared_ptr< ros::NodeHandle > ptr_node_handle )
     {
         this->ptr_node_handle = ptr_node_handle;
+        this->already_setup_ptr_node_handle = true;
     } // function setup_ptr_node_handle
 
     template<unsigned int size_thread>
