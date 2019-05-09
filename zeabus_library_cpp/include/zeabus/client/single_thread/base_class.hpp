@@ -3,17 +3,18 @@
 // CREATE ON    : 2019, APRIL 9
 // MAINTAINER   : K.Supasan
 
-#include    <zeabus/client/base_class.hpp>
-
-#include    <mutex>
-
-#include    <zeabus/escape_code.hpp>
+// MACRO DETAIL
+//
 
 // README
 //  Please remember this baseclass will help you manage thread, mutex and data single object.
 //  You don't worry about setup mutex and data
 
-// MACRO DETAIL
+#include    <zeabus/client/base_class.hpp>
+
+#include    <mutex>
+
+#include    <zeabus/escape_code.hpp>
 
 #ifndef _ZEABUS_CLIENT_SINGLE_THREAD_BASE_CLASS_HPP__
 #define _ZEABUS_CLIENT_SINGLE_THREAD_BASE_CLASS_HPP__
@@ -38,6 +39,7 @@ namespace single_thread
             void setup_ptr_data( type_data* ptr_data );
 
         protected:
+            // this will give you lock for lock data same with main member us
             std::shared_ptr< std::mutex > ptr_mutex_data;
             type_data* ptr_data;
 
