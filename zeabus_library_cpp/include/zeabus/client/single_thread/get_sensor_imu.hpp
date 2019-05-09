@@ -30,7 +30,7 @@ namespace single_thread
     {
 
         public:
-            GetSensorImu( std::shared_ptr< ros::NodeHandle > ptr_node_handle = "");
+            GetSensorImu( std::shared_ptr< ros::NodeHandle > ptr_node_handle = NULL);
 
             bool setup_client( std::string topic_service );
  

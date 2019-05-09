@@ -7,6 +7,7 @@
 
 #include    <mutex>
 
+
 // README
 //  Please remember this baseclass will help you manage thread, mutex and data single object.
 //  You don't worry about setup mutex and data
@@ -29,7 +30,7 @@ namespace single_thread
     class BaseClass : public zeabus::client::BaseClass< 1 >
     {
         public:
-            BaseClass( std::shared_ptr< ros::NodeHandle > ptr_node_handle = "" );
+            BaseClass( std::shared_ptr< ros::NodeHandle > ptr_node_handle = NULL );
             
             void setup_ptr_mutex_data( std::shared_ptr< std::mutex > ptr_mutex_data );
 

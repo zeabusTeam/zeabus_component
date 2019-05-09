@@ -13,15 +13,15 @@ namespace single_thread
 {
 
     template< typename type_data >
-    BaseClass< type_data >::BaseClass( std::shared_prt< ros::NodeHandle > ptr_node_handle )
-            : zeabus::client::BaseClass( ptr_node_handle )
+    BaseClass< type_data >::BaseClass( std::shared_ptr< ros::NodeHandle > ptr_node_handle )
+            : zeabus::client::BaseClass<1>( ptr_node_handle )
     {
         ;
     } // constructor BaseClass
 
     template< typename type_data >
     void BaseClass< type_data >::setup_ptr_mutex_data( 
-            std::shared_prt< std::mutex > ptr_mutex_data )
+            std::shared_ptr< std::mutex > ptr_mutex_data )
     {
         this->ptr_mutex_data = ptr_mutex_data;
     } // function setup_ptr_mutex_data
