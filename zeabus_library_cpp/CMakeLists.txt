@@ -26,6 +26,7 @@ set( SHARED_LIBS
     GeneralService
     SynchronousPort
     MAESTROConnector
+    ClientSingleThread
     ServiceGetSingleData
 )
 

@@ -17,14 +17,23 @@ namespace single_thread
     GetSensorImu::GetSensorImu( std::shared_ptr< ros::NodeHandle > ptr_node_handle )
         : BaseClass( ptr_node_handle )
     {
-        this->save_time = ros::Time::now();
+        ;
     } // constructor of GetSensorImu
 
     bool GetSensorImu::setup_client( std::string topic_service )
     {
-        this->client_server = this->ptr_node_handle->serviceClient<zeabus_utility::GetSensorImu>(
-                topic_service );
-        return true;
+        bool result = false;
+        if( this->already_setup_ptr_node_handle ){
+            this->client_server = this->ptr_node_handle->serviceClient<
+                    zeabus_utility::GetSensorImu>( topic_service );
+            result = true;
+        }
+        else
+        {
+            std::cout   << zeabus::escape_code::bold_red << "Please setup ptr_node_handle!!\n"
+                        << zeabus::escape_code::normal_white;
+        }
+        return result;
     } // function setup_client
 
     bool GetSensorImu::normal_call( bool data )

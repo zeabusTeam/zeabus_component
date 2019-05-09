@@ -7,6 +7,7 @@
 
 #include    <mutex>
 
+#include    <zeabus/escape_code.hpp>
 
 // README
 //  Please remember this baseclass will help you manage thread, mutex and data single object.
