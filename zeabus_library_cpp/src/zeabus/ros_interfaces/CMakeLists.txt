@@ -1,3 +1,5 @@
+add_subdirectory( file )
+
 add_library( ROSInterfaces SHARED
     single_thread.cpp
 )
