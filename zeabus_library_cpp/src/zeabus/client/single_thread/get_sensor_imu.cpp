@@ -36,12 +36,11 @@ namespace single_thread
         return result;
     } // function setup_client
 
-    bool GetSensorImu::normal_call( bool data )
+    bool GetSensorImu::normal_call()
     {
         bool can_call = false; // We want to ensure current call by this function not use mutex
         if( !( this->thread_status[0] ) )
         {
-            (this->client_data).request.data = data;
             (this->client_server).call( this->client_data );
             *(this->ptr_data) = (this->client_data).response.data;
             can_call = true;
@@ -49,9 +48,8 @@ namespace single_thread
         return can_call;
     } // function normal_call
 
-    void GetSensorImu::mutex_call( bool data )
+    void GetSensorImu::mutex_call()
     {
-        (this->client_data).request.data = data;
         (this->client_server).call( this->client_data );
         this->ptr_mutex_data->lock();
         *(this->ptr_data) = (this->client_data).response.data;
@@ -59,14 +57,14 @@ namespace single_thread
         this->thread_status[0] = false; // finish run thread
     } // function mutex_call
 
-    bool GetSensorImu::thread_call( bool data )
+    bool GetSensorImu::thread_call()
     {
         bool run_thread = false;
         if( ! ( this->thread_status[0] ) )
         {
             this->thread_status[0] = true;
             this->thread_id[0] = std::thread( 
-                    &zeabus::client::single_thread::GetSensorImu::mutex_call , this , data );
+                    &zeabus::client::single_thread::GetSensorImu::mutex_call , this );
             run_thread = true;
         } // thread are not running
         return run_thread;

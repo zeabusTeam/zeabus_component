@@ -31,11 +31,11 @@ namespace single_thread
 
             bool setup_client( std::string topic_service );
  
-            bool normal_call( bool data ); // call by sequence not using thread is
+            bool normal_call(); // call by sequence not using thread is
 
-            bool thread_call( bool data ); // use thread id to call service
+            bool thread_call(); // use thread id to call service
 
-            void mutex_call( bool data );
+            void mutex_call();
 
         protected:
             ros::ServiceClient client_server;
