@@ -46,7 +46,7 @@ namespace filter
     } // function setup_cutoff
 
     template< class type_buffer , unsigned int size >
-    void CutOffAverage< type_buffer , size >::push( type_buffer data )
+    double CutOffAverage< type_buffer , size >::push( type_buffer data )
     {
 #ifdef _DEBUG_CODE_
         std::cout   << "Before function to push data\n";
@@ -60,11 +60,7 @@ namespace filter
         zeabus::print_array::template_type( this->original_buffer , this->size_buffer , "CURRENT BUFFER" );
         std::cout   << "Current sum is " << this->size_buffer << std::endl;
 #endif
-    } // function push
-
-    template< class type_buffer , unsigned int size >
-    type_buffer CutOffAverage< type_buffer , size >::get_result()
-    {
+    // Next part of calculate output of filter
         zeabus::sort::bubble( this->original_buffer , this->temp_buffer , this->size_buffer);
 #ifdef _PRINT_FILTER_
         zeabus::print_array::template_type( this->original_buffer , this->size_buffer 
@@ -72,18 +68,24 @@ namespace filter
         zeabus::print_array::template_type( this->temp_buffer , this->size_buffer 
                 , "NEW BUFFER");
 #endif
-        type_buffer temp_sum = this->sum_buffer;
+        this->result = 1.0 * this->sum_buffer;
         for( unsigned int run = 0 ; run < this->size_cutoff ; run++ )
         {
-            temp_sum -= (this->temp_buffer)[run]; // cutoff minimum
-            temp_sum -= (this->temp_buffer)[ this->size_buffer - run - 1 ]; // cutoff maximum
+            this->result -= (this->temp_buffer)[run]; // cutoff minimum
+            this->result -= (this->temp_buffer)[ this->size_buffer - run - 1 ]; // cutoff maximum
 #ifdef _PRINT_PROCESS_
         std::cout   << "run_number " << run << " have order to cut "
                     << (this->temp_buffer)[run] << " and " 
                     << (this->temp_buffer)[ this->size_buffer - run - 1] << "\n";
 #endif
         }
-        return temp_sum;
+        return this->result;
+    } // function push
+
+    template< class type_buffer , unsigned int size >
+    double CutOffAverage< type_buffer , size >::get_result()
+    {
+        return this->result;
     } // function get_result
 
 

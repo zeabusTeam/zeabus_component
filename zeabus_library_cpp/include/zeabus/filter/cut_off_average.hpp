@@ -43,9 +43,9 @@ namespace filter
             
             bool setup_cutoff( unsigned int size_cutoff );
             
-            void push( type_buffer data );
+            double push( type_buffer data );
  
-            type_buffer get_result();
+            double get_result();
  
         protected:
             unsigned int size_cutoff;
@@ -54,6 +54,7 @@ namespace filter
         private:
             unsigned int current_point;
             type_buffer sum_buffer;
+            double result;
             type_buffer original_buffer[ size ];
             type_buffer temp_buffer[ size ];
     }; // class CutOffAverage
