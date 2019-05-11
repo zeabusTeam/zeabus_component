@@ -12,7 +12,7 @@ project( zeabus_library_cpp )
 ## find_package this importance
 #   That make us to ensure which package has been make or build before us
 
-find_package( catkin REQUIRED geometry_msgs roscpp sensor_msgs zeabus_utility )
+find_package( catkin REQUIRED geometry_msgs roscpp sensor_msgs zeabus_utility roslib)
 find_package( Boost REQUIRED COMPONENTS )
 find_package( zeabus_utility REQUIRED )
 
@@ -21,6 +21,7 @@ set( SHARED_LIBS
     Array
     Convert
     General
+    ROSFile
     IMUConnector
     DVLConnector
     ROSInterfaces
