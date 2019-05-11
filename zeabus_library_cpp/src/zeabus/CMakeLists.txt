@@ -5,6 +5,7 @@
 # This library is general purpose don't have any subdirectory CMakeLists.txt
 add_library( General SHARED
     escape_code.cpp
+    time.cpp
 )
 
 add_subdirectory( array )
