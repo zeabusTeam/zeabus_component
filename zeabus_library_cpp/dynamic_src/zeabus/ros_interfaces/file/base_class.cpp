@@ -55,6 +55,9 @@ namespace file
     template< typename type_output >
     void write( type_output* output )
     {
+#ifdef _PROCESS_STREAM_
+        std::cout   << "write : " << *output << "\n";
+#endif
         this->stream_file << output;
     }
 
@@ -62,6 +65,18 @@ namespace file
     void read( type_output* input )
     {
         this->stream_file >> *input;
+#ifdef _PROCESS_STREAM_
+        std::cout   << "read : " << *input << "\n";
+#endif
+    }
+
+    void writeline( std::string* message )
+    {
+#ifndef _PROCESS_STREAM_
+        std::cout   << "writeline : " << *message << "\n"
+                    << "\thave length : " << message->length << "\n"; 
+#endif
+        (this->stream_file).write( *message , message->length );
     }
 
 } // namespace file

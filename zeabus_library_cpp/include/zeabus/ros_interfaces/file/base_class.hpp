@@ -4,6 +4,7 @@
 // MAINTAINER	: K.Supasan
 
 // MACRO DETAIL
+//  _PROCESS_STREAM_    : will print about process stream input and output file
 
 // README
 //  BaseClass this implement for easy to read or write file but don't help you to manage 
@@ -60,6 +61,8 @@ namespace file
             // this function will use operator >> to read file please read ref 4 & 6
             template< typename type_input >
             void read( type_output* input );
+
+            void writeline( std::string* message );
 
         protected:  
             std::basic_fstrean< char > stream_file;
