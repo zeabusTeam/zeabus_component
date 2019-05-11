@@ -5,6 +5,7 @@
 
 // MACRO DETAIL
 //  _PROCESS_STREAM_    : will print about process stream input and output file
+//  _PROCESS_OBJECT_    : will print all process to call this object
 
 // README
 //  BaseClass this implement for easy to read or write file but don't help you to manage 
@@ -21,9 +22,15 @@
 //  ref4    : https://en.cppreference.com/w/cpp/named_req/FormattedOutputFunction
 //  ref5    : https://en.cppreference.com/w/cpp/io/basic_ostream/operator_ltlt
 //  ref6    : https://en.cppreference.com/w/cpp/io/basic_istream/operator_gtgt
+//  ref7    : https://en.cppreference.com/w/cpp/io/basic_fstream/open
 
 // MACRO SET
+//#define _PROCESS_OBJECT_
 //#define _PROCESS_STREAM_
+
+#ifdef _PROCESS_OBJECT_
+    #define _PROCESS_STREAM_
+#endif
 
 #include    <iostream> // this manage about std::cin , std::cout
 
@@ -43,6 +50,7 @@ namespace ros_interfaces
 namespace file
 {
 
+    const static char endl[1] = {'\n'};
     class BaseClass : public zeabus::ros_interfaces::file::PathFile
     {
         public:

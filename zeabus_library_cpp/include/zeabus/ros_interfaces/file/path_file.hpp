@@ -49,6 +49,8 @@ namespace file
             // but if true mean we updated full path and you already setup 3 path
             bool updated_path();
 
+            std::string get_full_path();
+
         protected:
             std::string path_package;
             std::string path_subdirectory;

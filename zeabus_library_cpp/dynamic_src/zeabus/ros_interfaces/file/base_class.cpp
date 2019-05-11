@@ -33,7 +33,10 @@ namespace file
 
     bool BaseClass::open( std::string full_path )
     {
-        (this->stream_file).open( full_path );
+#ifdef _PROCESS_OBJECT_
+        std::cout   << "BaseClass::open : " << full_path << "\n";
+#endif
+        (this->stream_file).open( full_path , std::ios::in | std::ios::out );
         return (this->stream_file).is_open();
     }
 
@@ -42,9 +45,12 @@ namespace file
         bool result = this->updated_path();
         if( result )
         {
-            (this->stream_file).open( this->full_path );
+#ifdef _PROCESS_OBJECT_
+        std::cout   << "BaseClass::open : " << this->full_path << "\n";
+#endif
+            (this->stream_file).open( this->full_path , std::ios::out | std::ios::out );
         }
-        return result;
+        return this->is_open();
     }
 
     bool BaseClass::is_open()
@@ -74,9 +80,11 @@ namespace file
     {
 #ifdef _PROCESS_STREAM_
         std::cout   << "writeline : " << *message << "\n"
-                    << "\thave length : " << message->length << "\n"; 
+                    << "\thave length : " << message->length() << "\n" 
+                    << "\thave length : " << message->capacity() << "\n"; 
 #endif
-        (this->stream_file).write( message->c_str() , message->capacity() );
+        (this->stream_file).write( message->c_str() , message->length() );
+        (this->stream_file).write(  endl , 1 );
     }
 
 } // namespace file

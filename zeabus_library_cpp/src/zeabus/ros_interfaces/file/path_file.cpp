@@ -102,6 +102,11 @@ namespace file
         return result;
     }
 
+    std::string PathFile::get_full_path()
+    {
+        return this->full_path;
+    }
+
 } // namespace File
 
 } // namespace ros_interfaces
