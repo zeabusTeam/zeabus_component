@@ -7,7 +7,7 @@
 
 #include    <zeabus/swap.hpp>
 
-#include    <zeabus/print_array.hpp>
+#include    <zeabus/array/print.hpp>
 
 // MACRO_DETAIL 
 // _PRINT_ARRAY_        : This macro will print array after and before source array

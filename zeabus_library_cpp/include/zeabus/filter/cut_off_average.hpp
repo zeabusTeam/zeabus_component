@@ -5,7 +5,7 @@
 
 #include    <iostream>
 
-#include    <zeabus/print_array.hpp>
+#include    <zeabus/array/print.hpp>
 
 #include    <zeabus/sort/bubble.hpp>
 
