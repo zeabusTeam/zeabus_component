@@ -1,14 +1,17 @@
-// FILE         : print_array.cpp
+// FILE         : print.cpp
 // AUTHOR       : K.Supasan
 // CREATE ON    : 2019, APRIL 8
 // MAINTAINER   : K.Supasan
 
-#include    <zeabus/print_array.hpp>
+#include    <zeabus/array/print.hpp>
 
 namespace zeabus
 {
 
-namespace print_array
+namespace array
+{
+
+namespace print
 {
 
     void integer_type( int* array, unsigned int size, std::string message )
@@ -28,6 +31,8 @@ namespace print_array
         std::cout   << std::endl;
     }
 
-} // namespace print_array
+} // namespace print
+
+} // namespace array
 
 } // namespace zeabus

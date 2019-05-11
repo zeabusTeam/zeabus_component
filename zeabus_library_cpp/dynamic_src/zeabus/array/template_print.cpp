@@ -1,4 +1,4 @@
-// FILE         : template_print_array.cpp
+// FILE         : template_print.cpp
 // AUTHOR       : K.Supasan
 // CREATE ON    : 2019, APRIL 8
 // MAINTAINER   : K.Supasan
@@ -6,7 +6,10 @@
 namespace zeabus
 {
 
-namespace print_array
+namespace array
+{
+
+namespace print
 {
 
     template< typename type_array >
@@ -27,6 +30,8 @@ namespace print_array
         std::cout   << std::endl;
     }
 
-} // namespace print_array
+} // namespace print
+
+} // namespace array
 
 } // namespace zeabus
