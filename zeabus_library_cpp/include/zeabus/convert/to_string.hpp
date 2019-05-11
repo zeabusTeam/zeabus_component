@@ -15,15 +15,22 @@
 
 #include    <sstream>
 
+#ifndef _ZEABUS_CONVERT_TO_STRING_HPP__
+#define _ZEABUS_CONVERT_TO_STRING_HPP__
+
 namespace zeabus
 {
 
 namespace convert
 {
 
-    template< typedef input_type >
+    template< typename input_type >
     std::string to_string( input_type input_data );
 
 } // namespace convert
 
 } // namespace zeabus
+
+#include    <zeabus/convert/to_string.cpp>
+
+#endif // _ZEABUS_CONVERT_TO_STRING_HPP__
