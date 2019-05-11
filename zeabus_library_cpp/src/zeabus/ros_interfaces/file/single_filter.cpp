@@ -39,7 +39,11 @@ namespace file
                     + zeabus::convert::to_string( *input ) + ","
                     + zeabus::convert::to_string( *output );
         this->writeline( &message );
-                    
+    }
+
+    void SingleFilter::logging( ros::Time stamp , double input , double output )
+    {
+        this->logging( &stamp , &input , &output );
     }
 
 } // namespace file

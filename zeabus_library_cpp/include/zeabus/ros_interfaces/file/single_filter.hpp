@@ -42,6 +42,7 @@ namespace file
             // We don't check you already open file or not
             // Beacause we create interface for manage your input only
             void logging( ros::Time* stamp , double* input , double* output );
+            void logging( ros::Time stamp , double input , double output );
     };
 
 } // namespace file
