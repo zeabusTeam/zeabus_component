@@ -61,7 +61,8 @@ namespace filter
         std::cout   << "Current sum is " << this->size_buffer << std::endl;
 #endif
     // Next part of calculate output of filter
-        zeabus::sort::bubble( this->original_buffer , this->temp_buffer , this->size_buffer);
+        zeabus::sort::cpp_stable_sort( this->original_buffer , this->temp_buffer 
+                , this->size_buffer);
 #ifdef _PRINT_FILTER_
         zeabus::print_array::template_type( this->original_buffer , this->size_buffer 
                 , "ORIGINAL BUFFER");
@@ -79,7 +80,7 @@ namespace filter
                     << (this->temp_buffer)[ this->size_buffer - run - 1] << "\n";
 #endif
         }
-        return this->result;
+        return ( this->result ) / (this->size_buffer - (this->size_cutoff * 2) );
     } // function push
 
     template< class type_buffer , unsigned int size >

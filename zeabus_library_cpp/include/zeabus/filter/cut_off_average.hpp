@@ -7,7 +7,8 @@
 
 #include    <zeabus/array/print.hpp>
 
-#include    <zeabus/sort/bubble.hpp>
+//#include    <zeabus/sort/bubble.hpp>
+#include    <zeabus/sort/cpp.hpp>
 
 // MACRO_DETAIL 
 // _PRINT_FILTER_   :   show array before and after sort 
