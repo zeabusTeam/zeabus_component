@@ -24,7 +24,7 @@ namespace sort
     template< typename array_type >
     void cpp_sort( array_type* source , array_type* result , unsigned int size )
     {
-        zeabus::array::copy( source , result , size );
+        zeabus::array::copy::template_type( source , result , size );
         zeabus::sort::cpp_sort( result , size );
     }
 
@@ -37,7 +37,7 @@ namespace sort
     template< typename array_type >
     void cpp_stable_sort( array_type* source , array_type* result , unsigned int size )
     {
-        zeabus::array::copy( source , result , size );
+        zeabus::array::copy::template_type( source , result , size );
         zeabus::sort::cpp_stable_sort( result , size );
     }
 

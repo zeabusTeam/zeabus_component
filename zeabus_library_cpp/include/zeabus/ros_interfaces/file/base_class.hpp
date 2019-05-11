@@ -22,6 +22,9 @@
 //  ref5    : https://en.cppreference.com/w/cpp/io/basic_ostream/operator_ltlt
 //  ref6    : https://en.cppreference.com/w/cpp/io/basic_istream/operator_gtgt
 
+// MACRO SET
+//#define _PROCESS_STREAM_
+
 #include    <iostream> // this manage about std::cin , std::cout
 
 #include    <fstream> // this library about input output file
@@ -60,12 +63,12 @@ namespace file
 
             // this function will use operator >> to read file please read ref 4 & 6
             template< typename type_input >
-            void read( type_output* input );
+            void read( type_input* input );
 
             void writeline( std::string* message );
 
         protected:  
-            std::basic_fstrean< char > stream_file;
+            std::basic_fstream< char > stream_file;
  
     }; // BaseClass object
 

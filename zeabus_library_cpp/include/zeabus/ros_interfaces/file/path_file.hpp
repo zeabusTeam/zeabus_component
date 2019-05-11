@@ -36,18 +36,18 @@ namespace file
 
     class PathFile
     {
+        public:
+            // We don't recommand setup full_path because we can't to check and alert you
+            //  about your fullpat are exi
+            PathFile( std::string full_path = "");
+    
+            bool setup_package( std::string package_name );
+            void setup_subdirectory( std::string subdirectory );
+            void setup_file_name( std::string file_name );
 
-        // We don't recommand setup full_path because we can't to check and alert you
-        //  about your fullpat are exi
-        PathFile( std::string full_path = "");
-
-        bool setup_package( std::string package_name );
-        void setup_subdirectory( std::string subdirectory );
-        void setup_file_name( std::string file_name );
-
-        // Return true not mean you success open file or file are exist
-        // but if true mean we updated full path and you already setup 3 path
-        bool updated_path();
+            // Return true not mean you success open file or file are exist
+            // but if true mean we updated full path and you already setup 3 path
+            bool updated_path();
 
         protected:
             std::string path_package;

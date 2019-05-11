@@ -53,7 +53,7 @@ namespace file
     }
 
     template< typename type_output >
-    void write( type_output* output )
+    void BaseClass::write( type_output* output )
     {
 #ifdef _PROCESS_STREAM_
         std::cout   << "write : " << *output << "\n";
@@ -62,7 +62,7 @@ namespace file
     }
 
     template< typename type_input >
-    void read( type_output* input )
+    void BaseClass::read( type_input* input )
     {
         this->stream_file >> *input;
 #ifdef _PROCESS_STREAM_
@@ -70,13 +70,13 @@ namespace file
 #endif
     }
 
-    void writeline( std::string* message )
+    void BaseClass::writeline( std::string* message )
     {
-#ifndef _PROCESS_STREAM_
+#ifdef _PROCESS_STREAM_
         std::cout   << "writeline : " << *message << "\n"
                     << "\thave length : " << message->length << "\n"; 
 #endif
-        (this->stream_file).write( *message , message->length );
+        (this->stream_file).write( message->c_str() , message->capacity() );
     }
 
 } // namespace file

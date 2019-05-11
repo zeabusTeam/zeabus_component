@@ -43,5 +43,5 @@ namespace sort
 
 } // namespace zeabus
 
-#include    <zeabus/sort/cpp_sort.cpp>
+#include    <zeabus/sort/cpp.cpp>
 #endif // _ZEABUS_SORT_CPP_HPP__
