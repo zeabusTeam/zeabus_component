@@ -19,12 +19,12 @@ namespace swap
 {
 
     template< typename array_type >
-    void template_type( array_type* first , array_type* second, unsigned int size )
+    void template_type( array_type** first , array_type** second, unsigned int size )
     {
-        array_type* temporary;
-        temporary = first;
-        first = second;
-        second = temporary;
+        array_type** temporary;
+        *temporary = *first;
+        *first = *second;
+        *second = *temporary;
     } // function template_type
 
 } // namespace swap

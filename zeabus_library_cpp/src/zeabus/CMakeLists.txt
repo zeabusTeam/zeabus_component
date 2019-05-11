@@ -5,8 +5,9 @@
 # This library is general purpose don't have any subdirectory CMakeLists.txt
 add_library( General SHARED
     escape_code.cpp
-    print_array.cpp
 )
+
+add_subdirectory( array )
 
 # Add library about sort algorithm
 add_subdirectory( sort )
