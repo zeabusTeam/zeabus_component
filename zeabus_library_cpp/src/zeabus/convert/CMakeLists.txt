@@ -4,4 +4,5 @@ add_library( Convert SHARED
     bytes.cpp
     vector/one_byte.cpp
     string/integer_type.cpp
+    integer/string_type.cpp
 )
