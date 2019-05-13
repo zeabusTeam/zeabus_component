@@ -30,6 +30,7 @@ namespace integer
 {
 
     std::string to_string( int* data , unsigned int width , char delim = '0' );
+    std::string to_string( int data , unsigned int width , char delim = '0' );
 
 } // namespace interger
 

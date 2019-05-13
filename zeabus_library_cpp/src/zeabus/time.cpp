@@ -11,6 +11,7 @@
 
 // MACRO SET
 //#define _PRINT_PROCESS_
+//#define _PRINT_TEMPORARY_
 
 #include    <zeabus/time.hpp>
 
@@ -31,52 +32,46 @@ namespace zeabus
 
     std::string output_time( std::tm* time , unsigned int type_case )
     {
+        const static char delim = '0';
         std::string result = "";
-        std::stringstream temporary;
         switch( type_case )
         {
             case 6  :
-                temporary.clear();
-                temporary << std::setw(2) << std::setfill('0') << time->tm_sec;
-                result = "_" + temporary.str() + result;
+                result = "_" + zeabus::convert::integer::to_string( time->tm_sec , 2 , delim) 
+                        + result;
 #ifdef _PRINT_PROCESS_
                 std::cout   << "case 6 : " << result << "\n";
-#endif 
+#endif // _PRINT_PROCESS_ 
             case 5  :
-                temporary.clear();
-                temporary << std::setw(2) << std::setfill('0') << time->tm_min;
-                result = "_" + temporary.str() + result;
+                result = "_" + zeabus::convert::integer::to_string( time->tm_min, 2 , delim ) 
+                        + result;
 #ifdef _PRINT_PROCESS_
                 std::cout   << "case 5 : " << result << "\n";
-#endif 
+#endif // _PRINT_PROCESS_ 
             case 4  :
-                temporary.clear();
-                temporary << std::setw(2) << std::setfill('0') << time->tm_hour;
-                result = "_" + temporary.str() + result;
+                result = "_" + zeabus::convert::integer::to_string( time->tm_hour , 2 , delim ) 
+                        + result;
 #ifdef _PRINT_PROCESS_
                 std::cout   << "case 4 : " << result << "\n";
-#endif 
+#endif // _PRINT_PROCESS_ 
             case 3  :
-                temporary.clear();
-                temporary << std::setw(2) << std::setfill('0') << time->tm_mday;
-                result = "_" + temporary.str() + result;
+                result = "_" + zeabus::convert::integer::to_string( time->tm_mday , 2 , delim ) 
+                        + result;
 #ifdef _PRINT_PROCESS_
                 std::cout   << "case 3 : " << result << "\n";
-#endif 
+#endif // _PRINT_PROCESS_ 
             case 2  :
-                temporary.clear();
-                temporary << std::setw(2) << std::setfill('0') << time->tm_mon;
-                result = "_" + temporary.str() + result;
+                result = "_" + zeabus::convert::integer::to_string( time->tm_mon , 2 , delim ) 
+                        + result;
 #ifdef _PRINT_PROCESS_
                 std::cout   << "case 2 : " << result << "\n";
-#endif 
+#endif // _PRINT_PROCESS_ 
             case 1  :
-                temporary.clear();
-                temporary << std::setw(4) << std::setfill('0') << time->tm_year;
-                result = temporary.str() + result;
+                result = zeabus::convert::integer::to_string( time->tm_year , 4 , delim ) 
+                        + result;
 #ifdef _PRINT_PROCESS_
                 std::cout   << "case 1 : " << result << "\n";
-#endif 
+#endif // _PRINT_PROCESS_ 
                 break;
         } // switch type_case
         return result;

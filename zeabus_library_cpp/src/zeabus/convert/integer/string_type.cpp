@@ -29,6 +29,12 @@ namespace integer
         return temporary.str();
     } // function to_string 3 argument at less 2 argument
 
+    std::string to_string( int data , unsigned int width , char delim )
+    {
+        std::basic_stringstream< char > temporary;
+        temporary   << std::setw( width ) << std::setfill( delim ) << data;
+        return temporary.str();
+    } // function to_string 3 argument at less 2 argument
 } // namespace interger
 
 } // namespace convert

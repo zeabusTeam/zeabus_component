@@ -5,6 +5,7 @@
 
 // MACRO DETAIL
 //  _PRINT_PROCESS_     : will print every case of set message and result
+//  _PRINT_TEMPORARY_   : will print tempory individual case
 
 // README
 //  In process to collect log we have to seperate or order file by time.
@@ -23,17 +24,17 @@
 //  ref2    : https://en.cppreference.com/w/cpp/chrono/c/gmtime
 //  ref3    : https://en.cppreference.com/w/cpp/chrono/c/localtime
 //  ref4    : https://stackoverflow.com/questions/35608291/formatting-how-to-convert-1-to-01-2-to-02-3-to-03-and-so-on
+//  ref5    : https://en.cppreference.com/w/cpp/io/basic_stringstream
 
 // MACRO SET
-//#define _PRINT_PROCESS_
+#define _PRINT_PROCESS_
+#define _PRINT_TEMPORARY_
 
 #include    <iostream>
 
-#include    <sstream>
-
-#include    <iomanip>
-
 #include    <ctime>
+
+#include    <zeabus/convert/integer.hpp>
 
 #ifndef _ZEABUS_TIME_HPP__
 #define _ZEABUS_TIME_HPP__
