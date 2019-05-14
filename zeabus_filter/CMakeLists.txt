@@ -9,12 +9,16 @@ find_package( catkin REQUIRED COMPONENTS
 )
 
 find_package( zeabus_library_cpp REQUIRED )
+find_package( zeabus_utility REQUIRED )
 
 catkin_package(
     CATKIN_DEPENDS roscpp
 )
 
+#message("Zeabus utility include dir is ${zeabus_utility_INCLUDE_DIRS}")
+
 include_directories(
     ${catkin_INCLUDE_DIRS}
     ${zeabus_library_cpp_INCLUDE_DIRS}
+    ${zeabus_utility_INCLUDE_DIRS}
 )
