@@ -57,16 +57,16 @@ namespace filter
         this->current_point++;  
         this->current_point %= this->size_buffer;
 #ifdef _PRINT_FILTER_
-        zeabus::print_array::template_type( this->original_buffer , this->size_buffer , "CURRENT BUFFER" );
+        zeabus::array::print::template_type( this->original_buffer , this->size_buffer , "CURRENT BUFFER" );
         std::cout   << "Current sum is " << this->size_buffer << std::endl;
 #endif
     // Next part of calculate output of filter
         zeabus::sort::cpp_stable_sort( this->original_buffer , this->temp_buffer 
                 , this->size_buffer);
 #ifdef _PRINT_FILTER_
-        zeabus::print_array::template_type( this->original_buffer , this->size_buffer 
+        zeabus::array::print::template_type( this->original_buffer , this->size_buffer 
                 , "ORIGINAL BUFFER");
-        zeabus::print_array::template_type( this->temp_buffer , this->size_buffer 
+        zeabus::array::print::template_type( this->temp_buffer , this->size_buffer 
                 , "NEW BUFFER");
 #endif
         this->result = 1.0 * this->sum_buffer;

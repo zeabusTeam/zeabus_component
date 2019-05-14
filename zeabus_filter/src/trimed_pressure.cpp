@@ -36,10 +36,10 @@
 
 #include    <zeabus/time.hpp>
 
-#include    <zeabus/ros_interfaces/single_filter.hpp>
+#include    <zeabus/ros_interfaces/file/single_filter.hpp>
 
 // Part of algorithm
-#include    <zeabus/filter/cut_off_average.hpp>
+#include    <zeabus/filter/trimed_mean.hpp>
 
 // Below function I will test about time up of data
 bool check_time_up( unsigned int limit_count , bool not_equal );
@@ -65,7 +65,7 @@ int main( int argv, char** argc )
     // Insert optional part param part  
     const static unsigned int buffer_size = 10; // size of buffer to use collect data
     const static unsigned int trimed_size = 2; // size of buffer will trimed
-    const static unsigned int rate_client = 60; // frequency of client to request data for sensor
+    const static unsigned int frequency = 60; // frequency of client to request data for sensor
     const static unsigned int limit_same_time = 10; // limit to warning when receive 10 time
 
     // Second part of Filter this part mix about data variable
@@ -77,7 +77,7 @@ int main( int argv, char** argc )
     zeabus_utility::HeaderFloat64 output_data;
     output_data.header.frame_id = "filter/pressure";
     ros::Time time_stamp = ros::Time::now(); // Time stamp for check new or old data
-    ros::Rate 
+    ros::Rate rate( frequency ); 
     
     // Forth part setup service
     zeabus::service::get_single_data::HeaderFloat64 server_pressure_filter;
@@ -97,8 +97,6 @@ int main( int argv, char** argc )
     client_pressure_sensor.setup_ptr_node_handle( ptr_node_handle );
     client_pressure_sensor.setup_ptr_data( &input_data );
     // We don't setup mutex for this because we didn't use that
-
-    ros::Rate rate( rate_client );
 
     // Sixth part full filter part buffer
     for( unsigned int run = 0 ; run < buffer_size ; run++ )
@@ -141,7 +139,7 @@ int main( int argv, char** argc )
 #endif // _DEBUG_SPIN_
         while( ! ( node_pressure_filter.status() ) ) //  we want to ensure now I spin
         {
-            rate.sleep()
+            rate.sleep();
         }
 #ifdef _DEBUG_SPIN_
         std::cout   << "node_pressure_filter finish spin\n";
@@ -158,8 +156,8 @@ int main( int argv, char** argc )
             time_stamp = input_data.header.stamp;
             (void)filter_pressure.push( input_data.data );
             ptr_mutex_data->lock();
-            output.header.time_stamp = ros::Time::now();
-            output.data = filter_pressure.get_result();
+            output_data.header.stamp = ros::Time::now();
+            output_data.data = filter_pressure.get_result();
             ptr_mutex_data->unlock();
 #ifdef _DEBUG_FILTER_
             std::cout   << "ros loop push " << input_data.data
@@ -177,18 +175,18 @@ int main( int argv, char** argc )
 }
 
 // t
-bool check_time_up( unsigned int limit_count , bool not_equal );
+bool check_time_up( unsigned int limit_count , bool not_equal )
 {
     static unsigned int count = 1;
     if( ! not_equal )
     {
-        switch( count )
+        if( count == limit_count )
         {
-        case limit_count : 
             std::cout   << zeabus::escape_code::bold_yellow << "Warning data didn't updated\n"
                         << zeabus::escape_code::normal_white;
-            break;
-        default:
+        }
+        else
+        {
             count++;
         } 
     }
