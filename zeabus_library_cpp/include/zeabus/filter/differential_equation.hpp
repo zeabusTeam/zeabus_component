@@ -67,9 +67,13 @@ namespace filter
             double constant_a[ num_a_term ];
 
             unsigned int point_input; // I design this variable can have value [0,M)
-            unsigned int point_output; // I design this variable can have value [1,N)
+            unsigned int point_output; // I design this variable can have value [0,N)
+            // point_output will always to point
 
             double result;
+
+        private:
+            double calculate();
     }; // object DifferentialEquation
 
 } // namespace filter
