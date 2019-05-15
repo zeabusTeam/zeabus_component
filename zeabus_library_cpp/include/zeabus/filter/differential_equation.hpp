@@ -21,6 +21,8 @@
 // include all library about arrya
 #include    <zeabus/array/handle_array.hpp> 
 
+#include    <zeabus/escape_code.hpp>
+
 #ifndef _ZEABUS_FILTER_DIFFERENTIAL_EQUATION_HPP__
 #define _ZEABUS_FILTER_DIFFERENTIAL_EQUATION_HPP__
 
@@ -74,4 +76,6 @@ namespace filter
 
 } // namespace zeabus
 
-#endif
+#include    <zeabus/filter/differential_equation.cpp>
+
+#endif // _ZEABUS_FILTER_DIFFERENTIAL_EQUATION_HPP__
