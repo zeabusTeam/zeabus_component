@@ -26,6 +26,9 @@ namespace copy
     template< typename array_type >
     void template_type( array_type* source , array_type* target , unsigned int size );
 
+    template< typename array_type >
+    void tamplate_type( array_type* source , array_type value , unsigned int size );
+
 } // namespace 
 
 } // namespace array
