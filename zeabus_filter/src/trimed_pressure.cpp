@@ -6,6 +6,7 @@
 // MACRO DETAIL
 //  _DEBUG_FILTER_  : This will print about input and output of filter
 //  _DEBUG_SPIN_    : This will print about spin new thread and will check before full active
+//  _COLLECT_LOG_   : This will collect log about filter input and output
 
 // README
 //  This file use trimed_mean method to filter value from pressure sensor
@@ -19,6 +20,7 @@
 // MACRO SET
 #define _DEBUG_FILTER_
 #define _DEBUG_SPIN_
+#define _COLLECT_LOG_
 
 // Header of genral part that mean you can change algorithm to fileter but can't change this part
 
@@ -35,8 +37,9 @@
 #include    <zeabus/escape_code.hpp>
 
 #include    <zeabus/time.hpp>
-
+#ifdef _COLLECT_LOG_
 #include    <zeabus/ros_interfaces/file/single_filter.hpp>
+#endif // _COLLECT_LOG_
 
 // Part of algorithm
 #include    <zeabus/filter/trimed_mean.hpp>
@@ -98,6 +101,15 @@ int main( int argv, char** argc )
     client_pressure_sensor.setup_ptr_data( &input_data );
     // We don't setup mutex for this because we didn't use that
 
+    // Optional part about log if you want to do must define _COLLECT_LOG_
+#ifdef _COLLECT_LOG_
+    zeabus::ros_interfaces::file::SingleFilter my_file;
+    my_file.setup_package( "zeabus_log" );
+    my_file.setup_subdirectory( "log/filter/pressure");
+    my_file.setup_file_name( "pressure_trimed_mean" + zeabus::local_time( 6 ) + ".txt" );
+    my_file.write_column( "input_pressure_sensor" , "output_pressure_filter" );
+#endif // _COLLECT_LOG_
+
     // Sixth part full filter part buffer
     for( unsigned int run = 0 ; run < buffer_size ; run++ )
     {
@@ -111,7 +123,10 @@ int main( int argv, char** argc )
 #ifdef _DEBUG_FILTER_
             std::cout   << "First fill push " << input_data.data
                         << " and result of fileter " << output_data.data;
-#endif 
+#endif // _DEBUG_FILTER_ 
+#ifdef _COLLECT_LOG_
+            my_file.logging( &time_stamp , &(input_data.data) , &(output_data.data) );
+#endif // _COLLECT_LOG_
         }
     } // for loop for fill buffer first time
 
@@ -163,6 +178,10 @@ int main( int argv, char** argc )
             std::cout   << "ros loop push " << input_data.data
                         << " and result of fileter " << output_data.data;
 #endif // _DEBUG_FILTER_
+#ifdef _COLLECT_LOG_
+            my_file.logging( &(output_data.header.stamp) , &(input_data.data) 
+                    , &(output_data.data) );
+#endif // _COLLECT_LOG_
         }
     }
 
