@@ -82,4 +82,4 @@ namespace filter
 
 #include    <zeabus/filter/differential_equation_interfaces.cpp>
 
-#endif // _ZEABUS_FILTER_DIFFERENTIAL_EQUATION_HPP__
+#endif // _ZEABUS_FILTER_DIFFERENTIAL_EQUATION_INTERFACES_HPP__
