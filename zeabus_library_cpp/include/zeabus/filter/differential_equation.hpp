@@ -16,12 +16,7 @@
 
 // MACRO SET
 
-#include    <iostream>
-
-// include all library about arrya
-#include    <zeabus/array/handle_array.hpp> 
-
-#include    <zeabus/escape_code.hpp>
+#include    <zeabus/filter/differential_equation_interfaces.hpp>
 
 #ifndef _ZEABUS_FILTER_DIFFERENTIAL_EQUATION_HPP__
 #define _ZEABUS_FILTER_DIFFERENTIAL_EQUATION_HPP__
@@ -41,38 +36,16 @@ namespace filter
     // What rule to setup parameter num_a_term and num_b_term? Please thinking you want to use
     //      function filter in MATLAB you have to setup same parameter of that.
     template< class type_buffer , unsigned int num_b_term , unsigned int num_a_term>
-    class DifferentialEquation
+    class DifferentialEquation 
+            : DifferentialEquationIntrfaces< type_buffer , num_b_term , num_a_term >
     {
         public:
             DifferentialEquation();
-
-            // size = size of constant_b array and must equal num_b_term
-            bool setup_constant_b( double* constant_b , unsigned int size );
-            // size = size of constant_a array and must equal num_a_term and first is 1
-            bool setup_constant_a( double* constant_a , unsigned int size );
-            // 2 functions above will return false if you can't setup data
-            // constant_b and constant_a I will start with value 0
-
-            // I think this will help to reduce time of
-            void full_fill_buffer( type_buffer value );
 
             double push( type_buffer data );
             double get_result();
 
         protected:
-            type_buffer input_buffer[ num_b_term ];
-            double output_buffer[ num_a_term ];
-
-            double constant_b[ num_b_term ];
-            double constant_a[ num_a_term ];
-
-            unsigned int point_input; // I design this variable can have value [0,M)
-            unsigned int point_output; // I design this variable can have value [0,N)
-            // point_output will always to point
-
-            double result;
-
-        private:
             double calculate();
     }; // object DifferentialEquation
 
