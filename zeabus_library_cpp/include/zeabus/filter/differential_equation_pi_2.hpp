@@ -19,6 +19,8 @@
 
 #include    <zeabus/filter/differential_equation_interface.hpp>
 
+#include    <cmath> // include function pi
+
 #ifndef _ZEABUS_FILTER_DIFFERENTIAL_EQUATION_PI_2_HPP__
 #define _ZEABUS_FILTER_DIFFERENTIAL_EQUATION_PI_2_HPP__
 
