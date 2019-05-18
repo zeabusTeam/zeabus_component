@@ -37,6 +37,7 @@ namespace radian
                 break;
             }
         }
+        return answer;
     } // function bound parameter is value
 
     void bound( double* number )
