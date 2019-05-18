@@ -23,10 +23,12 @@ namespace zeabus
 namespace radian
 {
 
-    const static double pi = 3.1416;    // value approximate from MATLAB 
+    const static double pi = 3.1416;    // value approximate from MATLAB
     const static double two_pi = 6.2832;
+    const static double half_pi = 1.5708;
     const static double negate_pi = -3.1416;
     const static double negate_two_pi = -6.2832;
+    const static double negate_half_pi = -1.5708; 
 
     // return value after bound
     double bound( double number );
