@@ -17,7 +17,7 @@
 
 #include    <zeabus/convert/to_string.hpp>
 
-#include    <geometry_msgs/Vector3.hpp>
+#include    <geometry_msgs/Vector3.h>
 
 #ifndef _ZEABUS_ROS_INTERFACES_CONVERT_GEOMETRY_MSGS_HPP
 #define _ZEABUS_ROS_INTERFACES_CONVERT_GEOMETRY_MSGS_HPP

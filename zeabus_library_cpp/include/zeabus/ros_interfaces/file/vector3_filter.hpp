@@ -13,16 +13,14 @@
 
 #include    <zeabus/ros_interfaces/file/base_class.hpp>
 
-#include    <ros/ros.h>
-
 #include    <zeabus/convert/to_string.hpp>
 
 #include    <zeabus/ros_interfaces/convert/geometry_msgs.hpp>
 
 #include    <geometry_msgs/Vector3.h>
 
-#ifndef _ZEABUS_ROS_INTERFACES_FILE_VECTOR3_FILTR_HPP__
-#define _ZEABUS_ROS_INTERFACES_FILE_VECTOR3_FILTR_HPP__
+#ifndef _ZEABUS_ROS_INTERFACES_FILE_VECTOR3_FILTER_HPP__
+#define _ZEABUS_ROS_INTERFACES_FILE_VECTOR3_FILTER_HPP__
 
 namespace zeabus
 {

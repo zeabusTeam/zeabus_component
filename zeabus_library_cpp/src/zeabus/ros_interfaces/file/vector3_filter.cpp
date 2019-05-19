@@ -19,6 +19,9 @@ namespace zeabus
 namespace ros_interfaces
 {
 
+namespace file
+{
+
     Vector3Filter::Vector3Filter( std::string full_path ) : BaseClass( full_path )
     {
         ;
@@ -43,11 +46,13 @@ namespace ros_interfaces
         this->writeline( &message );
     } // function collecting logging
 
-    void Vector3Filter::logging( const ros::Time stemp , const geometry_msgs::Vector3 input
+    void Vector3Filter::logging( const ros::Time stamp , const geometry_msgs::Vector3 input
             , const geometry_msgs::Vector3 output )
     {
         (this->logging)( &stamp , &input , &output );
     } // function collecting logging
+
+} // namespace file
 
 } // namespace ros_interfaces
 
