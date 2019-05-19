@@ -22,6 +22,7 @@ set( SHARED_LIBS
     Convert
     General
     ROSFile
+    ROSConvert
     IMUConnector
     DVLConnector
     ROSInterfaces
