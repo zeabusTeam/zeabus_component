@@ -24,7 +24,7 @@ include_directories(
 )
 
 add_executable( pressure src/trimed_pressure.cpp )
-target_link_libraries( pressure 
-    ${zeabus_library_cpp_LIBRARIES}
+target_link_libraries( pressure
+    ${zeabus_library_cpp_LIBRARIES} 
     ${catkin_LIBRARIES}
 )
