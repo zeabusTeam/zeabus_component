@@ -7,6 +7,7 @@ add_library( General SHARED
     time.cpp
     radian.cpp
     escape_code.cpp
+    count.cpp
 )
 
 add_subdirectory( array )
