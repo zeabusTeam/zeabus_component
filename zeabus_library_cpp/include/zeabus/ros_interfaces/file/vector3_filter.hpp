@@ -52,4 +52,4 @@ namespace file
 
 } // namespace zeabus
 
-#endif // _ZEABUS_ROS_INTERFACES_FILE_VECTOR3_FILTR_HPP__
+#endif // _ZEABUS_ROS_INTERFACES_FILE_VECTOR3_FILTER_HPP__
