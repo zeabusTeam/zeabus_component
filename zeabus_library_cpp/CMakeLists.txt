@@ -21,8 +21,6 @@ set( SHARED_LIBS
     Array
     Convert
     General
-    ROSFile
-    ROSConvert
     IMUConnector
     DVLConnector
     ROSInterfaces
@@ -31,6 +29,12 @@ set( SHARED_LIBS
     MAESTROConnector
     ClientSingleThread
     ServiceGetSingleData
+)
+
+set( ROS_LIBS
+    ROSConvert
+    ROSSingleFilter
+    ROSVector3Filter
 )
 
 set( zeabus_library_include_path 
@@ -42,7 +46,7 @@ catkin_package(
     # INCLUDE_DIRS will help you to export header
     INCLUDE_DIRS ${zeabus_library_include_path} 
     # LIBRARIES will help you to export library
-    LIBRARIES ${SHARED_LIBS}
+    LIBRARIES ${SHARED_LIBS} ${ROS_LIBS}
     # We help you link on syntex of catkin_EXPORTE_TARGEETS
     CATKIN_DEPENDS zeabus_utility 
     DEPENDS Boost

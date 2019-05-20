@@ -44,7 +44,7 @@ namespace single_thread
 
             // this will collect variable to use connect data between service and client
             zeabus_utility::GetGeometryVector3Stamped client_data;
-    }:
+    };
 
 } // namespace single_thread
 
