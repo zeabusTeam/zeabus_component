@@ -4,6 +4,8 @@
 // MAINTAINER	: K.Supasan
 
 // MACRO DETAIL
+// _OVER_COUNT_ : This will print when time is over
+// _PROCESS_    : This will print all. Now don't help you anything
 
 // README
 //  This file have purpose to count same time and return data for you
@@ -11,6 +13,12 @@
 // REFERENCE
 
 // MACRO SET
+//#define _OVER_COUNT_
+#define _PROCESS_
+
+#ifdef _PROCESS_
+    #define _OVER_COUNT_
+#endif
 
 #include    <iostream>
 

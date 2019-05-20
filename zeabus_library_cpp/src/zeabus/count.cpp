@@ -11,6 +11,12 @@
 // REFERENCE
 
 // MACRO SET
+//#define _OVER_COUNT_
+#define _PROCESS_
+
+#ifdef _PROCESS_
+    #define _PROCESS_
+#endif
 
 #include    <zeabus/count.hpp>
 
@@ -34,6 +40,10 @@ namespace count
             if( count < limit_count )
             {
                 *count_over = true;
+#ifdef _OVER_COUNT_
+                std::cout   << zeabus::escape_code::bold_yellow << "Count is over on limit is "
+                            << limit_count << "\n" << zeabus::escape_code::normal_white;  
+#endif
             }
             else
             {
