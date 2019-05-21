@@ -34,6 +34,19 @@ namespace convert
         return vector3_string( &data , delim );
     } // function vector3_string
 
+    std::string quaternion_string( const geometry_msgs::Quaternion* data, const char delim )
+    {
+        return zeabus::convert::to_string( data->w ) + delim
+                + zeabus::convert::to_string( data->x ) + delim
+                + zeabus::convert::to_string( data->y ) + delim
+                + zeabus::convert::to_string( data->z );
+    }
+
+    std::string quaternion_string( const geometry_msgs::Quaternion data , const char delim )
+    {
+        return quaternion_string( &data , delim );
+    }
+
 } // namespace convert
 
 } // namespace ros_interfaces

@@ -19,6 +19,8 @@
 
 #include    <geometry_msgs/Vector3.h>
 
+#include    <geometry_msgs/Quaternion.h>
+
 #ifndef _ZEABUS_ROS_INTERFACES_CONVERT_GEOMETRY_MSGS_HPP
 #define _ZEABUS_ROS_INTERFACES_CONVERT_GEOMETRY_MSGS_HPP
 
@@ -33,6 +35,9 @@ namespace convert
 
     std::string vector3_string( const geometry_msgs::Vector3* data , const char delim );
     std::string vector3_string( const geometry_msgs::Vector3 data , const char delim ); 
+
+    std::string quaternion_string( const geometry_msgs::Quaternion* data , const char delim );
+    std::string quaternion_string( const geometry_msgs::Quaternion data , const char delim );
 
 } // namespace convert
 
