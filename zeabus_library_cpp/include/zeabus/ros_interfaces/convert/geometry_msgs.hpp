@@ -17,6 +17,8 @@
 
 #include    <zeabus/convert/to_string.hpp>
 
+#include    <tf/LinearMath/Quaternion.h>
+
 #include    <geometry_msgs/Vector3.h>
 
 #include    <geometry_msgs/Quaternion.h>
@@ -38,6 +40,8 @@ namespace convert
 
     std::string quaternion_string( const geometry_msgs::Quaternion* data , const char delim );
     std::string quaternion_string( const geometry_msgs::Quaternion data , const char delim );
+
+    void tf_quaternion( const tf::Quaternion* source , geometry_msgs::Quaternion* target );
 
 } // namespace convert
 

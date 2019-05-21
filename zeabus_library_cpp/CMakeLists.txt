@@ -12,7 +12,7 @@ project( zeabus_library_cpp )
 ## find_package this importance
 #   That make us to ensure which package has been make or build before us
 
-find_package( catkin REQUIRED geometry_msgs roscpp sensor_msgs zeabus_utility roslib)
+find_package( catkin REQUIRED geometry_msgs roscpp sensor_msgs zeabus_utility roslib tf)
 find_package( Boost REQUIRED COMPONENTS )
 find_package( zeabus_utility REQUIRED )
 
@@ -48,7 +48,7 @@ catkin_package(
     # LIBRARIES will help you to export library
     LIBRARIES ${SHARED_LIBS} ${ROS_LIBS}
     # We help you link on syntex of catkin_EXPORTE_TARGEETS
-    CATKIN_DEPENDS zeabus_utility roscpp
+    CATKIN_DEPENDS zeabus_utility roscpp tf
     DEPENDS Boost
 )
 
