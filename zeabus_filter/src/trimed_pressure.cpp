@@ -100,6 +100,7 @@ int main( int argv, char** argc )
     my_file.setup_package( "zeabus_log" );
     my_file.setup_subdirectory( "log/filter/pressure");
     my_file.setup_file_name( "pressure_trimed_mean" + zeabus::local_time( 6 ) + ".txt" );
+    (void)my_file.open();
     my_file.write_column( "input_pressure_sensor" , "output_pressure_filter" );
 #endif // _COLLECT_LOG_
 
