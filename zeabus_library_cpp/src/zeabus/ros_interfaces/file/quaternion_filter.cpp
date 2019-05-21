@@ -36,8 +36,8 @@ namespace file
         this->writeline( &message );
     }
 
-    void Vector3Filter::logging( const ros::Time* stamp , const geometry_msgs::Quaternion* input
-            , const geometry_msgs::Quaternion* output )
+    void QuaternionFilter::logging( const ros::Time* stamp 
+            , const geometry_msgs::Quaternion* input , const geometry_msgs::Quaternion* output )
     {
         std::string message = zeabus::convert::to_string( stamp->sec )
                 + "." + zeabus::convert::to_string( stamp->nsec )
@@ -45,10 +45,25 @@ namespace file
                 + "," + zeabus::ros_interfaces::convert::quaternion_filter( output , ',');
     }
 
-    void Vector3Filter::logging( const ros::Time stamp , const geometry_msgs::Quaternion input
-            , const geometry_msgs::Quaternion output )
+    void QuaternionFilter::logging( const ros::Time stamp 
+            , const geometry_msgs::Quaternion input , const geometry_msgs::Quaternion output )
     {
         this->logging( &stamp , &input , &output );
+    }
+
+    void QuaternionFilter::logging( const ros::Time* stamp
+            , const double* input , const double* output )
+    {
+        std::string message = zeabus::convert::to_string( stamp->sec )
+                + "." + zeabus::convert::to_string( stamp->nsec )
+                + "," + zeabus::array::convert::to_string( input , 4 , ',' )
+                + "," + zeabus::array::convert::to_string( output , 4 , ',' );
+    }
+
+    void QuaternionFilter::logging( const ros::Time stamp 
+            , const double* input , const double* output )
+    {
+        (this->logging)( &stamp , input , output );
     }
 
 } // namespace file

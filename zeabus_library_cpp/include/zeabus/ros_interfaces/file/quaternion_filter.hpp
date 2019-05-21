@@ -13,15 +13,17 @@
 
 #include    <iostream>
 
-#include    <zeabus/ros_interfaces/file/base_class.hpp>
-
 #include    <ros/ros.h>
+
+#include    <geometry_msgs/Quaternion.h>
+
+#include    <zeabus/array/convert.hpp>
 
 #include    <zeabus/convert/to_string.hpp>
 
-#include    <zeabus/ros_interfaces/convert/geometry_msgs.hpp>
+#include    <zeabus/ros_interfaces/file/base_class.hpp>
 
-#include    <geometry_msgs/Quaternion.h>
+#include    <zeabus/ros_interfaces/convert/geometry_msgs.hpp>
 
 #ifndef _ZEABUS_ROS_INTERFACES_FILE_QUATERNION_FILTER_HPP
 #define _ZEABUS_ROS_INTERFACES_FILE_QUATERNION_FILTER_HPP
@@ -49,6 +51,9 @@ namespace file
                     , const geometry_msgs::Quaternion* output );
             void logging( const ros::Time stamp , const geometry_msgs::Quaternion input
                     , const geometry_msgs::Quaternion output );
+
+            void logging( const ros::Time* stamp, const double* input, const double* output);
+            void logging( const ros::Time stamp, const double* input, const double* output);
     };   
 
 } // namespace file
