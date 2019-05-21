@@ -21,7 +21,7 @@
 
 #include    <ros/ros.h>
 
-#include    <geometry_msgs/Imu.h>
+#include    <sensor_msgs/Imu.h>
 
 #include    <zeabus_utility/HeaderFloat64.h>
 
@@ -29,11 +29,11 @@
 
 #include    <geometry_msgs/Vector3Stamped.h>
 
-#include    <zeabus/single_thread/get_sensor_imu.hpp>
+#include    <zeabus/client/single_thread/get_sensor_imu.hpp>
 
-#include    <zeabus/single_thread/get_depth_command.hpp>
+#include    <zeabus/client/single_thread/get_depth_command.hpp>
 
-#include    <zeabus/single_thread/get_geometry_vector3_stamped.hpp>
+#include    <zeabus/client/single_thread/get_geometry_vector3_stamped.hpp>
 
 #ifndef _ZEABUS_CLIENT_FUSION_3_THREAD_HPP__
 #define _ZEABUS_CLIENT_FUSION_3_THREAD_HPP__
@@ -44,7 +44,7 @@ namespace zeabus
 namespace client
 {
 
-    class Fusion3Thread : zeabus::client::base_class< 3 >
+    class Fusion3Thread : public zeabus::client::BaseClass< 3 >
     {
         public:
             Fusion3Thread( std::shared_ptr< ros::NodeHandle > ptr_node_handle );

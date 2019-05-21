@@ -11,7 +11,7 @@
 
 // MACRO SET
 
-#include    <zeabus/ros_interfaces/fusion_3_thread.hpp>
+#include    <zeabus/client/fusion_3_thread.hpp>
 
 namespace zeabus
 {
@@ -19,7 +19,8 @@ namespace zeabus
 namespace client
 {
 
-    Fusion3Thread( std::shared_ptr< ros::NodeHandle > ptr_node_handle )
+    Fusion3Thread::Fusion3Thread( std::shared_ptr< ros::NodeHandle > ptr_node_handle ) 
+            : BaseClass( ptr_node_handle )
     {
         (this->pressure_client).setup_ptr_node_handle( ptr_node_handle );
         (this->dvl_client).setup_ptr_node_handle( ptr_node_handle );
@@ -46,14 +47,22 @@ namespace client
     void Fusion3Thread::setup_client( std::string* dvl_topic , std::string* imu_topic
             , std::string* pressure_topic )
     {
-        (this->dvl_client).setup_client( dvl_topic );
-        (this->imu_client).setup_client( imu_topic );
-        (this->pressure_client).setup_client( pressure_topic );
+        (this->dvl_client).setup_client( *dvl_topic );
+        (this->imu_client).setup_client( *imu_topic );
+        (this->pressure_client).setup_client( *pressure_topic );
     } // setup_client function
 
     void Fusion3Thread::all_call()
     {
-
+        this->thread_id[0] = std::thread( 
+                &zeabus::client::single_thread::GetGeometryVector3Stamped::mutex_call 
+                , &(this->dvl_client) );
+        this->thread_id[1] = std::thread(
+                &zeabus::client::single_thread::GetSensorImu::mutex_call
+                , &(this->imu_client) );
+        this->thread_id[2] = std::thread(
+                &zeabus::client::single_thread::GetDepthCommand::mutex_call
+                , &(this->pressure_client) );
     } // all_call() function
 } // namespace client
 
