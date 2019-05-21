@@ -87,13 +87,6 @@ int main( int argv, char** argc )
     server_pressure_filter.setup_ptr_node_handle( ptr_node_handle );
     server_pressure_filter.setup_ptr_mutex_data( ptr_mutex_data );
     server_pressure_filter.register_data( &output_data );
-    // We don't want to setup server now because our data don't already
-//    process_code = server_pressure_filter.setup_server_service( "/filter/pressure" );
-    if( ! process_code )
-    {
-        std::cout   << zeabus::escape_code::bold_red << "Filter pressure can't setup server\n"
-                    << zeabus::escape_code::normal_white;
-    }
     
     // Fifth part setup client
     zeabus::client::single_thread::GetDepthCommand client_pressure_sensor;
