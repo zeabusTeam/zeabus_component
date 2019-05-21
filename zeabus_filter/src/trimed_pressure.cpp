@@ -182,6 +182,7 @@ int main( int argv, char** argc )
     // Next part is last part we have to close all thread and all ros operate by this code
     ros::shutdown(); // we want to close all NodeHandle in this pid
     node_pressure_filter.join();
+    my_file.close();
 
     return 0;
      

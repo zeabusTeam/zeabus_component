@@ -14,7 +14,7 @@
 
 // MACRO SET
 //#define _OVER_COUNT_
-#define _PROCESS_
+//#define _PROCESS_
 
 #ifdef _PROCESS_
     #define _OVER_COUNT_

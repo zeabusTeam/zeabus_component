@@ -26,7 +26,7 @@ namespace count
         static data_type collect_data;
         static unsigned int count_time = 0xffffffff;
         bool result = true;
-        *count_over = true;
+        *count_over = false; // if over will return true
         if( count_time == 0xffffffff )
         {
             count_time = 0;
@@ -59,7 +59,7 @@ namespace count
                                 << "Count is over on limit is "
                                 << limit_count << "\n" << zeabus::escape_code::normal_white;  
 #endif
-                    *count_over = false;
+                    *count_over = true;
                 }
             }
         }

@@ -31,13 +31,13 @@ namespace count
         static unsigned int count = 0;
         if( equal )
         {
-            count = 0;
+            count = 1;
             *count_over = false;
         }
         else
         {
             count++;
-            if( count < limit_count )
+            if( count > limit_count )
             {
                 *count_over = true;
 #ifdef _OVER_COUNT_

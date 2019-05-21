@@ -6,13 +6,14 @@ set( CMAKE_CXX_FLAGS "-Wall -std=c++14 -pthread" )
 find_package( catkin REQUIRED COMPONENTS
     roscpp
     geometry_msgs
+    tf
 )
 
 find_package( zeabus_library_cpp REQUIRED )
 find_package( zeabus_utility REQUIRED )
 
 catkin_package(
-    CATKIN_DEPENDS roscpp
+    CATKIN_DEPENDS roscpp tf
 )
 
 #message("Zeabus utility include dir is ${zeabus_utility_INCLUDE_DIRS}")
@@ -25,6 +26,12 @@ include_directories(
 
 add_executable( pressure src/trimed_pressure.cpp )
 target_link_libraries( pressure
+    ${zeabus_library_cpp_LIBRARIES} 
+    ${catkin_LIBRARIES}
+)
+
+add_executable( imu src/trimed_imu.cpp )
+target_link_libraries( imu
     ${zeabus_library_cpp_LIBRARIES} 
     ${catkin_LIBRARIES}
 )
