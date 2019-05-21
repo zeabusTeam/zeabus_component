@@ -1,18 +1,21 @@
 <?xml version="1.0"?>
 <package format="2">
 
-    <name>zeabus_library_cpp</name>
+    <name>zeabus_filter</name>
     <version>0.0.0</version>
-    <description>This will collect library of CPP language to use in component part</description>
 
-    <maintainer email="supasan.k@ku.th">Supasan Komonlit</maintainer>
+    <description>This will package to manage about filter part node</description>
+
+    <author email="supasan.k@ku.th">K.Supasan</author>
+
+    <maintainer email="supasan.k@ku.th">K.Supasan</maintainer>
 
     <license>MIT</license>
 
     <buildtool_depend>catkin</buildtool_depend>
 
-    <build_depend>Boost</build_depend>
-    <exec_depend>Boost</exec_depend>
+    <build_depend>zeabus_library_cpp</build_depend>
+    <exec_depend>zeabus_library_cpp</exec_depend>
 
     <build_depend>roscpp</build_depend>
     <exec_depend>roscpp</exec_depend>
@@ -22,9 +25,6 @@
 
     <build_depend>geometry_msgs</build_depend>
     <exec_depend>geometry_msgs</exec_depend>
-
-    <build_depend>sensor_msgs</build_depend>
-    <exec_depend>sensor_msgs</exec_depend>
 
     <build_depend>zeabus_utility</build_depend>
     <exec_depend>zeabus_utility</exec_depend>

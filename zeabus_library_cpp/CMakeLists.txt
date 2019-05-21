@@ -12,7 +12,7 @@ project( zeabus_library_cpp )
 ## find_package this importance
 #   That make us to ensure which package has been make or build before us
 
-find_package( catkin REQUIRED geometry_msgs roscpp sensor_msgs zeabus_utility roslib)
+find_package( catkin REQUIRED geometry_msgs roscpp sensor_msgs zeabus_utility roslib tf)
 find_package( Boost REQUIRED COMPONENTS )
 find_package( zeabus_utility REQUIRED )
 
@@ -21,15 +21,21 @@ set( SHARED_LIBS
     Array
     Convert
     General
-    ROSFile
     IMUConnector
     DVLConnector
-    ROSInterfaces
     GeneralService
     SynchronousPort
     MAESTROConnector
     ClientSingleThread
     ServiceGetSingleData
+)
+
+set( ROS_LIBS
+    ROSConvert
+    ROSInterfaces
+    ROSSingleFilter
+    ROSVector3Filter
+    ROSQuaternionFilter
 )
 
 set( zeabus_library_include_path 
@@ -41,9 +47,9 @@ catkin_package(
     # INCLUDE_DIRS will help you to export header
     INCLUDE_DIRS ${zeabus_library_include_path} 
     # LIBRARIES will help you to export library
-    LIBRARIES ${SHARED_LIBS}
+    LIBRARIES ${SHARED_LIBS} ${ROS_LIBS}
     # We help you link on syntex of catkin_EXPORTE_TARGEETS
-    CATKIN_DEPENDS zeabus_utility 
+    CATKIN_DEPENDS zeabus_utility roscpp tf
     DEPENDS Boost
 )
 

@@ -53,8 +53,7 @@ namespace single_thread
         {
             (this->thread_status)[0] = true;
             (this->thread_id)[0] = std::thread( 
-                    &zeabus::client::single_thread::GetGeometryVector3Stamped::mutex_call 
-                    , this , data );
+                    &zeabus::client::single_thread::GetGeometryVector3Stamped::mutex_call, this);
         }
         return can_call;
     }
@@ -64,7 +63,7 @@ namespace single_thread
         (this->thread_status)[0] = true;
         (this->client_server).call( this->client_data );
         this->ptr_mutex_data->lock();
-        *(this->ptr_data) = (this->client_data).data;
+        *(this->ptr_data) = (this->client_data).response.data;
         this->ptr_mutex_data->unlock();
     }
 

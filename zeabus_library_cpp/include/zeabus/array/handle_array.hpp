@@ -12,3 +12,4 @@
 #include    <zeabus/array/print.hpp>
 #include    <zeabus/array/swap.hpp>
 #include    <zeabus/array/copy.hpp>
+#include    <zeabus/array/convert.hpp>

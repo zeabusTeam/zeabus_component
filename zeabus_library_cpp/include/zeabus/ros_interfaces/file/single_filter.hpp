@@ -36,6 +36,7 @@ namespace file
         public:
             SingleFilter( std::string full_path = "" );
 
+            // We automatic write time for first paragraph
             void write_column( std::string input_name = "input"
                     , std::string output_name = "output");
 

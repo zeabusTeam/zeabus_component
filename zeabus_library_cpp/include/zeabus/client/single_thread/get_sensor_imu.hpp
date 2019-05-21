@@ -23,7 +23,7 @@ namespace client
 namespace single_thread
 {
 
-    class GetSensorImu : zeabus::client::single_thread::BaseClass< sensor_msgs::Imu >
+    class GetSensorImu : public zeabus::client::single_thread::BaseClass< sensor_msgs::Imu >
     {
 
         public:

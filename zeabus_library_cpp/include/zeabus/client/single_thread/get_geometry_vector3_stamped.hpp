@@ -25,7 +25,7 @@ namespace client
 namespace single_thread
 {
 
-    class GetGeometryVector3Stamped :: BaseClass< geometry_msgs::Vector3Stamped >
+    class GetGeometryVector3Stamped : public BaseClass< geometry_msgs::Vector3Stamped >
     {
         public:
             GetGeometryVector3Stamped( std::shared_ptr<ros::NodeHandle> ptr_node_handle = NULL);
@@ -44,7 +44,7 @@ namespace single_thread
 
             // this will collect variable to use connect data between service and client
             zeabus_utility::GetGeometryVector3Stamped client_data;
-    }:
+    };
 
 } // namespace single_thread
 

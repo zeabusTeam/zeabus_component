@@ -1,4 +1,4 @@
-// FILE         : cut_off_average.hpp
+// FILE         : trimed_mean.hpp
 // AUTHOR       : K.Supasan
 // CREATE ON    : 2019, APRIL 8
 // MAINTAINER   : K.Supasan
@@ -27,8 +27,8 @@
     #define _PRINT_FILTER_
 #endif
 
-#ifndef _ZEABUS_FILTER_CUT_OFF_AVERAGE_HPP__
-#define _ZEABUS_FILTER_CUT_OFF_AVERAGE_HPP__
+#ifndef _ZEABUS_FILTER_TRIMED_MEAN_HPP__
+#define _ZEABUS_FILTER_TRIMED_MEAN_HPP__
 
 namespace zeabus
 {
@@ -37,19 +37,19 @@ namespace filter
 {
 
     template<class type_buffer, unsigned int size>
-    class CutOffAverage
+    class TrimedMean
     {
         public:
-            CutOffAverage( unsigned int size_cutoff = 1 );
+            TrimedMean( unsigned int size_trim = 1 );
             
-            bool setup_cutoff( unsigned int size_cutoff );
+            bool setup_trim( unsigned int size_trim );
             
             double push( type_buffer data );
  
             double get_result();
  
         protected:
-            unsigned int size_cutoff;
+            unsigned int size_trim;
             unsigned int size_buffer;
             
         private:
@@ -58,12 +58,12 @@ namespace filter
             double result;
             type_buffer original_buffer[ size ];
             type_buffer temp_buffer[ size ];
-    }; // class CutOffAverage
+    }; // class TrimMean
 
 } // namespace filter
 
 } // namespace zeabus
 
-#include    <zeabus/filter/cut_off_average.cpp>
+#include    <zeabus/filter/trimed_mean.cpp>
 
-#endif // _ZEABUS_FILTER_CUT_OFF_AVERAGE_HPP__
+#endif // _ZEABUS_FILTER_TRIMED_MEAN_HPP__

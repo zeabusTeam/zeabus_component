@@ -31,5 +31,5 @@ namespace swap
 } // namespace array
 
 } // namespace zeabus
-#include    <zeabus/array/template_swap.hpp>
+#include    <zeabus/array/template_swap.cpp>
 #endif

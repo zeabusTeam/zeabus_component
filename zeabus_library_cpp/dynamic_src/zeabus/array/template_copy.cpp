@@ -27,6 +27,15 @@ namespace copy
         }
     } // function template_type
 
+    template< typename array_type >
+    void template_type( array_type* source , array_type value , unsigned int size )
+    {
+        for( unsigned int run = 0 ; run < size ; run++ )
+        {
+            source[ run ] = value;
+        }
+    } // function template_type
+
 } // namesapce copy
 
 } // namespace array

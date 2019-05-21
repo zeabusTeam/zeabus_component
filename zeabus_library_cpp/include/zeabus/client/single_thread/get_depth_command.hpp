@@ -24,7 +24,7 @@ namespace single_thread
 {
 
     class GetDepthCommand 
-            : zeabus::client::single_thread::BaseClass< zeabus_utility::HeaderFloat64 >
+            : public zeabus::client::single_thread::BaseClass< zeabus_utility::HeaderFloat64 >
     {
         public:
             GetDepthCommand( std::shared_ptr< ros::NodeHandle > ptr_node_handle = NULL );
