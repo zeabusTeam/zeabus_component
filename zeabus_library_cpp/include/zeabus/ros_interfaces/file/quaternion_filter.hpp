@@ -52,8 +52,8 @@ namespace file
             void logging( const ros::Time stamp , const geometry_msgs::Quaternion input
                     , const geometry_msgs::Quaternion output );
 
-            void logging( const ros::Time* stamp, const double* input, const double* output);
             void logging( const ros::Time stamp, const double* input, const double* output);
+            void logging( const ros::Time* stamp, const double* input, const double* output);
     };   
 
 } // namespace file

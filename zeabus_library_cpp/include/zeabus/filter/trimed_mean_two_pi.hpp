@@ -58,12 +58,12 @@ namespace filter
 
         private:
             // collect raw input data in domain [-pi , pi]
-            double orignal_buffer[ size ];
+            double original_buffer[ buffer_size ];
             // collect temp in put for calculate
-            double temp_buffer[ size ];
+            double temp_buffer[ buffer_size ];
             double result;
             unsigned int current_point;
-    }
+    };
 
 } // namespace filter
 

@@ -41,8 +41,8 @@ namespace file
     {
         std::string message = zeabus::convert::to_string( stamp->sec )
                 + "." + zeabus::convert::to_string( stamp->nsec )
-                + "," + zeabus::ros_interfaces::convert::quaternion_filter( input , ',' )
-                + "," + zeabus::ros_interfaces::convert::quaternion_filter( output , ',');
+                + "," + zeabus::ros_interfaces::convert::quaternion_string( input , ',' )
+                + "," + zeabus::ros_interfaces::convert::quaternion_string( output , ',');
     }
 
     void QuaternionFilter::logging( const ros::Time stamp 
@@ -58,6 +58,7 @@ namespace file
                 + "." + zeabus::convert::to_string( stamp->nsec )
                 + "," + zeabus::array::convert::to_string( input , 4 , ',' )
                 + "," + zeabus::array::convert::to_string( output , 4 , ',' );
+        this->writeline( &message );
     }
 
     void QuaternionFilter::logging( const ros::Time stamp 

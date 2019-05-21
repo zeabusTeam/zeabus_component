@@ -11,15 +11,17 @@
 
 // MACRO SET
 
-#include    <zeabus/ros_interfaces/file/base_class.hpp>
+#include    <iostream>
+
+#include    <geometry_msgs/Vector3.h>
 
 #include    <zeabus/array/convert.hpp>
 
 #include    <zeabus/convert/to_string.hpp>
 
-#include    <zeabus/ros_interfaces/convert/geometry_msgs.hpp>
+#include    <zeabus/ros_interfaces/file/base_class.hpp>
 
-#include    <geometry_msgs/Vector3.h>
+#include    <zeabus/ros_interfaces/convert/geometry_msgs.hpp>
 
 #ifndef _ZEABUS_ROS_INTERFACES_FILE_VECTOR3_FILTER_HPP__
 #define _ZEABUS_ROS_INTERFACES_FILE_VECTOR3_FILTER_HPP__

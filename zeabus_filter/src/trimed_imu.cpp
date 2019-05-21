@@ -19,7 +19,7 @@
 // MACRO SET
 //#define _LOG_FILTER_
 //#define _LOG_IN_OUT_
-//#define _COLLECT_LOG_
+#define _COLLECT_LOG_
 //#define _DEBUG_PROCESS_
 
 // MACRO COMMAND
@@ -41,9 +41,11 @@
 
 #include    <zeabus/escape_code.hpp>
 
-#include    <geometry_msgs/sensor_imu.h>
+#include    <sensor_msgs/Imu.h>
 
-#include    <zeabus/ros_interfaces/singled_thread.hpp>
+#include    <zeabus/ros_interfaces/single_thread.hpp>
+
+#include    <zeabus/ros_interfaces/convert/geometry_msgs.hpp>
 
 #include    <zeabus/client/single_thread/get_sensor_imu.hpp>
 
@@ -58,7 +60,7 @@
 #endif
 
 // Part of algoritm
-#include    <zeabus/filter/trimed_meani_two_pi.hpp>
+#include    <zeabus/filter/trimed_mean_two_pi.hpp>
 
 int main( int argv , char** argc )
 {
@@ -110,7 +112,7 @@ int main( int argv , char** argc )
 #ifdef _LOG_FILTER_
     zeabus::ros_interfaces::file::Vector3Filter file_filter;
     file_filter.setup_package( "zeabus_log" );
-    file_filter.setup_directory("log/filter/imu");
+    file_filter.setup_subdirectory("log/filter/imu");
     file_filter.setup_file_name("imu_trimed_mean" + zeabus::local_time( 6) + ".txt" );
     process_code = file_filter.open();
     if( !process_code )
@@ -122,7 +124,7 @@ int main( int argv , char** argc )
 #ifdef _LOG_IN_OUT_
     zeabus::ros_interfaces::file::QuaternionFilter file_in_out;
     file_in_out.setup_package("zeabus_log");
-    file_in_out.setup_directory( "log/filter/imu" );
+    file_in_out.setup_subdirectory( "log/filter/imu" );
     file_in_out.setup_file_name( "imu_quaternion" + zeabus::local_time( 6 ) + ".txt" );
     process_code = file_in_out.open();
     if( !process_code )
@@ -141,7 +143,7 @@ int main( int argv , char** argc )
         {
             quaternion = tf::Quaternion( input_data.orientation.x , input_data.orientation.y
                     , input_data.orientation.z , input_data.orientation.w );
-            tf::Matrix3x3( &quaternion ).getRPY( input_filter[0] , input_filter[1] 
+            tf::Matrix3x3( quaternion ).getRPY( input_filter[0] , input_filter[1] 
                     , input_filter[2] );
             for( unsigned int sub_run = 0 ; sub_run < 3 ; sub_run++ )
             {
@@ -174,8 +176,8 @@ int main( int argv , char** argc )
     output_data.header.stamp = ros::Time::now();
     output_data.angular_velocity = input_data.angular_velocity;
     output_data.linear_acceleration = input_data.linear_acceleration;
-    quaternion.setRPY( output_data[0] , output_data[1] , output_data[2] );
-    zeabus::ros_interfaces::convert::tf_quaternion( &(output_data.orientation) , &quaternion );
+    quaternion.setRPY( output_filter[0] , output_filter[1] , output_filter[2] );
+    zeabus::ros_interfaces::convert::tf_quaternion( &quaternion , &(output_data.orientation) );
 
     process_code = node_imu_filter.spin(); // This command will split thread to spin
     if( ! process_code )
@@ -202,31 +204,32 @@ int main( int argv , char** argc )
     {
         rate.sleep();
         (void)client_imu_sensor.normal_call();
-        if( zeabus::count::compare( input_data.header.stamp , limit_same_time , time_over ) )
+        if( zeabus::count::compare( input_data.header.stamp , limit_same_time , &time_over ) )
         {
             
             quaternion = tf::Quaternion( input_data.orientation.x , input_data.orientation.y
                     , input_data.orientation.z , input_data.orientation.w );
-            tf::Matrix3x3( &quaternion ).getRPY( input_filter[0] , input_filter[1] 
+            tf::Matrix3x3( quaternion ).getRPY( input_filter[0] , input_filter[1] 
                     , input_filter[2] );
             for( unsigned int sub_run = 0 ; sub_run < 3 ; sub_run++ )
             {
                 output_filter[ sub_run ] = RPY_filter[ sub_run ].push( input_filter[ sub_run ] );
             }
             time_stamp = ros::Time::now();
-            ptr_mutex_data-lock();
+            ptr_mutex_data->lock();
             output_data.header.stamp = time_stamp;
             output_data.angular_velocity = input_data.angular_velocity;
             output_data.linear_acceleration = input_data.linear_acceleration;
-            quaternion.setRPY( output_data[0] , output_data[1] , output_data[2] );
-            zeabus::ros_interfaces::convert::tf_quaternion( &(output_data.orientation) 
-                    , &quaternion );
+            quaternion.setRPY( output_filter[0] , output_filter[1] , output_filter[2] );
+            zeabus::ros_interfaces::convert::tf_quaternion( &quaternion 
+                    , &(output_data.orientation) );
             ptr_mutex_data->unlock();
 #ifdef _LOG_FILTER_
-            file_filter( &time_stamp , input_filter , output_filter );
+            file_filter.logging( &time_stamp , input_filter , output_filter );
 #endif // _LOG_FILTER_
 #ifdef _LOG_IN_OUT_
-            file_in_out( &time_stamp , &(input_data.orientation) , &(output_data.orientation ) );
+            file_in_out.logging( &time_stamp , &(input_data.orientation) 
+                    , &(output_data.orientation ) );
 #endif // _LOG_IN_OUT_
         }
         else if( time_over )
@@ -243,8 +246,12 @@ int main( int argv , char** argc )
     // Last part is close all thread and all ros operate by this code
     ros::shutdown();
     node_imu_filter.join();
+#ifdef _LOG_FILTER_
     file_in_out.close();
+#endif // _LOG_FILTER_
+#ifdef _LOG_IN_OUT_
     file_filter.close();
+#endif // _LOG_IN_OUT_
 
     return 0;
 

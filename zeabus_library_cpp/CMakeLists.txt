@@ -23,7 +23,6 @@ set( SHARED_LIBS
     General
     IMUConnector
     DVLConnector
-    ROSInterfaces
     GeneralService
     SynchronousPort
     MAESTROConnector
@@ -33,8 +32,10 @@ set( SHARED_LIBS
 
 set( ROS_LIBS
     ROSConvert
+    ROSInterfaces
     ROSSingleFilter
     ROSVector3Filter
+    ROSQuaternionFilter
 )
 
 set( zeabus_library_include_path 

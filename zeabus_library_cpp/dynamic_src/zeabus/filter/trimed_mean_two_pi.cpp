@@ -22,14 +22,14 @@ namespace filter
     template<unsigned int buffer_size , unsigned int trim_size >
     TrimedMean2Pi< buffer_size , trim_size >::TrimedMean2Pi()
     {
-        zeabus::array::copy::template_type( this->original_buffer , 0 , buffer_size );
-        zeabus::array::copy::template_type( this->temp_buffer , 0 , buffer_size );
+        zeabus::array::copy::template_type( this->original_buffer , 0.0 , buffer_size );
+        zeabus::array::copy::template_type( this->temp_buffer , 0.0 , buffer_size );
         this->current_point = 0;
         this->result = 0;
     } // contructor of class
 
     template<unsigned int buffer_size , unsigned int trim_size >
-    TrimedMean2Pi< buffer_size , trim_size >::push( double data )
+    double TrimedMean2Pi< buffer_size , trim_size >::push( double data )
     {
         this->original_buffer[ this->current_point ] = zeabus::radian::bound( data );
         this->current_point++;
@@ -39,15 +39,15 @@ namespace filter
     } // function push
 
     template<unsigned int buffer_size , unsigned int trim_size >
-    TrimedMean2Pi< buffer_size , trim_size >::get_result()
+    double TrimedMean2Pi< buffer_size , trim_size >::get_result()
     {
         return this->result;
     } // function get_result
 
     template<unsigned int buffer_size , unsigned int trim_size >
-    TrimedMean2Pi< buffer_size , trim_size >::calculate()
+    void TrimedMean2Pi< buffer_size , trim_size >::calculate()
     {
-        zeabus::sort::cpp_stable_sort( this->original_buffer , this-temp_buffer , buffer_size );
+        zeabus::sort::cpp_stable_sort( this->original_buffer , this->temp_buffer , buffer_size );
 #ifdef _SHOW_CAL_
         zeabus::array::print::template_type( this->original_buffer , buffer_size , "Original");
         zeabus::array::print::template_type( this->temp_buffer , buffer_size , "After Sort");
