@@ -52,6 +52,20 @@ namespace file
         (this->logging)( &stamp , &input , &output );
     } // function collecting logging
 
+    void Vector3Filter::logging(const ros::Time* stamp,const double* input,const double* output)
+    {
+        std::string message = zeabus::convert::to_string( stamp->sec )
+                + "." + zeabus::convert::to_string( stamp->nsec )
+                + "," + zeabus::array::convert::to_string( input , 3 , ',' )
+                + "," + zeabus::array::convert::to_string( output , 3 , ',' );
+        this->writeline( &message );        
+    }
+
+    void Vector3Filter::logging(const ros::Time stamp,const double* input,const double* output)
+    {
+        (this->logging)(&stamp , input , output );
+    }
+
 } // namespace file
 
 } // namespace ros_interfaces

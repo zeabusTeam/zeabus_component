@@ -13,6 +13,8 @@
 
 #include    <zeabus/ros_interfaces/file/base_class.hpp>
 
+#include    <zeabus/array/convert.hpp>
+
 #include    <zeabus/convert/to_string.hpp>
 
 #include    <zeabus/ros_interfaces/convert/geometry_msgs.hpp>
@@ -44,6 +46,9 @@ namespace file
                     , const geometry_msgs::Vector3* output );
             void logging( const ros::Time stamp , const geometry_msgs::Vector3 input
                     , const geometry_msgs::Vector3 output );
+
+            void logging( const ros::Time stamp , const double* input , const double* output );
+            void logging( const ros::Time* stamp , const double* input , const double* output );
     };
 
 } // namespace file
