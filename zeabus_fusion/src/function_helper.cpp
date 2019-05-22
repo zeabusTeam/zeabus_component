@@ -16,8 +16,8 @@
 
 // This function use to convert NED coordinate to ENU coordinate
 
-const static tf::Quaternion quaternion_coordinate( zeabus::radian::negate_half_pi
-        , 0 , zeabus::radian::pi );
+const static tf::Quaternion quaternion_coordinate = tf::Quaternion( 
+        zeabus::radian::negate_half_pi, 0 , zeabus::radian::pi );
 
 void NED_to_ENU( tf::Quaternion* data )
 {
@@ -57,7 +57,7 @@ void rotation_linear( const geometry_msgs::Vector3* source , geometry_msgs::Vect
 {
     tf::Quaternion temp_quaternion( source->x , source->y , source->z , 0 );
     temp_quaternion = (*rotation) * temp_quaternion * ( rotation->inverse() ) ;
-    result->x = temp_quaternion->x();
-    result->y = temp_quaternion->y();
-    result->z = temp_quaternion->z();
+    result->x = temp_quaternion.x();
+    result->y = temp_quaternion.y();
+    result->z = temp_quaternion.z();
 } // function rotation_linear

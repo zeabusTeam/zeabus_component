@@ -45,6 +45,9 @@ namespace convert
     void tf_quaternion( const tf::Quaternion* source , geometry_msgs::Quaternion* target );
     void quaternion_tf( const geometry_msgs::Quaternion* source , tf::Quaternion* target );
 
+    void vector3_quaternion( const geometry_msgs::Vector3* source , tf::Quaternion* target );
+    void quaternion_vector3( const tf::Quaternion* source , geometry_msgs::Vector3* target );
+
 } // namespace convert
 
 } // namespace ros_interfaces

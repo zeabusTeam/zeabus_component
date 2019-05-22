@@ -36,7 +36,7 @@
 
 #include    <ros/ros.h>
 
-#include    <zeabus/radian.h>
+#include    <zeabus/radian.hpp>
 
 #include    <nav_msgs/Odometry.h>
 
@@ -44,7 +44,7 @@
 
 #include    <geometry_msgs/Vector3.h>
 
-#include    <tf/LinearMath/Matrix3x.h>
+#include    <tf/LinearMath/Matrix3x3.h>
 
 #define TF_EULER_DEFAULT_ZYX
 #include    <tf/LinearMath/Quaternion.h>
@@ -90,15 +90,15 @@ int main( int argv , char** argc )
     static std::string imu_topic = "/filter/imu";
     static std::string pressure_topic = "/filter/pressure";
     static double temp_RPY[3] = { 0 , 0 , zeabus::radian::negate_half_pi };
-    static tf::quaternion offset_quaternion( temp_RPY[2], temp_RPY[1], temp_RPY[0]);
+    static tf::Quaternion offset_quaternion( temp_RPY[2], temp_RPY[1], temp_RPY[0]);
 
     // Second part of variable to use in this pid
     static zeabus_utility::HeaderFloat64 pressure_data;
     static sensor_msgs::Imu imu_data;
-    static geometry_msgs::Vector3Stammped dvl_data;
+    static geometry_msgs::Vector3Stamped dvl_data;
     static ros::Time dvl_stamp = ros::Time::now();
     static ros::Time imu_stamp = ros::Time::now();
-    static ros::Time pressure_stamp  ros::Time::now();
+    static ros::Time pressure_stamp = ros::Time::now();
     static unsigned char status_data = 0b000;
     static zeabus_utility::AUVState service_data; // this use in server we will lock this
     static zeabus_utility::AUVState temp_data;
@@ -107,12 +107,12 @@ int main( int argv , char** argc )
     zeabus::client::Fusion3Thread client_data( ptr_node_handle );
     client_data.setup_all_data( &dvl_data , &imu_data , &pressure_data );
     client_data.setup_ptr_mutex_data( dvl_mutex , imu_mutex , pressure_mutex );
-    client_data.setup_client( dvl_topic , imu_topic , pressure_topic );
+    client_data.setup_client( &dvl_topic , &imu_topic , &pressure_topic );
 
     // Forth part of server data
     zeabus::service::get_data::AUVState server_state( ptr_node_handle );
     server_state.setup_ptr_mutex_data( ptr_mutex_data );
-    server_state.register_data( &status_data );
+    server_state.register_data( &service_data );
 
     // Fifth part of about state of robot
     //  Purpose of this calculate that is for calculate distance from start poitn
@@ -127,12 +127,12 @@ int main( int argv , char** argc )
 
     ros::Rate rate( frequency );
     // Init data first time
-    service_data.header.frame_id = "robot";
+    service_data.data.header.frame_id = "robot";
     service_data.data.twist.twist.linear.x = 0;
     service_data.data.twist.twist.linear.y = 0;
     service_data.data.twist.twist.linear.z = 0;
-    temp_data.pose.pose.position.x = 0;
-    temp_data.pose.pose.position.y = 0;
+    temp_data.data.pose.pose.position.x = 0;
+    temp_data.data.pose.pose.position.y = 0;
     node_sensor_fusion.spin();
     while( ptr_node_handle->ok() )
     {
@@ -177,12 +177,12 @@ int main( int argv , char** argc )
         }
         if( imu_stamp != imu_data.header.stamp )
         {
-            imu_stamp = imu_stamp.header.stamp;
-            zeabus::ros_interfaces::convert::quaternion_tf( &(imu_data.angular_velocity ) 
+            imu_stamp = imu_data.header.stamp;
+            zeabus::ros_interfaces::convert::vector3_quaternion( &(imu_data.angular_velocity ) 
                     , &temp_quaternion );
-            temp_quaternion = offset_quaternion * temp_quaternion;
-            zeabus::ros_interfaces::convert::tf_quaternion( 
-                    &(temp_data.auv_state.data.twist.twist.angular) , &temp_quaternion );
+            temp_quaternion = offset_quaternion *temp_quaternion* (offset_quaternion.inverse());
+            zeabus::ros_interfaces::convert::quaternion_vector3( 
+                    &temp_quaternion , &(temp_data.data.twist.twist.angular) );
 #ifdef _PROCESS_
             std::cout   << "Update angular_velocity!\n";
 #endif
@@ -203,7 +203,8 @@ int main( int argv , char** argc )
             status_data &= 0b100;
         }
         // Next we will rotation imu data
-        if( status_data & 0b010 ){
+        if( status_data & 0b010 )
+        {
             zeabus::ros_interfaces::convert::quaternion_tf( &(imu_data.orientation) 
                     , &temp_quaternion );
             NED_to_ENU( &temp_quaternion ); 
@@ -230,12 +231,10 @@ int main( int argv , char** argc )
             }
             else
             {
-                robot_distance.x = 
-                        ( service_data.twist.twist.linear.x + temp_data.twist.twist.linear.x )
-                        / ( frequency * 2 );
-                robot_distance.y = 
-                        ( service_data.twist.twist.linear.y + temp_data.twist.twist.linear.y )
-                        / ( frequency * 2 );
+                robot_distance.x = ( service_data.data.twist.twist.linear.x 
+                        + temp_data.data.twist.twist.linear.x ) / ( frequency * 2 );
+                robot_distance.y = ( service_data.data.twist.twist.linear.y 
+                        + temp_data.data.twist.twist.linear.y ) / ( frequency * 2 );
                 rotation_linear( &robot_distance , &world_distance , &temp_quaternion );
                 temp_data.data.pose.pose.position.x += world_distance.x;
                 temp_data.data.pose.pose.position.y += world_distance.y;

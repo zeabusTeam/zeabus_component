@@ -23,6 +23,7 @@ set( SHARED_LIBS
     General
     IMUConnector
     DVLConnector
+    ClientFusion
     GeneralService
     SynchronousPort
     MAESTROConnector

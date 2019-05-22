@@ -19,3 +19,8 @@ include_directories(
     ${catkin_INCLUDE_DIRS}
     ${zeabus_library_cpp_INCLUDE_DIRS}
 )
+
+add_executable( sensor_fusion
+    src/raw_fusion.cpp
+)
+target_link_libraries( sensor_fusion ${catkin_LIBRARIES} ${zeabus_library_cpp_LIBRARIES})
