@@ -3,7 +3,7 @@
 // CREATE ON    : 2019, APRIL 29
 // MAINTAINER   : Supasan Komonlit
 
-#include    <zeabus/service/get_single_data/base_class.hpp>
+#include    <zeabus/service/get_data/base_class.hpp>
 
 #include    <zeabus_utility/GetGeometryVector3Stamped.h>
 
@@ -18,14 +18,13 @@ namespace zeabus
 namespace service
 {
 
-namespace get_single_data
+namespace get_data
 {
 
     class GeometryVector3Stamped : public BaseClass< geometry_msgs::Vector3Stamped >
     {
         public:
-            GeometryVector3Stamped( std::shared_ptr< ros::NodeHandle > ptr_node_handle = NULL 
-                    , std::string frame_id = "dvl" );
+            GeometryVector3Stamped( std::shared_ptr< ros::NodeHandle > ptr_node_handle = NULL ) 
 
         protected:
 
@@ -36,7 +35,7 @@ namespace get_single_data
 
     }; // class GeometryVector3Stamped
 
-} // namespace get_single_data
+} // namespace get_data
 
 } // namespace service
 

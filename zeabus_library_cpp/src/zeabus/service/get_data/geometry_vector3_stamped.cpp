@@ -3,7 +3,7 @@
 // CREATE ON    : 2019, APRIL 29
 // MAINTAINER   : Supasan Komonlit
 
-#include    <zeabus/service/get_single_data/geometry_vector3_stamped.hpp>
+#include    <zeabus/service/get_data/geometry_vector3_stamped.hpp>
 
 namespace zeabus
 {
@@ -11,7 +11,7 @@ namespace zeabus
 namespace service
 {
 
-namespace get_single_data
+namespace get_data
 {
 
     GeometryVector3Stamped::GeometryVector3Stamped( 
@@ -24,7 +24,7 @@ namespace get_single_data
     void GeometryVector3Stamped::ensure_setup_service( std::string service_topic )
     {
         this->service_server = this->ptr_node_handle->advertiseService( service_topic 
-                , &zeabus::service::get_single_data::GeometryVector3Stamped::callback , this );
+                , &zeabus::service::get_data::GeometryVector3Stamped::callback , this );
     } // function ensure_setup_service
 
     bool GeometryVector3Stamped::callback( 
@@ -37,7 +37,7 @@ namespace get_single_data
         return true;
     } // function callback
 
-} // namespace get_single_data
+} // namespace get_data
 
 } // namespace service
 

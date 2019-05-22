@@ -1,4 +1,4 @@
-add_subdirectory( get_single_data )
+add_subdirectory( get_data )
 
 add_library( GeneralService SHARED
     base_class.cpp

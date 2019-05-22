@@ -11,7 +11,7 @@
 
 // MACRO SET
 
-#include    <zeabus/service/get_single_data/header_float64.hpp>
+#include    <zeabus/service/get_data/header_float64.hpp>
 
 namespace zeabus
 {
@@ -19,7 +19,7 @@ namespace zeabus
 namespace service
 {
 
-namespace get_single_data
+namespace get_data
 {
 
     HeaderFloat64::HeaderFloat64( std::shared_ptr< ros::NodeHandle > ptr_node_handle 
@@ -31,7 +31,7 @@ namespace get_single_data
     void HeaderFloat64::ensure_setup_service( std::string service_topic )
     {
         this->service_server = this->ptr_node_handle->advertiseService( service_topic 
-                , &zeabus::service::get_single_data::HeaderFloat64::callback , this );
+                , &zeabus::service::get_data::HeaderFloat64::callback , this );
     }
 
     bool HeaderFloat64::callback( zeabus_utility::DepthCommand::Request& request
@@ -44,7 +44,7 @@ namespace get_single_data
         return true;
     }
 
-} // namespace get_single_data
+} // namespace get_data
 
 } // namespace service
 

@@ -9,7 +9,7 @@ namespace zeabus
 namespace service
 {
 
-namespace get_single_data
+namespace get_data
 {
 
     template< class data_type >
@@ -115,7 +115,7 @@ namespace get_single_data
         return result;
     } // function check_setup_service
     
-} // namespace get_single_data
+} // namespace get_data
 
 } // namespace service
 
