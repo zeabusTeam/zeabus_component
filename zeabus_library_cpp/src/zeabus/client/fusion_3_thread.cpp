@@ -39,9 +39,9 @@ namespace client
     void Fusion3Thread::setup_data( geometry_msgs::Vector3Stamped* dvl_data
             , sensor_msgs::Imu* imu_data , zeabus_utility::HeaderFloat64* pressure_data )
     {
-        this->dvl_data = dvl_data;
-        this->imu_data = imu_data;
-        this->pressure_data = pressure_data;
+        (this->pressure_client).set_ptr_data( dvl_data );
+        (this->dvl_client).set_ptr_data( imu_data );
+        (this->imu_client).set_ptr_data( pressure_data );
     } // setup_data
 
     void Fusion3Thread::setup_client( std::string* dvl_topic , std::string* imu_topic
