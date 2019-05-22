@@ -33,7 +33,7 @@ namespace get_data
     {
 
         public:
-            HeaderFloat64( std::shared_ptr< ros::NodeHandle > ptr_node_handle = NULL ) 
+            HeaderFloat64( std::shared_ptr< ros::NodeHandle > ptr_node_handle = NULL ); 
 
         protected:
             void ensure_setup_service( std::string service_topic );

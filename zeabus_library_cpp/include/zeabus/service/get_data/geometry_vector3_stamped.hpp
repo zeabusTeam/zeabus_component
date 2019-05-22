@@ -24,7 +24,7 @@ namespace get_data
     class GeometryVector3Stamped : public BaseClass< geometry_msgs::Vector3Stamped >
     {
         public:
-            GeometryVector3Stamped( std::shared_ptr< ros::NodeHandle > ptr_node_handle = NULL ) 
+            GeometryVector3Stamped( std::shared_ptr< ros::NodeHandle > ptr_node_handle = NULL ); 
 
         protected:
 

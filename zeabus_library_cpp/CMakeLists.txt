@@ -27,7 +27,7 @@ set( SHARED_LIBS
     SynchronousPort
     MAESTROConnector
     ClientSingleThread
-    ServiceGetSingleData
+    ServiceGetData
 )
 
 set( ROS_LIBS

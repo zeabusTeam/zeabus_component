@@ -27,9 +27,7 @@ namespace get_data
     class BaseClass
     {
         public:
-            BaseClass( std::shared_ptr< ros::NodeHandle > ptr_node_handle = NULL )
-
-            void setup_frame_id( std::string frame_id );
+            BaseClass( std::shared_ptr< ros::NodeHandle > ptr_node_handle = NULL );
 
             void setup_ptr_node_handle( std::shared_ptr< ros::NodeHandle > ptr_node_handle );
 
@@ -56,8 +54,6 @@ namespace get_data
             bool already_setup_ptr_mutex_data;
 
             bool already_setup_ptr_node_handle;
-
-            std::string frame_id;
 
             std::shared_ptr< std::mutex > ptr_mutex_data;
 

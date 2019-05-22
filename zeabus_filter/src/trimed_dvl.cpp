@@ -30,7 +30,7 @@
 
 #include    <zeabus/ros_interfaces/single_thread.hpp>
 
-#include    <zeabus/service/get_single_data/geometry_vector3_stamped.hpp>
+#include    <zeabus/service/get_data/geometry_vector3_stamped.hpp>
 
 #include    <zeabus/client/single_thread/get_geometry_vector3_stamped.hpp>
 
@@ -65,7 +65,7 @@ int main( int argv , char** argc )
     ros::Rate rate( frequency );
 
     // Forth part setup service
-    zeabus::service::get_single_data::GeometryVector3Stamped server_dvl_filter;
+    zeabus::service::get_data::GeometryVector3Stamped server_dvl_filter;
     server_dvl_filter.setup_ptr_node_handle( ptr_node_handle );
     server_dvl_filter.setup_ptr_mutex_data( ptr_mutex_data );
     server_dvl_filter.register_data( &output_data );

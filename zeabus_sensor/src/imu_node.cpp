@@ -24,7 +24,7 @@
 #include    <zeabus/convert/vector/one_byte.hpp>
 
 #include    <zeabus/ros_interfaces/single_thread.hpp>
-#include    <zeabus/service/get_single_data/sensor_imu.hpp>
+#include    <zeabus/service/get_data/sensor_imu.hpp>
 
 #include    <iostream>
 #include    <vector>
@@ -200,7 +200,7 @@ int main( int argv , char** argc )
     sensor_msgs::Imu temporary_message;
     message.header.frame_id = "imu";
 
-    zeabus::service::get_single_data::SensorImu imu_server( ptr_node_handle , "imu" );
+    zeabus::service::get_data::SensorImu imu_server( ptr_node_handle );
     imu_server.register_data( &message );
     imu_server.setup_ptr_mutex_data( ptr_mutex_data );
     bool result = imu_server.setup_server_service( "/sensor/imu" );

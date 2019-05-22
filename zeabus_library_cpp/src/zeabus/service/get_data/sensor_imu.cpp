@@ -14,8 +14,8 @@ namespace service
 namespace get_data
 {
 
-    SensorImu::SensorImu( std::shared_ptr< ros::NodeHandle > ptr_node_handle 
-            , std::string frame_id) : BaseClass( ptr_node_handle , frame_id )
+    SensorImu::SensorImu( std::shared_ptr< ros::NodeHandle > ptr_node_handle ) 
+            : BaseClass( ptr_node_handle )
     {
         ; // nothing to do in constructor fo subclass
     } //  Constructor SensorImu

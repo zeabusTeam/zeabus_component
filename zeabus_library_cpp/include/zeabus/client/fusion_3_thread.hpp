@@ -56,8 +56,8 @@ namespace client
             void setup_client( std::string* dvl_topic , std::string* imu_topic 
                     , std::string* pressure_topic );
 
-            void setup_data( geometry_msgs::Vector3Stamped* dvl_data , sensor_msgs::Imu* imu_data
-                    , zeabus_utility::HeaderFloat64* pressure_data );
+            void setup_all_data( geometry_msgs::Vector3Stamped* dvl_data 
+                    , sensor_msgs::Imu* imu_data ,zeabus_utility::HeaderFloat64* pressure_data );
 
             void all_call();
 

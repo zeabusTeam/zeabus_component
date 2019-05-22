@@ -24,7 +24,7 @@ namespace get_data
     class SensorImu : public BaseClass< sensor_msgs::Imu >
     {
         public:
-            SensorImu( std::shared_ptr< ros::NodeHandle > ptr_node_handle = NULL ) 
+            SensorImu( std::shared_ptr< ros::NodeHandle > ptr_node_handle = NULL ); 
 
         protected:
 

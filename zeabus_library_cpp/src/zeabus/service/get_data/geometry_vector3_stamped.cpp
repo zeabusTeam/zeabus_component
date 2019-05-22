@@ -15,8 +15,7 @@ namespace get_data
 {
 
     GeometryVector3Stamped::GeometryVector3Stamped( 
-            std::shared_ptr< ros::NodeHandle > ptr_node_handle , std::string frame_id) 
-            : BaseClass( ptr_node_handle , frame_id )
+            std::shared_ptr< ros::NodeHandle > ptr_node_handle ) : BaseClass( ptr_node_handle)
     {
         ; // nothing to do in constructor fo subclass
     } //  Constructor GeometryVector3Stamped

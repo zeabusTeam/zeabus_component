@@ -13,8 +13,7 @@ namespace get_data
 {
 
     template< class data_type >
-    BaseClass< data_type >::BaseClass( std::shared_ptr< ros::NodeHandle > ptr_node_handle 
-            , std::string frame_id )
+    BaseClass< data_type >::BaseClass( std::shared_ptr< ros::NodeHandle > ptr_node_handle ) 
     {
         this->already_setup_ptr_node_handle = false;
         this->already_setup_ptr_mutex_data = false;
@@ -23,14 +22,7 @@ namespace get_data
         {
             this->setup_ptr_node_handle( ptr_node_handle );
         }
-        this->setup_frame_id( frame_id );
     } //  function constructor BaseClass
-
-    template< class data_type >
-    void BaseClass< data_type >::setup_frame_id( std::string frame_id )
-    {
-        this->frame_id = frame_id;
-    } // function setup_frame_id
 
     template< class data_type >
     void BaseClass<data_type>::setup_ptr_node_handle( 

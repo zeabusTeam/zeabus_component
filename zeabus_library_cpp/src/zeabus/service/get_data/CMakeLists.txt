@@ -3,7 +3,7 @@ add_library( ServiceGetData SHARED
     geometry_vector3_stamped.cpp
     header_float64.cpp
 )
-add_dependencies( ServiceGetSingleData ${catkin_EXPORTED_TARGETS})
-target_link_libraries( ServiceGetSingleData 
+add_dependencies( ServiceGetData ${catkin_EXPORTED_TARGETS})
+target_link_libraries( ServiceGetData 
     ${catkin_LIBRARIES} 
 )

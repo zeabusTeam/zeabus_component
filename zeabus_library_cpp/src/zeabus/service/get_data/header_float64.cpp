@@ -22,8 +22,8 @@ namespace service
 namespace get_data
 {
 
-    HeaderFloat64::HeaderFloat64( std::shared_ptr< ros::NodeHandle > ptr_node_handle 
-            , std::string frame_id ) : BaseClass( ptr_node_handle , frame_id )
+    HeaderFloat64::HeaderFloat64( std::shared_ptr< ros::NodeHandle > ptr_node_handle ) 
+            : BaseClass( ptr_node_handle )
     {
         ; 
     } // constructor HeaderFloat64
