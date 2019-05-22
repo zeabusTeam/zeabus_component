@@ -29,7 +29,7 @@ namespace service
 namespace get_data
 {
 
-    class AUVState : public BaseClass< zeabis_utility::AUVState >
+    class AUVState : public BaseClass< zeabus_utility::AUVState >
     {
         public:
             AUVState( std::shared_ptr< ros::NodeHandle > ptr_node_handle = NULL );
@@ -39,7 +39,7 @@ namespace get_data
 
             bool callback( zeabus_utility::GetAUVState::Request& request
                     , zeabus_utility::GetAUVState::Response& response );
-    } // class AUVState
+    }; // class AUVState
 
 } // namespace get_data
 
