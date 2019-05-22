@@ -31,7 +31,7 @@ namespace time
 {
 
     // will use ros::Time::now() to convert to string and return result
-    std::string time_string();
+    std::string string();
 
 } // namespace time
 

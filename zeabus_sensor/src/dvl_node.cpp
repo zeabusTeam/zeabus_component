@@ -106,6 +106,7 @@ int main( int argv , char** argc )
                 temp_message.vector.y = temp_velocity[1];
                 temp_message.vector.z = temp_velocity[2];
                 temp_message.header.stamp = ros::Time();
+                thread_id.join();
                 thread_id =  std::thread( thread_copy_data , &temp_message 
                         , &message , ptr_mutex_data ); 
             }

@@ -19,7 +19,7 @@ namespace zeabus
 namespace ros_interfaces
 {
 
-    std::string time_string()
+    std::string string()
     {
         ros::Time time = ros::Time::now();
         return zeabus::convert::to_string( time.sec ) + "."
