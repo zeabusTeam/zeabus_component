@@ -5,6 +5,10 @@
 
 // MACRO DETAIL
 
+// README
+//  This file when connect with variable in main code use zeabus_utitlity/HeaderFloat64
+//  But in class object use zeabus_utility/DepthCommand to connect with other node
+
 #include    <zeabus/client/single_thread/base_class.hpp>
 
 #include    <zeabus_utility/DepthCommand.h>

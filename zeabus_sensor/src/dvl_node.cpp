@@ -8,7 +8,7 @@
 
 #include    <zeabus/sensor/DVL/decode_string.hpp>
 
-#include    <zeabus/service/get_single_data/geometry_vector3_stamped.hpp>
+#include    <zeabus/service/get_data/geometry_vector3_stamped.hpp>
 
 #include    <zeabus/ros_interfaces/single_thread.hpp>
 
@@ -61,7 +61,7 @@ int main( int argv , char** argc )
         (void)dvl.load_parameter();
         (void)dvl.bottom_track( "001" );
         (void)dvl.max_depth( "0060"); // 5 meter + 1 meter = 6 meter = 60 decimeter
-        (void)dvl.set_heading( "00000" );
+        (void)dvl.set_heading( "09000" );
         (void)dvl.set_salinty( "35" );
         (void)dvl.time_per_ensemble( "00:00:00.00" );
         (void)dvl.time_between_pings( "00:00.05" );
@@ -77,8 +77,7 @@ int main( int argv , char** argc )
     geometry_msgs::Vector3Stamped message;
     geometry_msgs::Vector3Stamped temp_message;
     message.header.frame_id = "dvl";
-    zeabus::service::get_single_data::GeometryVector3Stamped dvl_server( ptr_node_handle 
-            , "dvl" );
+    zeabus::service::get_data::GeometryVector3Stamped dvl_server( ptr_node_handle );
     dvl_server.register_data( &message );
     dvl_server.setup_ptr_mutex_data( ptr_mutex_data );
     int temp_velocity[4] = { 0 , 0 , 0 , 0 }; // for collect data from function
@@ -107,6 +106,7 @@ int main( int argv , char** argc )
                 temp_message.vector.y = temp_velocity[1];
                 temp_message.vector.z = temp_velocity[2];
                 temp_message.header.stamp = ros::Time();
+                thread_id.join();
                 thread_id =  std::thread( thread_copy_data , &temp_message 
                         , &message , ptr_mutex_data ); 
             }

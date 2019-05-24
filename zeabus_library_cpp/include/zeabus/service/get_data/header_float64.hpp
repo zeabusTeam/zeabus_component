@@ -11,7 +11,7 @@
 
 // MACRO SET
 
-#include    <zeabus/service/get_single_data/base_class.hpp>
+#include    <zeabus/service/get_data/base_class.hpp>
 
 #include    <zeabus_utility/DepthCommand.h>
 
@@ -26,15 +26,14 @@ namespace zeabus
 namespace service
 {
 
-namespace get_single_data
+namespace get_data
 {
 
     class HeaderFloat64 : public BaseClass< zeabus_utility::HeaderFloat64 >
     {
 
         public:
-            HeaderFloat64( std::shared_ptr< ros::NodeHandle > ptr_node_handle = NULL 
-                    , std::string frame_id = "filter/pressure" );
+            HeaderFloat64( std::shared_ptr< ros::NodeHandle > ptr_node_handle = NULL ); 
 
         protected:
             void ensure_setup_service( std::string service_topic );
@@ -44,7 +43,7 @@ namespace get_single_data
 
     }; // class HeaderFloat64
 
-} // namespace get_single_data
+} // namespace get_data
 
 } // namespace service
 

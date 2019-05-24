@@ -20,17 +20,14 @@ namespace zeabus
 namespace service
 {
 
-namespace get_single_data
+namespace get_data
 {
 
     template< class data_type >
     class BaseClass
     {
         public:
-            BaseClass( std::shared_ptr< ros::NodeHandle > ptr_node_handle = NULL 
-                    , std::string frame_id = "");
-
-            void setup_frame_id( std::string frame_id );
+            BaseClass( std::shared_ptr< ros::NodeHandle > ptr_node_handle = NULL );
 
             void setup_ptr_node_handle( std::shared_ptr< ros::NodeHandle > ptr_node_handle );
 
@@ -58,18 +55,16 @@ namespace get_single_data
 
             bool already_setup_ptr_node_handle;
 
-            std::string frame_id;
-
             std::shared_ptr< std::mutex > ptr_mutex_data;
 
     }; // BaseClass object
 
-} // name get_single_data
+} // name get_data
 
 } // namespace service
  
 } // namespace zeabus
 
-#include    <zeabus/service/get_single_data/base_class.cpp>
+#include    <zeabus/service/get_data/base_class.cpp>
 
 #endif // _ZEABUS_SERVICE_GET_SINGLE_DATA_BASE_CLASS_HPP__

@@ -30,7 +30,7 @@
 
 #include    <zeabus/client/single_thread/get_depth_command.hpp>
 
-#include    <zeabus/service/get_single_data/header_float64.hpp>
+#include    <zeabus/service/get_data/header_float64.hpp>
 
 #include    <zeabus_utility/HeaderFloat64.h>
 
@@ -83,7 +83,7 @@ int main( int argv, char** argc )
     ros::Rate rate( frequency ); 
     
     // Forth part setup service
-    zeabus::service::get_single_data::HeaderFloat64 server_pressure_filter;
+    zeabus::service::get_data::HeaderFloat64 server_pressure_filter;
     server_pressure_filter.setup_ptr_node_handle( ptr_node_handle );
     server_pressure_filter.setup_ptr_mutex_data( ptr_mutex_data );
     server_pressure_filter.register_data( &output_data );

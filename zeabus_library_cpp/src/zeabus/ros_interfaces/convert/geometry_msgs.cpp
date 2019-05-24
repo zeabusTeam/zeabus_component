@@ -55,6 +55,24 @@ namespace convert
         target->z = (source->z)();
     }
 
+    void quaternion_tf( const geometry_msgs::Quaternion* source , tf::Quaternion* target )
+    {
+        *target = tf::Quaternion( source->x , source->y , source->z , source->w );
+    }
+
+    void vector3_quaternion( const geometry_msgs::Vector3* source , tf::Quaternion* target )
+    {
+        *target = tf::Quaternion( source->x , source->y , source->z , 0 );
+    }
+
+    void quaternion_vector3( const tf::Quaternion* source , geometry_msgs::Vector3* target )
+    {
+        target->x = source->x();
+        target->y = source->y();
+        target->z = source->z();
+    }
+
+
 } // namespace convert
 
 } // namespace ros_interfaces

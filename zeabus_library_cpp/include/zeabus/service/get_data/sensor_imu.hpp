@@ -3,7 +3,7 @@
 // CREATE ON    : 2019, APRIL 27
 // MAINTAINER   : Supasan Komonlit
 
-#include    <zeabus/service/get_single_data/base_class.hpp>
+#include    <zeabus/service/get_data/base_class.hpp>
 
 #include    <zeabus_utility/GetSensorImu.h>
 
@@ -18,14 +18,13 @@ namespace zeabus
 namespace service
 {
 
-namespace get_single_data
+namespace get_data
 {
 
     class SensorImu : public BaseClass< sensor_msgs::Imu >
     {
         public:
-            SensorImu( std::shared_ptr< ros::NodeHandle > ptr_node_handle = NULL 
-                    , std::string frame_id = "imu" );
+            SensorImu( std::shared_ptr< ros::NodeHandle > ptr_node_handle = NULL ); 
 
         protected:
 
@@ -36,7 +35,7 @@ namespace get_single_data
 
     }; // class SensorImu
 
-} // namespace get_single_data
+} // namespace get_data
 
 } // namespace service
 

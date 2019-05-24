@@ -49,7 +49,7 @@
 
 #include    <zeabus/client/single_thread/get_sensor_imu.hpp>
 
-#include    <zeabus/service/get_single_data/sensor_imu.hpp>
+#include    <zeabus/service/get_data/sensor_imu.hpp>
 
 #ifdef _LOG_FILTER_
 #include    <zeabus/ros_interfaces/file/vector3_filter.hpp>
@@ -97,7 +97,7 @@ int main( int argv , char** argc )
     tf::Quaternion quaternion;
 
     // Forth part setup service
-    zeabus::service::get_single_data::SensorImu server_imu_filter;
+    zeabus::service::get_data::SensorImu server_imu_filter;
     server_imu_filter.setup_ptr_node_handle( ptr_node_handle );
     server_imu_filter.setup_ptr_mutex_data( ptr_mutex_data );
     server_imu_filter.register_data( &output_data );
