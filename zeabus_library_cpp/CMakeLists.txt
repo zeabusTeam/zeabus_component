@@ -12,9 +12,16 @@ project( zeabus_library_cpp )
 ## find_package this importance
 #   That make us to ensure which package has been make or build before us
 
-find_package( catkin REQUIRED geometry_msgs roscpp sensor_msgs zeabus_utility roslib tf)
+find_package( catkin REQUIRED COMPONENTS
+    geometry_msgs 
+    roscpp 
+    sensor_msgs 
+    zeabus_utility 
+    roslib 
+    tf
+)
 find_package( Boost REQUIRED COMPONENTS )
-find_package( zeabus_utility REQUIRED )
+find_package( zeabus_utility REQUIRED COMPONENTS )
 
 set( SHARED_LIBS 
     Sort
@@ -51,7 +58,7 @@ catkin_package(
     LIBRARIES ${SHARED_LIBS} ${ROS_LIBS}
     # We help you link on syntex of catkin_EXPORTE_TARGEETS
     CATKIN_DEPENDS zeabus_utility roscpp tf
-    DEPENDS Boost
+    DEPENDS Boost 
 )
 
 set( CMAKE_CXX_FLAGS "-Wall -std=c++14")
