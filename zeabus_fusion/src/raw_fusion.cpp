@@ -84,7 +84,6 @@ int main( int argv , char** argc )
     //  use thread for server only one.
 
     // Insert optional part param part
-    static unsigned int limit_time = 5; // this rule will use to all data
     static signed int frequency = 30;
     static std::string dvl_topic = "/filter/dvl";
     static std::string imu_topic = "/filter/imu";
