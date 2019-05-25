@@ -21,3 +21,12 @@ include_directories(
     ${catkin_INCLUDE_DIRS}
     ${zeabus_library_cpp_INCLUDE_DIRS}
 )
+
+add_executable( interfaces
+    src/interfaces.cpp
+)
+add_dependencies( interfaces ${catkin_EXPORTED_TARGETS} )
+target_link_libraries( interfaces 
+    ${zeabus_library_cpp_LIBRARIES}
+    ${catkin_LIBRARIES}
+)

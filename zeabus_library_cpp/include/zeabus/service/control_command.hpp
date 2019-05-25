@@ -30,7 +30,7 @@ namespace service
     class ControlCommand : public zeabus::service::BaseClass
     {
         public:
-            ControlCommand( std::shared_ptr< ros::NodeHandle > ptr_node_handle );
+            ControlCommand( std::shared_ptr< ros::NodeHandle > ptr_node_handle = NULL);
         
             bool setup_server_service( std::string service_topic );
 
