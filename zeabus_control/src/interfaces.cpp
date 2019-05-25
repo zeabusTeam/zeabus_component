@@ -28,7 +28,7 @@
 
 #include    <zeabus_utility/AUVState.h>
 
-#include    <zeabus/client/get_auv_tate.h>
+#include    <zeabus/client/single_thread/get_auv_state.hpp>
 
 #include    <zeabus_utility/ControlCommand.h>
 
@@ -67,7 +67,7 @@ int main( int argv , char** argc )
     server_control_interfaces.setup_ptr_data( &command );
 
     // Forth part setup client get current state
-    zeabus::service::GetAUVState client_control_interfaces;
+    zeabus::client::single_thread::GetAUVState client_control_interfaces;
     client_control_interfaces.setup_ptr_node_handle( ptr_node_handle );
     client_control_interfaces.setup_ptr_data( &current_state );
 

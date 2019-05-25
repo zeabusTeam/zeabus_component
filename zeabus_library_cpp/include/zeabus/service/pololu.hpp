@@ -5,7 +5,7 @@
 
 #include    <zeabus/service/base_class.hpp>
 
-#include    <zeabus_utility/SendUInt16Array.h>
+#include    <zeabus_utility/SendThrottle.h>
 
 #include    <vector>
 // Because we must push data in to vector type unsigned short int 16 bits
@@ -43,8 +43,8 @@ namespace service
                     , unsigned int size_target , ros::Time* ptr_time_updated );
 
         protected:
-            bool callback( zeabus_utility::SendUInt16Array::Request& request
-                    , zeabus_utility::SendUInt16Array::Response& response );
+            bool callback( zeabus_utility::SendThrottle::Request& request
+                    , zeabus_utility::SendThrottle::Response& response );
 
             bool already_setup_ptr_data;
 
