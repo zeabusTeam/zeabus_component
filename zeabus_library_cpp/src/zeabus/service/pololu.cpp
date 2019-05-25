@@ -58,10 +58,9 @@ namespace service
         return result;
     } // function setup_server_service
 
-    bool Pololu::callback( zeabus_utility::SendUInt16Array::Request& request
-            , zeabus_utility::SendUInt16Array::Response& response )
+    bool Pololu::callback( zeabus_utility::SendThrottle::Request& request
+            , zeabus_utility::SendThrottle::Response& response )
     {
-    response.result = false;
 #ifdef _CALLBACK_CALLED_
         std::cout   << "callback of pololu have been called\n";
     #ifdef _SENDER_DETAIL_
@@ -70,21 +69,12 @@ namespace service
     #endif // _SENDER_DETAIL_
 #endif // _CALLBACK_CALLED_
         this->ptr_mutex_data->lock();
-        if( request.size ==  this->size_target )
+        this->ptr_buffer->clear();
+        for( unsigned int run = 0 ; run < this->size_target ; run++ )
         {
-            this->ptr_buffer->clear();
-            for( unsigned int run = 0 ; run < this->size_target ; run++ )
-            {
-                this->ptr_buffer->push_back( (request.data)[run] );
-            }
-            *(this->ptr_time_updated) = ros::Time::now();
-            response.result = true;
-        } // condition ok data
-        else
-        {
-            std::cout   << zeabus::escape_code::bold_red << "Wrong size array of PWM\n"
-                        << zeabus::escape_code::normal_white << "\n";
+            this->ptr_buffer->push_back( (request.data)[run] );
         }
+        *(this->ptr_time_updated) = ros::Time::now();
         this->ptr_mutex_data->unlock();
 #ifdef _SENDER_DETAIL_
         ros::Time temp_time = ros::Time::now();

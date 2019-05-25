@@ -15,3 +15,9 @@ add_library( ROSQuaternionFilter SHARED
     quaternion_filter.cpp
 )
 target_link_libraries( ROSQuaternionFilter ${catkin_LIBRARIES} Array)
+
+add_library( ROSControlCommand SHARED
+    path_file.cpp
+    control_command.cpp
+)
+target_link_libraries( ROSControlCommand ${catkin_LIBRARIES} Array)
