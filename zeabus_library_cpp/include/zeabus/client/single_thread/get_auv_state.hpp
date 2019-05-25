@@ -31,14 +31,15 @@ namespace client
 namespace single_thread
 {
 
-    class GetAUVState : public BassClass< zeabus_utility::AUVState >
+    class GetAUVState 
+            : public zeabus::client::single_thread::BaseClass< zeabus_utility::AUVState >
     {
         public:
             GetAUVState( std::shared_ptr< ros::NodeHandle > ptr_node_handle = NULL );
 
             bool setup_client( std::string topic_service );
     
-            bool normal_call()
+            bool normal_call();
 
         protected:
             ros::ServiceClient client_server;

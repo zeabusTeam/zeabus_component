@@ -24,7 +24,7 @@ namespace client
 namespace single_thread
 {
 
-    GetAUVState::GetAUVState( std::shared< ros::NodeHandle > ptr_node_handle )
+    GetAUVState::GetAUVState( std::shared_ptr< ros::NodeHandle > ptr_node_handle )
             : BaseClass( ptr_node_handle )
     {
         ;
@@ -43,7 +43,9 @@ namespace single_thread
 
     bool GetAUVState::normal_call()
     {
-
+        (this->client_server).call( this->client_data );
+        *(this->ptr_data) = (this->client_data).response.auv_state;
+        return true;
     }
 
 } // namespace single_thread
