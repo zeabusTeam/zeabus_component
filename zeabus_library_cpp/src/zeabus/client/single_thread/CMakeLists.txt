@@ -1,8 +1,9 @@
 add_library( ClientSingleThread SHARED
+    get_auv_state.cpp
     get_sensor_imu.cpp
     get_depth_command.cpp
+    send_control_command.cpp
     get_geometry_vector3_stamped.cpp
-    get_auv_state.cpp
 )
 
 add_dependencies( ClientSingleThread 

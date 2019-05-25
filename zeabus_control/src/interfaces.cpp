@@ -16,6 +16,8 @@
 
 #include    <memory>
 
+#include    <vector>
+
 #include    <iostream>
 
 #include    <zeabus/time.hpp>

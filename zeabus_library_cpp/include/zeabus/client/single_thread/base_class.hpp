@@ -37,6 +37,12 @@ namespace single_thread
             void setup_ptr_mutex_data( std::shared_ptr< std::mutex > ptr_mutex_data );
 
             void setup_ptr_data( type_data* ptr_data );
+            // In get type of service
+            //      This ptr_data will collect data for reponse form server
+            // In send type of service
+            //      This ptr_data will collect data for data to use to send server
+            //      If you use call type thread please ensure you use mutex lock when
+            //      write data at ptr_data
 
         protected:
             // this will give you lock for lock data same with main member us
