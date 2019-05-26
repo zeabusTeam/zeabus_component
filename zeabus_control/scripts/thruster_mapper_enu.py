@@ -11,9 +11,23 @@
 #   In the future, I think this node should have process to detect about frame id to checkout
 #       about piority to use so that is the future time.
 #   If above line have I think we must to use thread manage about that process
+#   About tf library. In different between python and cpp style coding. 
+#       Python language have purpose about to interesting process and how to
+#       CPP language have stlye to interesting about theory and ristric
+#       All that make python don't have quaternion struct please ref02
+#       You will know quaternion have been representing in mode numpy.dyarray for parameter
+#           you must to pass by use tuple to pass parameter
+#   In noted of ref02 you will know this tf library not optimized for speed!
+#   Axes 4-str : will have affect about output and input. Only quaternion don't affect from this
+#       first str will be 's'tatic or 'r'otation 
+#           - 's' will return euler from that quaternion to origin
+#           - 'r' will return euler form origin to that quaternion
+#   Axes 4-tuple : 
+#       Array or tuple will representing to ix+jy+kz+w to [ x , y , z , w ]
 
 # REFERENCE
 #   ref01 : http://wiki.ros.org/ROS/Tutorials/WritingServiceClient(python)
+#   ref02 : http://docs.ros.org/melodic/api/tf/html/python/transformations.html#module-tf.transformations
 
 import math
 import rospy
@@ -78,9 +92,14 @@ class ThrusterMapper:
 
         self.direction_inverse = numpy.linalg.pinv( self.direction )
 
+        self.current_quaternion = ( 0 , 0 , 0 , 1 ) 
+        # At ref02 you can use tuple instead numpy.array
         
+        self.target_quaternion = ( 0 , 0 , 0 , 1 )
+        # for above quaternion or tuple variable will use to convert
 
     def update_state( self ):
+        current_auv_state = self.client_state()
         
 
     def callback( self , request ):
