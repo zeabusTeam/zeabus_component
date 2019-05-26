@@ -16,8 +16,9 @@
 
 // This function use to convert NED coordinate to ENU coordinate
 
+// This from roation yaw negate half file and then rotation roll pi in radian
 const static tf::Quaternion quaternion_coordinate = tf::Quaternion( 
-        zeabus::radian::negate_half_pi, 0 , zeabus::radian::pi );
+        0.707 , -0.707 , 0 , 0 );
 
 void NED_to_ENU( tf::Quaternion* data )
 {

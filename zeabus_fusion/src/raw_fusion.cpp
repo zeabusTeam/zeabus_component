@@ -89,7 +89,8 @@ int main( int argv , char** argc )
     static std::string imu_topic = "/filter/imu";
     static std::string pressure_topic = "/filter/pressure";
     static double temp_RPY[3] = { 0 , 0 , zeabus::radian::negate_half_pi };
-    static tf::Quaternion offset_quaternion( temp_RPY[2], temp_RPY[1], temp_RPY[0]);
+    static tf::Quaternion offset_quaternion;;
+    offset_quaternion.setRPY( temp_RPY[0] , temp_RPY[1] , temp_RPY[2] );
 
     // Second part of variable to use in this pid
     static zeabus_utility::HeaderFloat64 pressure_data;
@@ -112,6 +113,7 @@ int main( int argv , char** argc )
     zeabus::service::get_data::AUVState server_state( ptr_node_handle );
     server_state.setup_ptr_mutex_data( ptr_mutex_data );
     server_state.register_data( &service_data );
+    server_state.setup_server_service( "/fusion/auv_state");
 
     // Fifth part of about state of robot
     //  Purpose of this calculate that is for calculate distance from start poitn
@@ -188,7 +190,7 @@ int main( int argv , char** argc )
         }
         else
         {
-            status_data &= 0b010; 
+            status_data &= 0b101; 
         }
         if( pressure_stamp != pressure_data.header.stamp )
         {
@@ -199,10 +201,10 @@ int main( int argv , char** argc )
         }
         else
         {
-            status_data &= 0b100;
+            status_data &= 0b011;
         }
         // Next we will rotation imu data
-        if( status_data & 0b010 )
+        if( (status_data & 0b010) != 0 )
         {
             zeabus::ros_interfaces::convert::quaternion_tf( &(imu_data.orientation) 
                     , &temp_quaternion );
@@ -219,9 +221,6 @@ int main( int argv , char** argc )
 #endif
             zeabus::ros_interfaces::convert::tf_quaternion( &temp_quaternion 
                     , &(temp_data.data.pose.pose.orientation ) );
-        }
-        if( status_data == 3 )
-        {
             if( count_dvl > 5 )
             {
                 std::cout   << zeabus::escape_code::bold_red << "FATAL! DVL Lose data\n"
