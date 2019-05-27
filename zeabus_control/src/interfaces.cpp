@@ -235,5 +235,8 @@ int main( int argv , char** argc )
                     << " " << (error.mask)[5] << "\n\n";        
                 
 #endif 
-    } 
+    }
+    ros::shutdown();
+    node_control_interfaces.join();
+    return 0; 
 }

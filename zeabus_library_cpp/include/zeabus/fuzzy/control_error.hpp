@@ -41,8 +41,6 @@ namespace fuzzy
             
             ControlError( double offset = 0 );
 
-            void set_relative_value( double low , double medium , double high );
-
             // This will mean when we want zero
             void set_offset_force( double offset = 0 );
 
@@ -68,7 +66,7 @@ namespace fuzzy
             double get_result();
 
             // function to get rule condition 
-            void set_rule_condition( std::array< std::array< double , 7> , 7 >* rule );
+            void set_rule_condition( std::array< std::array< signed char , 7> , 7 >* rule );
 
         protected:
             // function output condition we have input is this->output and will edit value
@@ -81,6 +79,7 @@ namespace fuzzy
             double offset;
             double output;
             double buffer_output;
+            double previous_error;
             // 3 line belows will about buffer of different
             unsigned int point_element;
             double sum_buffer;
@@ -95,9 +94,8 @@ namespace fuzzy
             signed char diff_fuzzy; 
             signed char result_fuzzy;
             // This will use to collect rule_condition
-            std::array< std::array<double , 7 > , 7 > rule_table;
+            std::array< std::array<signed char , 7 > , 7 > rule_table;
             
-
     }; // class object ControlError
 
 } // namespace fuzzy
