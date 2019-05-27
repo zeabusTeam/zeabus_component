@@ -19,7 +19,7 @@
 
 // MACRO SET
 #define _DEBUG_FILTER_
-#define _DEBUG_SPIN_
+//#define _DEBUG_SPIN_
 #define _COLLECT_LOG_
 
 // Header of genral part that mean you can change algorithm to fileter but can't change this part
@@ -109,6 +109,7 @@ int main( int argv, char** argc )
     for( unsigned int run = 0 ; run < buffer_size ; run++ )
     {
         rate.sleep();
+        zeabus::escape_code::clear_screen();
         (void)client_pressure_sensor.normal_call();
         if( check_time_up( limit_same_time , time_stamp != input_data.header.stamp ) )
         {

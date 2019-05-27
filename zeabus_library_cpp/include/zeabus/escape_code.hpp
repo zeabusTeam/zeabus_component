@@ -4,6 +4,7 @@
 
 #include    <iostream> // for standard library of c++
 
+#include    <cstdlib> // use std::system to clear screen
 // This file will manage about ANSI Escape sequence 
 // This escape sequence can use in MISRA C++ 2018 by RULE 2-13-1 REQUIRED
 //      DETAIL : Only those escape sequence that are defined in ISO/IEC 14882:2003 shall be use

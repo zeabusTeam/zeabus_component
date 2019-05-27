@@ -12,7 +12,8 @@ namespace escape_code
 
     void clear_screen()
     {
-        std::cout << "\x1B[1J\x1B[H";
+//        std::cout << "\x1B[1J\x1B[H";
+        std::system("clear");
     } // void clear_screen
 
 } // namespace escape_code

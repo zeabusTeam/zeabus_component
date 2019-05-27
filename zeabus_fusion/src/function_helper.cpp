@@ -18,14 +18,11 @@
 
 // This from roation yaw negate half file and then rotation roll pi in radian
 
-#include    <cstdlib>
-
 const static tf::Quaternion quaternion_coordinate = tf::Quaternion( 
         0.707 , -0.707 , 0 , 0 );
 
 void NED_to_ENU( tf::Quaternion* data )
 {
-    std::system("clear");
     double RPY[3];
 #ifdef _IMU_CONVERTER_
     std::cout   << "NED quaternion    : " 
