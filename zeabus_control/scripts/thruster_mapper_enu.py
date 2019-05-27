@@ -85,11 +85,11 @@ class ThrusterMapper:
         ])
 
         self.distance = numpy.array([
-            [0.332, 0.2202, -0.023],   # thruster id 0
-            [0.332, -0.2202, -0.023],  # thruster id 1
-            [-0.332, 0.2202, -0.023],  # thruster id 2
+            [0.332, 0.2202, -0.023],    # thruster id 0
+            [0.332, -0.2202, -0.023],   # thruster id 1
+            [-0.332, 0.2202, -0.023],   # thruster id 2
             [-0.332, -0.2202, -0.023],  # thruster id 3
-            [0.3536, 0.3536, -0.023],  # thruster id 4
+            [0.3536, 0.3536, -0.023],   # thruster id 4
             [0.3536, -0.3536, -0.023],  # thruster id 5
             [-0.3536, 0.3536, -0.023],  # thruster id 6
             [-0.3536, -0.3536, -0.023]  # thruster id 7
@@ -98,13 +98,22 @@ class ThrusterMapper:
         # this variable will show about momentum to calculate about rotatio by euler
         self.direction_angular = numpy.array([
             # thruster id 0
+            numpy.cross(self.distance[0], self.direction_linear[0]),
             # thruster id 1
+            numpy.cross(self.distance[1], self.direction_linear[1]),
             # thruster id 2
+            numpy.cross(self.distance[2], self.direction_linear[2]),
             # thruster id 3
+            numpy.cross(self.distance[3], self.direction_linear[3]),
             # thruster id 4
+            numpy.cross(self.distance[4], self.direction_linear[4]),
             # thruster id 5
+            numpy.cross(self.distance[5], self.direction_linear[5]),
             # thruster id 6
-            numpy.cross(self.distance[0], self.direction_linear[0]), numpy.cross(self.distance[0], self.direction_linear[1]), numpy.cross(self.distance[0], self.direction_linear[1]), numpy.cross(self.distance[0], self.direction_linear[1]), numpy.cross(self.distance[0], self.direction_linear[1]), numpy.cross(self.distance[0], self.direction_linear[1]), numpy.cross(self.distance[0], self.direction_linear[1]), numpy.cross(self.distance[0], self.direction_linear[1])])  # thruster id 7
+            numpy.cross(self.distance[6], self.direction_linear[6]),
+            # thruster id 7
+            numpy.cross(self.distance[7], self.direction_linear[7])
+        ])
 
         self.direction = numpy.concatenate(
             (self.direction_linear, self.direction_angular), axis=1)
