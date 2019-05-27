@@ -16,9 +16,7 @@ class read_file:
 
     def count_line(self):
         document = open(self.name_file)
-        count = 0
-        for data in document:
-            count += 1
+        count = len(document.readlines())
         document.close()
         return count
 
