@@ -17,14 +17,25 @@
 // This function use to convert NED coordinate to ENU coordinate
 
 // This from roation yaw negate half file and then rotation roll pi in radian
+
+#include    <cstdlib>
+
 const static tf::Quaternion quaternion_coordinate = tf::Quaternion( 
         0.707 , -0.707 , 0 , 0 );
 
 void NED_to_ENU( tf::Quaternion* data )
 {
+    std::system("clear");
+    double RPY[3];
 #ifdef _IMU_CONVERTER_
     std::cout   << "NED quaternion    : " 
                 << data->w() << " " << data->x() << " " << data->y() << " " << data->z() << "\n";
+#endif
+
+#ifdef _IMU_CONVERTER_
+    tf::Matrix3x3( *data ).getRPY( RPY[0] , RPY[1] , RPY[2] );
+    std::cout   << "Euler NED : " 
+                << RPY[0] << " " << RPY[1] << " " << RPY[2] << "\n";
 #endif
     *data = quaternion_coordinate*(*data);
     *data = (*data) * ( quaternion_coordinate.inverse() ) ; 
@@ -32,10 +43,9 @@ void NED_to_ENU( tf::Quaternion* data )
     std::cout   << "ENU quaternion    : " 
                 << data->w() << " " << data->x() << " " << data->y() << " " << data->z() << "\n";
 #endif
-    double RPY[3];
     tf::Matrix3x3( *data ).getRPY( RPY[0] , RPY[1] , RPY[2] );
 #ifdef _IMU_CONVERTER_
-    std::cout   << "Euler form before offset : " 
+    std::cout   << "Euler ENU form before offset : " 
                 << RPY[0] << " " << RPY[1] << " " << RPY[2] << "\n";
 #endif
     RPY[0] += zeabus::radian::negate_pi;
@@ -44,7 +54,7 @@ void NED_to_ENU( tf::Quaternion* data )
     zeabus::radian::bound( &(RPY[2]) );
     data->setRPY( RPY[0] , RPY[1] , RPY[2] );
 #ifdef _IMU_CONVERTER_
-    std::cout   << "Euler form after offset  : " 
+    std::cout   << "Euler ENU form after offset  : " 
                 << RPY[0] << " " << RPY[1] << " " << RPY[2] << "\n";
 #endif
 #ifdef _IMU_CONVERTER_

@@ -6,6 +6,7 @@
 
 // MACRO DETAIL
 // _SHOW_INDIVIDUAL_CHAR_ : this for read_data( std::string* ) this show data haved read
+#define _SHOW_INDIVIDUAL_CHAR_
 
 namespace zeabus
 {
@@ -67,13 +68,12 @@ namespace serial
     {
         *message = ""; // reset message to empty string
         unsigned int count = 0 ; // for count number of byte we can read
-        std::vector< unsigned char > temporary;
-        temporary.reserve( 1 );
+        char temporary;
         bool continue_read = true;
         while( continue_read )
         {
-            count += this->read_data( &temporary , 1 );
-            switch( temporary[0] )
+            count += boost::asio::read( this->io_port , boost::asio::buffer( &temporary , 1 ) );
+            switch( temporary )
             {
             case '\r' :
 #ifdef _SHOW_INDIVIDUAL_CHAR_
@@ -91,10 +91,10 @@ namespace serial
 #endif // _SHOW_INDIVIDUAL_CHAR_
                 continue;
             default :
-                message += temporary[0];
+                *message += temporary;
                 count += 1;
 #ifdef _SHOW_INDIVIDUAL_CHAR_
-                std::cout << "<read_string> data is \"" << temporary[0] << "\"\n"; 
+                std::cout << "<read_string> data is \"" << temporary << "\"\n"; 
 #endif // _SHOW_INDIVIDUAL_CHAR_
             }
         } // loop while read string

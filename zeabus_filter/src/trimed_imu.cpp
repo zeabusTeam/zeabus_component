@@ -21,6 +21,7 @@
 //#define _LOG_IN_OUT_
 #define _COLLECT_LOG_
 //#define _DEBUG_PROCESS_
+#define _PROCESS_
 
 // MACRO COMMAND
 #ifdef _COLLECT_LOG_
@@ -78,7 +79,7 @@ int main( int argv , char** argc )
     // Insert optional part param
     const static unsigned int buffer_size = 6;
     const static unsigned int trimed_size = 1;
-    const static unsigned int frequency = 50;
+    const static unsigned int frequency = 40;
     const static unsigned int limit_same_time = 10;
 
     // Second part of Filter this part mix about data variable
@@ -106,6 +107,7 @@ int main( int argv , char** argc )
     zeabus::client::single_thread::GetSensorImu client_imu_sensor;
     client_imu_sensor.setup_ptr_node_handle( ptr_node_handle );;
     client_imu_sensor.setup_ptr_data( &input_data );
+    client_imu_sensor.setup_client( "/sensor/imu" );
     // We don't setup mutex for this because we didn't use that
 
     // Optional part about log if you want to do must define 
@@ -234,7 +236,7 @@ int main( int argv , char** argc )
         }
         else if( time_over )
         {
-            std::cout   << zeabus::escape_code::bold_red << "FATAL! Data time out"
+            std::cout   << zeabus::escape_code::bold_red << "FATAL! Data time out\n"
                         << zeabus::escape_code::normal_white;
         }
         else

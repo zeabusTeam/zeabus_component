@@ -46,7 +46,7 @@ int main( int argv , char** argc )
     }
 
     // idle in importance process because if can help guaruntee success setup
-    status_file = dvl.set_idle();
+    status_file = dvl.set_idle( 5 );
     if( status_file )
     {
         std::cout   << "Succress to set idle\n";

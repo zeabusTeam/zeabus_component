@@ -3,6 +3,8 @@
 // CREATE ON    : 2019, APRIL 27
 // MAINTAINER   : Supasan Komonlit
 
+#define _CALLBACK_PRINT_
+
 #include    <zeabus/service/get_data/sensor_imu.hpp>
 
 namespace zeabus
@@ -29,6 +31,9 @@ namespace get_data
     bool SensorImu::callback( zeabus_utility::GetSensorImu::Request& request 
             , zeabus_utility::GetSensorImu::Response& response )
     {
+#ifdef _CALLBACK_PRINT_
+        std::cout   << "IMU CALLBACK CALLED\n";
+#endif
         this->ptr_mutex_data->lock();
         response.data = *(this->ptr_data);
         this->ptr_mutex_data->unlock();

@@ -92,6 +92,7 @@ int main( int argv, char** argc )
     zeabus::client::single_thread::GetDepthCommand client_pressure_sensor;
     client_pressure_sensor.setup_ptr_node_handle( ptr_node_handle );
     client_pressure_sensor.setup_ptr_data( &input_data );
+    client_pressure_sensor.setup_client( "/sensors/pressure" );
     // We don't setup mutex for this because we didn't use that
 
     // Optional part about log if you want to do must define _COLLECT_LOG_
@@ -170,7 +171,7 @@ int main( int argv, char** argc )
             ptr_mutex_data->unlock();
 #ifdef _DEBUG_FILTER_
             std::cout   << "ros loop push " << input_data.data
-                        << " and result of fileter " << output_data.data;
+                        << " and result of fileter " << output_data.data << "\n";
 #endif // _DEBUG_FILTER_
 #ifdef _COLLECT_LOG_
             my_file.logging( &(output_data.header.stamp) , &(input_data.data) 

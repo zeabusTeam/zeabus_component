@@ -3,6 +3,8 @@
 // CREATE ON    : 2019, APRIL 8
 // MAINTAINER   : K.Supasan
 
+#define _CALL_PROCESS_
+
 #include    <zeabus/client/single_thread/get_sensor_imu.hpp>
 
 namespace zeabus
@@ -41,6 +43,9 @@ namespace single_thread
         bool can_call = false; // We want to ensure current call by this function not use mutex
         if( !( this->thread_status[0] ) )
         {
+#ifdef _CALL_PROCESS_
+            std::cout   << "Call data from IMU\n";
+#endif
             (this->client_server).call( this->client_data );
             *(this->ptr_data) = (this->client_data).response.data;
             can_call = true;

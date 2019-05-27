@@ -19,8 +19,8 @@
 // REFERENCE
 
 // MACRO SET
-//#define _IMU_CONVERTER_
-//#define _ROBOT_DATA_
+#define _IMU_CONVERTER_
+#define _ROBOT_DATA_
 //#define _PROCESS_
 
 // MACRO CONDITION
@@ -86,7 +86,7 @@ int main( int argv , char** argc )
     // Insert optional part param part
     static signed int frequency = 30;
     static std::string dvl_topic = "/filter/dvl";
-    static std::string imu_topic = "/filter/imu";
+    static std::string imu_topic = "/sensor/imu";
     static std::string pressure_topic = "/filter/pressure";
     static double temp_RPY[3] = { 0 , 0 , zeabus::radian::negate_half_pi };
     static tf::Quaternion offset_quaternion;;
@@ -211,7 +211,7 @@ int main( int argv , char** argc )
             NED_to_ENU( &temp_quaternion ); 
             temp_quaternion = offset_quaternion * temp_quaternion ;
 #ifdef _ROBOT_DATA_
-            tf::Matrix3x( temp_quaternion ).getRPY( temp_RPY[0], temp_RPY[1], temp_RPY[2] );
+            tf::Matrix3x3( temp_quaternion ).getRPY( temp_RPY[0], temp_RPY[1], temp_RPY[2] );
             std::cout   << "ROBOT Euler " << "Roll : " << temp_RPY[0]
                         << " Pitch : " << temp_RPY[1] << " Yaw : " << temp_RPY[2] << "\n";
 #endif

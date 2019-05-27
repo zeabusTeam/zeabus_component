@@ -5,6 +5,8 @@
 
 #include    <zeabus/sensor/DVL/connector.hpp>
 
+#define _PRINT_DATA_CONNECTION_
+
 namespace zeabus
 {
 
@@ -25,17 +27,22 @@ namespace DVL
         std::string message = "===";
         unsigned int count = 0;
         bool result = false;
-        (void)this->write_data( &message );
+        count = this->write_data( &message );
 #ifdef _PRINT_DATA_CONNECTION_
-            std::cout << "COMMAND TO DVL " << message << std::endl;
+            std::cout   << "COMMAND TO DVL " << message << " and write " << count << std::endl;
 #endif // _PRINT_DATA_CONNECTION_
+        count = 0;
         do
         {
             count++; // count round to wait comand
             (void)this->read_data( &message );
+#ifdef _PRINT_DATA_CONNECTION_
+            std::cout   << "message I have to read is " << message << "\n";
+#endif
         }while( message != "Explorer DVL" && count < limit_round );
         if( count < limit_round ) // if true that mean have correct response form dvl
         {
+
 #ifdef _PRINT_DATA_CONNECTION_
             std::cout << message << std::endl;
 #endif // _PRINT_DATA_CONNECTION_
@@ -53,6 +60,7 @@ namespace DVL
 #endif // _PRINT_DATA_CONNECTION_
             result = true;
         } // condition count < limit_round
+
         return result;
     } // function set_idle
 
