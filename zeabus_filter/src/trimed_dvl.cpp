@@ -5,6 +5,7 @@
 
 // MACRO DETAIL
 // _COLLECT_LOG_    : This will help you to collect log of your data
+// _SUMMARY_        : This will help you show only important data
 
 // README
 //  In dvl and pressure sensor will use only one log because input and output is same variable
@@ -12,7 +13,8 @@
 // REFERENCE
 
 // MACRO SET
-//#define _COLLECT_LOG_
+#define _COLLECT_LOG_
+#define _SUMMARY_
 
 #include    <memory>
 
@@ -74,6 +76,7 @@ int main( int argv , char** argc )
     zeabus::client::single_thread::GetGeometryVector3Stamped client_dvl_filter;
     client_dvl_filter.setup_ptr_node_handle( ptr_node_handle );
     client_dvl_filter.setup_ptr_data( &input_data );
+    client_dvl_filter.setup_client( "/sensor/dvl" );
 
     // Option part about log file ig you want to do must define _COLLECT_LOG_
 #ifdef _COLLECT_LOG_
@@ -156,6 +159,13 @@ int main( int argv , char** argc )
 #ifdef _COLLECT_LOG_
             my_file.logging( &time_stamp , &(input_data.vector) , &(output_data.vector) );
 #endif // _COLLECT_LOG_
+#ifdef _SUMMARY_
+            zeabus::escape_code::clear_screen();
+            std::cout   << "Input data vector : " << input_data.vector.x << " " 
+                        << input_data.vector.y << " " << input_data.vector.z
+                        << "\nOutput data vector: " << output_data.vector.x << " "
+                        << output_data.vector.y << " " << output_data.vector.z << "\n";
+#endif
         }
         else if( time_over )
         {
