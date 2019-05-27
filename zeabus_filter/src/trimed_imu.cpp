@@ -237,7 +237,7 @@ int main( int argv , char** argc )
 #ifdef _SUMMARY_
             std::cout   << "Input Euler  : " << input_filter[0] << " "
                         << input_filter[1] << " " << input_filter[2]
-                        << "Output Euler : " << output_filter[0] << " "
+                        << "\nOutput Euler : " << output_filter[0] << " "
                         << output_filter[1] << " " << output_filter[2] << "\n";
 #endif // _SUMMARY_
 #ifdef _LOG_IN_OUT_
