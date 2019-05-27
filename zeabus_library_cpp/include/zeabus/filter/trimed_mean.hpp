@@ -58,6 +58,7 @@ namespace filter
             double result;
             type_buffer original_buffer[ size ];
             type_buffer temp_buffer[ size ];
+            double temp; // use to collect new sum after cut
     }; // class TrimMean
 
 } // namespace filter

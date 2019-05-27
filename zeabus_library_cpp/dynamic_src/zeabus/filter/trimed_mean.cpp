@@ -69,24 +69,25 @@ namespace filter
         zeabus::array::print::template_type( this->temp_buffer , this->size_buffer 
                 , "NEW BUFFER");
 #endif
-        this->result = 1.0 * this->sum_buffer;
+        this->temp = 1.0 * this->sum_buffer;
         for( unsigned int run = 0 ; run < this->size_trim ; run++ )
         {
-            this->result -= (this->temp_buffer)[run]; // trim minimum
-            this->result -= (this->temp_buffer)[ this->size_buffer - run - 1 ]; // trim maximum
+            this->temp -= (this->temp_buffer)[run]; // trim minimum
+            this->temp -= (this->temp_buffer)[ this->size_buffer - run - 1 ]; // trim maximum
 #ifdef _PRINT_PROCESS_
         std::cout   << "run_number " << run << " have order to cut "
                     << (this->temp_buffer)[run] << " and " 
                     << (this->temp_buffer)[ this->size_buffer - run - 1] << "\n";
 #endif
         }
-        return ( this->result ) / (this->size_buffer - (this->size_trim * 2) );
+        this->result = ( this->temp ) / (this->size_buffer - (this->size_trim * 2) );
+        return this->result;
     } // function push
 
     template< class type_buffer , unsigned int size >
     double TrimedMean< type_buffer , size >::get_result()
     {
-        return this->result;
+        return this->result ;
     } // function get_result
 
 
