@@ -3,8 +3,6 @@
 // CREATE ON    : 2019, APRIL 27
 // MAINTAINER   : Supasan Komonlit
 
-#define _CALLBACK_PRINT_
-
 #include    <zeabus/service/get_data/sensor_imu.hpp>
 
 namespace zeabus

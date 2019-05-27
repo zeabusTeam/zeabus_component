@@ -3,6 +3,12 @@
 // CREATE ON    : 2019, APRIL 27
 // MAINTAINER   : Supasan Komonlit
 
+// MACRO DETAIL
+// _CALLBACK_PRINT_ : this will print when callback have been call
+
+// MACRO SET
+#define _CALLBACK_PRINT_
+
 #include    <zeabus/service/get_data/base_class.hpp>
 
 #include    <zeabus_utility/GetSensorImu.h>
