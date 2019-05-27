@@ -2,22 +2,33 @@
 // Author       : Supasan Komonlit
 // Create On    : 2019, APRIL 06
 
-#include    <iostream>
+// MACRO DETAIL
+// _SUMMARY_    : This macro will help you to see summary data
 
-#include    <zeabus/sensor/DVL/connector.hpp>
+// MACRO SET
+//#define _SUMMARY_
 
-#include    <zeabus/sensor/DVL/decode_string.hpp>
-
-#include    <zeabus/service/get_data/geometry_vector3_stamped.hpp>
-
-#include    <zeabus/ros_interfaces/single_thread.hpp>
+// MACRO CONDITION
 
 #include    <memory>
 
 #include    <thread>
 
+#include    <iostream>
+
 #include    <ros/ros.h>
+
 #include    <geometry_msgs/Vector3Stamped.h>
+
+#include    <zeabus/escape_code.hpp>
+
+#include    <zeabus/sensor/DVL/connector.hpp>
+
+#include    <zeabus/sensor/DVL/decode_string.hpp>
+
+#include    <zeabus/ros_interfaces/single_thread.hpp>
+
+#include    <zeabus/service/get_data/geometry_vector3_stamped.hpp>
 
 namespace Asio = boost::asio;
 void thread_copy_data( geometry_msgs::Vector3Stamped* source 
@@ -108,9 +119,16 @@ int main( int argv , char** argc )
         {
             zeabus::sensor::DVL::PD6_code_BS( &raw_data , &(temp_velocity[0]) 
                     , &(temp_velocity[1]) , &(temp_velocity[2]) , &ok_data );
+#ifdef _SUMMARY_
+            zeabus::escape_code::clear_screen();
+#endif // _SUMMARY_
             if( ok_data == 'A' ) // if data BS is ok
             {
-                std::cout << "DVL GOOD DATA\n";
+                std::cout   << "DVL GOOD DATA\n";
+#ifdef _SUMMARY_
+                std::cout   << "data is " << temp_velocity[0] << " " << temp_velocity[1]
+                            << " " << temp_velocity[2] << "\n";
+#endif // _SUMMARY_
                 temp_message.vector.x = temp_velocity[0];
                 temp_message.vector.y = temp_velocity[1];
                 temp_message.vector.z = temp_velocity[2];
