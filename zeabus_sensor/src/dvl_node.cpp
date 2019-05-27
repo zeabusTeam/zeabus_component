@@ -19,6 +19,7 @@
 #include    <ros/ros.h>
 #include    <geometry_msgs/Vector3Stamped.h>
 
+namespace Asio = boost::asio;
 void thread_copy_data( geometry_msgs::Vector3Stamped* source 
         , geometry_msgs::Vector3Stamped* target , std::shared_ptr< std::mutex > lock_data );
 
@@ -45,6 +46,14 @@ int main( int argv , char** argc )
         std::cout   << "Failure to open port dvl\n";
     }
 
+	(void)dvl.set_option_port( Asio::serial_port_base::flow_control( 
+							Asio::serial_port_base::flow_control::none ) );
+	(void)dvl.set_option_port( Asio::serial_port_base::parity( 
+							Asio::serial_port_base::parity::none ) );
+	(void)dvl.set_option_port( Asio::serial_port_base::stop_bits( 
+							Asio::serial_port_base::stop_bits::one ) );
+	(void)dvl.set_option_port( Asio::serial_port_base::character_size( (unsigned char) 8 ) );
+	(void)dvl.set_option_port( Asio::serial_port_base::baud_rate( 115200 ) );
     // idle in importance process because if can help guaruntee success setup
     status_file = dvl.set_idle( 5 );
     if( status_file )
