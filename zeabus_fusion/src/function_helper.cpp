@@ -27,19 +27,18 @@ void NED_to_ENU( tf::Quaternion* data )
 #ifdef _IMU_CONVERTER_
     std::cout   << "NED quaternion    : " 
                 << data->w() << " " << data->x() << " " << data->y() << " " << data->z() << "\n";
-#endif
+#endif // _IMU_CONVERTER_
 
 #ifdef _IMU_CONVERTER_
     tf::Matrix3x3( *data ).getRPY( RPY[0] , RPY[1] , RPY[2] );
     std::cout   << "Euler NED : " 
                 << RPY[0] << " " << RPY[1] << " " << RPY[2] << "\n";
-#endif
+#endif // _IMU_CONVERTER_
     *data = quaternion_coordinate*(*data);
-    *data = (*data) * ( quaternion_coordinate.inverse() ) ; 
 #ifdef _IMU_CONVERTER_
     std::cout   << "ENU quaternion    : " 
                 << data->w() << " " << data->x() << " " << data->y() << " " << data->z() << "\n";
-#endif
+#endif // _IMU_CONVERTER_
     tf::Matrix3x3( *data ).getRPY( RPY[0] , RPY[1] , RPY[2] );
 #ifdef _IMU_CONVERTER_
     std::cout   << "Euler ENU form before offset : " 
