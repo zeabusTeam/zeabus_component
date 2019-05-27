@@ -4,6 +4,11 @@
 // MAINTAINER   : K.Supasan
 
 // MACRO DETAIL
+// _CALL_PROCESS_       : Use this to see when we arein function call
+
+// MACRO SET
+//#define _CALL_PROCESS_
+
 
 #include    <zeabus/client/single_thread/base_class.hpp>
 

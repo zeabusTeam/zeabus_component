@@ -3,8 +3,6 @@
 // CREATE ON    : 2019, APRIL 8
 // MAINTAINER   : K.Supasan
 
-#define _CALL_PROCESS_
-
 #include    <zeabus/client/single_thread/get_sensor_imu.hpp>
 
 namespace zeabus

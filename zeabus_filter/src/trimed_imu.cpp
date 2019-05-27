@@ -23,6 +23,7 @@
 #define _COLLECT_LOG_
 //#define _DEBUG_PROCESS_
 //#define _PROCESS_
+#define _SUMMARY_
 
 // MACRO COMMAND
 #ifdef _COLLECT_LOG_
