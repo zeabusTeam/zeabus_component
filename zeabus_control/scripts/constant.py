@@ -12,16 +12,16 @@
 
 # part of file thruster_mapper_enu
 # Below constant will about data when updated time
-_THRUSTER_MAPPER_UPDATED_ = True
+THRUSTER_MAPPER_UPDATED = True
 # Below constant will about show all calculate process
-_THRUSTER_MAPPER_CALCULATE_PROCESS_ = True
+THRUSTER_MAPPER_CALCULATE_PROCESS = True
 # Below constant will show you a result
-_THRUSTER_MAPPER_RESULT_ = True
+THRUSTER_MAPPER_RESULT = True
 # Below constant will help you to see RPY instead quaternion
-_THRUSTER_MAPPER_EULER_ = True
+THRUSTER_MAPPER_EULER = True
 # Below constant will know about can call service to auv_state or not
-_THRUSTER_MAPPER_AUV_STATE_ = True
+THRUSTER_MAPPER_AUV_STATE = True
 
-if( _THRUSTER_MAPPER_CALCULATE_PROCESS_ ):
-    _THRUSTER_MAPPER_RESULT_ = True
+if(THRUSTER_MAPPER_CALCULATE_PROCESS):
+    THRUSTER_MAPPER_RESULT = True
 # In the result is one part of PROCESS CALCULATE
