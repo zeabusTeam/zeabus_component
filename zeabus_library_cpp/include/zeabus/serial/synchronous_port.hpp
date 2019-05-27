@@ -11,6 +11,16 @@
 
 // MACRO DETAIL
 // _SHOW_INDIVIDUAL_CHAR_   : this for read_data( std::string* ) this show data you haved read
+// _SHOW_RESULT_MESSAGE_  : this for read_data( std::string* ) this show result of message
+
+// MACRO SET
+//#define _SHOW_INDIVIDUAL_CHAR_
+#define _SHOW_RESULT_MESSAGE_
+
+// MACRO CONDITION
+#ifdef _SHOW_INDIVIDUAL_CHAR_
+    #define _SHOW_RESULT_MESSAGE_
+#endif
 
 #ifndef _ZEABUS_SERIAL_SYNCHRONOUS_PORT_HPP
 #define _ZEABUS_SERIAL_SYNCHRONOUS_PORT_HPP

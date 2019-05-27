@@ -6,7 +6,16 @@
 
 // MACRO DETAIL
 // _SHOW_INDIVIDUAL_CHAR_ : this for read_data( std::string* ) this show data haved read
-#define _SHOW_INDIVIDUAL_CHAR_
+// _SHOW_RESULT_MESSAGE_  : this for read_data( std::string* ) this show result of message
+
+// MACRO SET
+//#define _SHOW_INDIVIDUAL_CHAR_
+#define _SHOW_RESULT_MESSAGE_
+
+// MACRO CONDITION
+#ifdef _SHOW_INDIVIDUAL_CHAR_
+    #define _SHOW_RESULT_MESSAGE_
+#endif
 
 namespace zeabus
 {
@@ -98,7 +107,7 @@ namespace serial
 #endif // _SHOW_INDIVIDUAL_CHAR_
             }
         } // loop while read string
-#ifdef _SHOW_INDIVIDUAL_CHAR_
+#ifdef _SHOW_RESULT_MESSAGE_
         std::cout << "<read_string> Message data is " << *message << "\n";
 #endif // _SHOW_INDIVIDUAL_CHAR_
         return count;
