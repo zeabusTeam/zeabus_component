@@ -7,33 +7,44 @@
 //  _DECLARE_PROCESS_   : this macro will declare your process for debug about setting part
 //  _PRINT_DATA_STREAM_ : this macro will declare process about data stream after you have 
 //                          ability to read data from IMU
-//  _DECLARE_UPDATED_    : this macro will declate you can't update data or not
+//  _DECLARE_UPDATED_   : this macro will declate you can't update data or not
+//  _SUMMARY_           : this macro will include _DECLARE_UPDATED_ and show last result
+//                          now available only euler
 
+// MACRO SET
 //#define _DECLARE_PROCESS_ 
-
 //#define _PRINT_DATA_STREAM_
+//#define _DECLARE_UPDATED_
+#define _SUMMARY_
 
-#define _DECLARE_UPDATED_
+// MACRO CONDITION
+#ifdef _SUMMARY_
+    #define _DECLARE_UPDATED_
+#endif
 
-#include    <ros/ros.h>
-
-#include    <zeabus/sensor/IMU/connector.hpp>
-
-#include    <zeabus/sensor/IMU/LORD_IMU_COMMUNICATION.hpp>
-
-#include    <zeabus/convert/vector/one_byte.hpp>
-
-#include    <zeabus/ros_interfaces/single_thread.hpp>
-#include    <zeabus/service/get_data/sensor_imu.hpp>
+#include    <vector>
 
 #include    <iostream>
-#include    <vector>
+
+#include    <ros/ros.h>
 
 #include    <sensor_msgs/Imu.h>
 
 #include    <zeabus/escape_code.hpp>
 
-// FINSISH SETUP IMU LINE 180
+#include    <tf/LinearMath/Matrix3x3.h>
+
+#include    <zeabus/sensor/IMU/connector.hpp>
+
+#include    <zeabus/convert/vector/one_byte.hpp>
+
+#include    <zeabus/service/get_data/sensor_imu.hpp>
+
+#include    <zeabus/ros_interfaces/single_thread.hpp>
+
+#include    <zeabus/sensor/IMU/LORD_IMU_COMMUNICATION.hpp>
+
+#include    <zeabus/ros_interfaces/convert/geometry_msgs.hpp>
 
 namespace Asio = boost::asio;
 namespace IMUProtocal = zeabus::sensor::IMU::LORD_MICROSTRAIN;
@@ -224,6 +235,10 @@ int main( int argv , char** argc )
     std::cout   << "Now start streaming data\n";
 #endif // _DECLARE_PROCESS_
 
+#ifdef _SUMMARY_
+    tf::Quaternion temp_quaternion;
+    double temp_RPY[3];
+#endif
     unsigned int limit_number;    
     while( ( ptr_node_handle->ok() && ( ! skip_process ) ) )
     {
@@ -288,6 +303,13 @@ int main( int argv , char** argc )
                 std::cout   << zeabus::escape_code::bold_yellow
                             << "Update IMU data\n" << zeabus::escape_code::normal_white;
 #endif // _DECLARE_UPDATED_
+#ifdef _SUMMARY_
+                zeabus::ros_interfaces::convert::quaternion_tf( 
+                        &temporary_message.orientation , &temp_quaternion );
+                tf::Matrix3x3( temp_quaternion ).getRPY( temp_RPY[0], temp_RPY[1], temp_RPY[2] );
+                std::cout   << "Data in Euler is " << temp_RPY[0] << " " << temp_RPY[1] 
+                            << " " << temp_RPY[2] << "\n";
+#endif
             }
 #ifdef _DECLARE_UPDATED_
             else
