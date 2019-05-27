@@ -1,36 +1,38 @@
 #!/usr/bin/env python2
-# FILE			: thruster_mapper_enu.py
-# AUTHOR		: K.Supasan
-# CREATE ON	    : 2019, May 26 (UTC+0)
-# MAINTAINER	: K.Supasan
-# ORIGINAL FILE : K.Supakit 2018/11/14
+"""
+FILE			: thruster_mapper_enu.py
+AUTHOR		    : K.Supasan
+CREATE ON	    : 2019, May 26 (UTC+0)
+MAINTAINER	    : K.Supasan
+ORIGINAL FILE   : K.Supakit 2018/11/14
 
-# README
-#   This code have response about command to use matrix distribute for from world frame to
-#       robot frame.
-#   In the future, I think this node should have process to detect about frame id to checkout
-#       about piority to use so that is the future time.
-#   If above line have I think we must to use thread manage about that process
-#   About tf library. In different between python and cpp style coding.
-#       Python language have purpose about to interesting process and how to
-#       CPP language have stlye to interesting about theory and ristric
-#       All that make python don't have quaternion struct please ref02
-#       You will know quaternion have been representing in mode numpy.dyarray for parameter
-#           you must to pass by use tuple to pass parameter
-#   In noted of ref02 you will know this tf library not optimized for speed!
-#   Axes 4-str : will have affect about output and input. Only quaternion don't affect from this
-#       first str will be 's'tatic or 'r'otation
-#           - 's' will return euler from that quaternion to origin
-#           - 'r' will return euler form origin to that quaternion
-#   Axes 4-tuple :
-#       Array or tuple will representing to ix+jy+kz+w to [ x , y , z , w ]
+README
+  This code have response about command to use matrix distribute for from world frame to
+      robot frame.
+  In the future, I think this node should have process to detect about frame id to checkout
+      about piority to use so that is the future time.
+  If above line have I think we must to use thread manage about that process
+  About tf library. In different between python and cpp style coding.
+      Python language have purpose about to interesting process and how to
+      CPP language have stlye to interesting about theory and ristric
+      All that make python don't have quaternion struct please ref02
+      You will know quaternion have been representing in mode numpy.dyarray for parameter
+          you must to pass by use tuple to pass parameter
+  In noted of ref02 you will know this tf library not optimized for speed!
+  Axes 4-str : will have affect about output and input. Only quaternion don't affect from this
+      first str will be 's'tatic or 'r'otation
+          - 's' will return euler from that quaternion to origin
+          - 'r' will return euler form origin to that quaternion
+  Axes 4-tuple :
+      Array or tuple will representing to ix+jy+kz+w to [ x , y , z , w ]
 
-# REFERENCE
-#   ref01 : http://wiki.ros.org/ROS/Tutorials/WritingServiceClient(python)
-#   ref02 : http://docs.ros.org/melodic/api/tf/html/python/transformations.html#module-tf.transformations
-#   ref03 : https://pyformat.info/
-#   ref04 : https://www.w3schools.com/python/ref_func_print.asp
-#   ref05 : https://docs.python.org/3/whatsnew/3.0.html
+REFERENCE
+  ref01 : http://wiki.ros.org/ROS/Tutorials/WritingServiceClient(python)
+  ref02 : http://docs.ros.org/melodic/api/tf/html/python/transformations.html#module-tf.transformations
+  ref03 : https://pyformat.info/
+  ref04 : https://www.w3schools.com/python/ref_func_print.asp
+  ref05 : https://docs.python.org/3/whatsnew/3.0.html
+"""
 
 from __future__ import print_function
 
@@ -46,10 +48,11 @@ from constant import *
 
 
 class ThrusterMapper:
-    '''
+    """
     function init that is function to constructor class
     I will use to assign about const data that mean that data will not change
-    '''
+    """
+
     def __init__(self):
 
         rospy.init_node('control_thruster')

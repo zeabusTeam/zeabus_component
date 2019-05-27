@@ -1,14 +1,17 @@
 #!/usr/bin/env python
-# FILE			: lookup_pwm_force.py
-# AUTHOR		: K.Supasan
-# CREATE ON		: 2019, May 26 (UTC+0)
-# MAINTAINER	: K.Supasan
-# ORIGINAL FILE : can't remember for zeabus first generation
+"""
+FILE			: lookup_pwm_force.py
+AUTHOR		    : K.Supasan
+CREATE ON		: 2019, May 26 (UTC+0)
+MAINTAINER	    : K.Supasan
+ORIGINAL FILE   : can't remember for zeabus first generation
 
-# README
+README
 
-# REFERENCE
-#   ref1    : https://www.python.org/dev/peps/pep-0008/#tabs-or-spaces
+REFERENCE
+  ref1    : https://www.python.org/dev/peps/pep-0008/#tabs-or-spaces
+"""
+
 
 import rospy
 import rospkg
@@ -22,11 +25,12 @@ rospack = rospkg.RosPack()
 
 
 class lookup_pwm_force:
-
-    # 3 parameter will point to fild to collect data
-    #   package_name we will use ros lib to get path to ros
-    #   subdirectory will use append to package path
-    #   and file_name will be name file to end of string full path
+    """
+    3 parameter will point to fild to collect data
+      package_name we will use ros lib to get path to ros
+      subdirectory will use append to package path
+      and file_name will be name file to end of string full path
+    """
     def __init__(self,  package_name, subdirectory, file_name):
         fullpath = rospack.get_path(package_name) + \
             "/" + subdirectory + "/" + file_name

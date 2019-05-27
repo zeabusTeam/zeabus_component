@@ -1,13 +1,14 @@
 #!/usr/bin/env python
-# FILE			: read_file.py
-# AUTHOR		: K.Supasan
-# CREATE ON		: 2019, May 26 (UTC+0)
-# MAINTAINER	: K.Supasan
+"""
+FILE		: read_file.py
+AUTHOR		: K.Supasan
+CREATE ON	: 2019, May 26 (UTC+0)
+MAINTAINER	: K.Supasan
 
-# README
+README
 
-# REFERENCE
-
+REFERENCE
+"""
 
 class read_file:
 
