@@ -26,7 +26,7 @@
 
 // MACRO SET
 //#define _PROCESS_OBJECT_
-#define _PROCESS_STREAM_
+//#define _PROCESS_STREAM_
 
 #ifdef _PROCESS_OBJECT_
     #define _PROCESS_STREAM_

@@ -36,6 +36,7 @@ namespace count
 
     // what mean of compare? That mean I will compare with our data
     // return value will return for you about that same data or not
+    //      if not same data will return true and in other return false
     //      but count_over will return true if same_time > limit_count
     template< typename data_type >
     bool compare( data_type data , unsigned int limit_count , bool* count_over );
