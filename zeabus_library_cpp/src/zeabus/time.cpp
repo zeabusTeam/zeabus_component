@@ -67,7 +67,7 @@ namespace zeabus
                 std::cout   << "case 2 : " << result << "\n";
 #endif // _PRINT_PROCESS_ 
             case 1  :
-                result = zeabus::convert::integer::to_string( time->tm_year , 4 , delim ) 
+                result = zeabus::convert::integer::to_string( time->tm_year + 2000 , 4 , delim ) 
                         + result;
 #ifdef _PRINT_PROCESS_
                 std::cout   << "case 1 : " << result << "\n";
