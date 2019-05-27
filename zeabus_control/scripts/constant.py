@@ -17,6 +17,10 @@ _THRUSTER_MAPPER_UPDATED_ = True
 _THRUSTER_MAPPER_CALCULATE_PROCESS_ = True
 # Below constant will show you a result
 _THRUSTER_MAPPER_RESULT_ = True
+# Below constant will help you to see RPY instead quaternion
+_THRUSTER_MAPPER_EULER_ = True
+# Below constant will know about can call service to auv_state or not
+_THRUSTER_MAPPER_AUV_STATE_ = True
 
 if( _THRUSTER_MAPPER_CALCULATE_PROCESS_ ):
     _THRUSTER_MAPPER_RESULT_ = True
