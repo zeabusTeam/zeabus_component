@@ -8,7 +8,7 @@ add_library( ROSVector3Filter SHARED
     path_file.cpp
     vector3_filter.cpp
 )
-target_link_libraries( ROSVector3Filter ${catkin_LIBRARIES} Array)
+target_link_libraries( ROSVector3Filter ${catkin_LIBRARIES} Array ROSConvert)
 
 add_library( ROSQuaternionFilter SHARED
     path_file.cpp

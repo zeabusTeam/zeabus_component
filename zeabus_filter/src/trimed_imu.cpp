@@ -8,6 +8,7 @@
 //  _COLLECT_LOG_   :   This will collect all log in this code
 //  _LOG_IN_OUT_    :   This will collect all log about pair data of input and output
 //  _DEBUG_PROCESS_ :   This will help you to see process code
+//  _SUMMARY_       :   This will help you easy to debug and see about this operated
 
 // README
 //  IMU filter this find we will have to convert quaternion to roll pitch yaw because if I use
@@ -204,6 +205,9 @@ int main( int argv , char** argc )
 
     while( ptr_node_handle->ok() )
     {
+#ifdef _SUMMARY_
+        zeabus::escape_code::clear_screen();
+#endif // _SUMMARY_
         rate.sleep();
         (void)client_imu_sensor.normal_call();
         if( zeabus::count::compare( input_data.header.stamp , limit_same_time , &time_over ) )
@@ -229,6 +233,12 @@ int main( int argv , char** argc )
 #ifdef _LOG_FILTER_
             file_filter.logging( &time_stamp , input_filter , output_filter );
 #endif // _LOG_FILTER_
+#ifdef _SUMMARY_
+            std::cout   << "Input Euler  : " << input_filter[0] << " "
+                        << input_filter[1] << " " << input_filter[2]
+                        << "Output Euler : " << output_filter[0] << " "
+                        << output_filter[1] << " " << output_filter[2] << "\n";
+#endif // _SUMMARY_
 #ifdef _LOG_IN_OUT_
             file_in_out.logging( &time_stamp , &(input_data.orientation) 
                     , &(output_data.orientation ) );

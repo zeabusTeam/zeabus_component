@@ -32,6 +32,8 @@
 
 #include    <zeabus/ros_interfaces/single_thread.hpp>
 
+#include    <zeabus/ros_interfaces/file/vector3_filter.hpp>
+
 #include    <zeabus/service/get_data/geometry_vector3_stamped.hpp>
 
 #include    <zeabus/client/single_thread/get_geometry_vector3_stamped.hpp>
@@ -81,7 +83,7 @@ int main( int argv , char** argc )
     // Option part about log file ig you want to do must define _COLLECT_LOG_
 #ifdef _COLLECT_LOG_
     zeabus::ros_interfaces::file::Vector3Filter my_file;
-    my_file.setup_pacakge( "zeabus_log" );
+    my_file.setup_package( "zeabus_log" );
     my_file.setup_subdirectory( "log/filter/dvl" );
     my_file.setup_file_name( "dvl_trimed_mean" + zeabus::local_time( 6 ) + ".txt" );
     (void)my_file.open();
