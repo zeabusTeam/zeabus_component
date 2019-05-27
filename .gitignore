@@ -33,3 +33,9 @@
 
 # Adding by user
 *.swp
+
+# Vscode
+.vscode
+
+# python
+*.pyc
