@@ -101,7 +101,7 @@ int main( int argv , char** argc )
     maestro_server.setup_ptr_mutex_data( ptr_mutex_data );
     maestro_server.setup_ptr_data( &temp_target_pwm , thruster_size , &time_updated );
 
-    bool node_status = maestro_server.setup_server_service( "/hardware/pwm");
+    bool node_status = maestro_server.setup_server_service( "/hardware/thruster_throttle");
     if( !node_status )
     {
         status_node = false;
