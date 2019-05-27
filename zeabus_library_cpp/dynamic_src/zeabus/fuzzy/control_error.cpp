@@ -58,11 +58,19 @@ namespace fuzzy
     } // function set_diff_range
 
     template< unsigned int buffer_size >
-    void ControlError:;set_force_range( double low , double medium , double high )
+    void ControlError::set_force_range( double low , double medium , double high )
     {
         (this->force_range)[0] = fabs( low );
         (this->force_range)[1] = fabs( meidum );
         (this->force_range)[2] = fabs( high );
+    }
+
+    template< unsigned int buffer_size >
+    void set_relative_value( double low , double medium , double high )
+    {
+        (this->relative_value)[0] = fabs( low );
+        (this->relative_value)[1] = fabs( medium );
+        (this->relative_value)[2] = fabs( high );
     }
 
     template< unsigned int buffer_size >
@@ -94,13 +102,25 @@ namespace fuzzy
     template< unsigned int buffer_size >
     double ControlError::output_condition()
     {
-        
+        ;
+        // Above this line will be have condition to estimate or june output data
+        this->buffer_output = this->output;
     } // function output_condition
 
     template< unsigned int buffer_size >
     double ControlError::rule_condition()
     {
+        this->result_fuzzy = (this->rule_table)[ this->error_fuzzy ][ this->diff_error ];
+        double temp_data = (this->relative_value)[ fabs( this->result_fuzzy ) ];
+        this->output = this->buffer_output + fabs( temp_data  , this->result_fuzzy);
+        this->output_condition();
     } // function rule_condition
+
+    template< unsigned int buffer_size >
+    void ControlError::set_rule_condition( std::array< std::array< double , 7 > , 7 >* rule )
+    {
+      this->rule_table = *rule; 
+    }
 
     template< unsigned int buffer_size >
     double ControlError::fuzzy_condition( double error )
