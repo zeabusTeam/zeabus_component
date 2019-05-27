@@ -39,3 +39,8 @@
 
 # python
 *.pyc
+
+#log file we will don't push to repository
+zeabus_log/log/*.txt
+zeabus_log/log/*/*.txt
+zeabus_log/log/*/*/*.txt
