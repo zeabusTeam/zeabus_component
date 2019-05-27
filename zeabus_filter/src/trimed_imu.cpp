@@ -21,7 +21,7 @@
 //#define _LOG_IN_OUT_
 #define _COLLECT_LOG_
 //#define _DEBUG_PROCESS_
-#define _PROCESS_
+//#define _PROCESS_
 
 // MACRO COMMAND
 #ifdef _COLLECT_LOG_
@@ -115,7 +115,7 @@ int main( int argv , char** argc )
     zeabus::ros_interfaces::file::Vector3Filter file_filter;
     file_filter.setup_package( "zeabus_log" );
     file_filter.setup_subdirectory("log/filter/imu");
-    file_filter.setup_file_name("imu_trimed_mean" + zeabus::local_time( 6) + ".txt" );
+    file_filter.setup_file_name("imu_trimed_mean_" + zeabus::local_time( 6 ) + ".txt" );
     process_code = file_filter.open();
     if( !process_code )
     {
@@ -127,7 +127,7 @@ int main( int argv , char** argc )
     zeabus::ros_interfaces::file::QuaternionFilter file_in_out;
     file_in_out.setup_package("zeabus_log");
     file_in_out.setup_subdirectory( "log/filter/imu" );
-    file_in_out.setup_file_name( "imu_quaternion" + zeabus::local_time( 6 ) + ".txt" );
+    file_in_out.setup_file_name( "imu_quaternion_" + zeabus::local_time( 6 ) + ".txt" );
     process_code = file_in_out.open();
     if( !process_code )
     {

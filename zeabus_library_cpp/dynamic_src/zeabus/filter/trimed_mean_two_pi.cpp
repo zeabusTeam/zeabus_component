@@ -92,7 +92,7 @@ namespace filter
         }
         this->result /= buffer_size - (2*trim_size);
 #ifdef _SHOW_CAL_
-        std::cout   << "Result is " << this->result;
+        std::cout   << "Result is " << this->result << "\n";
 #endif // _SHOW_CAL_
     } // function calculate 
 
