@@ -10,12 +10,14 @@
 //  _DECLARE_UPDATED_   : this macro will declate you can't update data or not
 //  _SUMMARY_           : this macro will include _DECLARE_UPDATED_ and show last result
 //                          now available only euler
+//  _IMU_ENU_SYSTEM_    : if you macro this. This programe will not convert data from NED to ENU
 
 // MACRO SET
 //#define _DECLARE_PROCESS_ 
 //#define _PRINT_DATA_STREAM_
 //#define _DECLARE_UPDATED_
 #define _SUMMARY_
+#define _IMU_ENU_SYSTEM_
 
 // MACRO CONDITION
 #ifdef _SUMMARY_
@@ -51,7 +53,7 @@ namespace IMUProtocal = zeabus::sensor::IMU::LORD_MICROSTRAIN;
 
 int main( int argv , char** argc )
 {
-    zeabus::sensor::IMU::Connector imu("/dev/microstrain/3dm_gx5_45_0000__6251.65901" , 100 );
+    zeabus::sensor::IMU::Connector imu("/dev/microstrain/3dm_gx5_45_0000__6251.65903" , 100 );
 
     zeabus::ros_interfaces::SingleThread imu_node( argv , argc , "imu_node");
 
@@ -65,7 +67,6 @@ int main( int argv , char** argc )
 #endif // _DECLARE_PROCESS_
 
     bool status_file = true ; // use collect response of function
-    bool skip_process = false; // use to don't do that process and don't alert
     unsigned int round = 0;
     unsigned int limit_round = 6; // if you want to try n round set limit_round = n + 1
 
@@ -73,11 +74,11 @@ int main( int argv , char** argc )
     if(  ! status_file )
     {
         std::cout << "Failure to open port imu\n";
-        skip_process = true;
     }
 #ifdef _DECLARE_PROCESS_
     else{
         std::cout << "Finish open_port process\n";
+        ros::shutdown();
     }
 #endif // _DECLARE_PROCESS_
 
@@ -94,7 +95,7 @@ int main( int argv , char** argc )
 #endif // _DECLARE_PROCESS_
 
     round = 0; // set init value counter is 0 for start process
-    while( ( ! skip_process ) && ptr_node_handle->ok() )
+    while( ptr_node_handle->ok() )
     {
         round++;
         status_file = imu.set_idle(); // try to set imu to idle state
@@ -109,98 +110,24 @@ int main( int argv , char** argc )
         }
         if( round == (limit_round * 20) )
         {
-            skip_process = true;
+            ros::shutdown();
         }
     }
 
-    round = 0; // set init value counter is 0 for start process
-    while( ( ! skip_process ) && ptr_node_handle->ok() )
+    if( ptr_node_handle->ok() )
     {
-        round++;
         status_file = imu.ping();
-        if( ! status_file )
-        {
-            std::cout   << "round " << round << " : Failure command ping\n";
-        }
-        else
-        {
-            std::cout   << "round " << round << " : Success command ping\n\n";
-            break; // jump sunccess this process
-        }
-        if( round == limit_round )
-        {
-            skip_process = true;
-        }
-    }
 
-    imu.set_IMU_rate( 50 ); // send in mode Rate Decimation = IMU Base Rate / Desired Data Rate
+        imu.set_IMU_rate( 50 ); 
 
-    round = 0;
-    while( ( ! skip_process ) && ptr_node_handle->ok() )
-    {
-        round++;
         status_file = imu.set_IMU_message_format( 
                 IMUProtocal::DATA::IMU_DATA_SET::SCALED_ACCELEROMETER_VECTOR 
                 , IMUProtocal::DATA::IMU_DATA_SET::SCALED_GYRO_VECTOR
                 , IMUProtocal::DATA::IMU_DATA_SET::CF_QUATERNION );
-        if( ! status_file )
-        {
-            std::cout   << "round " << round << " : Failure command set IMU message format\n";
-        }
-        else
-        {
-            std::cout   << "round " << round << " : Success command set IMU message format\n";
-            break;
-        }
-        if( round == limit_round )
-        {
-            skip_process = true;
-        }
-    }
-    // we not save because we have new set up always want to use
 
-    round = 0;
-    while( ( ! skip_process ) && ptr_node_handle->ok() )
-    {
-        round++;
         status_file = imu.enable_IMU_data_stream();
-        if( ! status_file )
-        {
-            std::cout   << "round " << round 
-                        << " : Failure command set enable IMU data stream\n";
-        }
-        else
-        {   
-            std::cout   << "round " << round 
-                        << " : Success command set enable IMU data stream\n";
-            break;
-        }
-        if( round == limit_round )
-        {
-            skip_process = true;
-        }
-    }
 
-    round = 0;
-    while( ( ! skip_process ) && ptr_node_handle->ok() )
-    {
-        round++;
         status_file = imu.resume();
-        if( ! status_file )
-        {
-            std::cout   << "round " << round 
-                        << " : Failure command resume data stream\n";
-        }
-        else
-        {
-            std::cout   << "round " << round 
-                        << " : Success command resume data stream\n";
-            break;
-        }
-        if( round == limit_round )
-        {
-            skip_process = true;
-        }
     }
 
 #ifdef _DECLARE_PROCESS_
@@ -214,22 +141,7 @@ int main( int argv , char** argc )
     zeabus::service::get_data::SensorImu imu_server( ptr_node_handle );
     imu_server.register_data( &message );
     imu_server.setup_ptr_mutex_data( ptr_mutex_data );
-    bool result = imu_server.setup_server_service( "/sensor/imu" );
-    if( ! result )
-    {
-        std::cout   << "Failure setup service\n";
-        skip_process = true;
-    }
-
-    if( ! skip_process ){
-        result = imu_node.spin();
-    }
-
-    if( ! result )
-    {
-        std::cout   << "Unsucess spin\n";
-        skip_process = true;
-    }
+    (void)imu_server.setup_server_service( "/sensor/imu" );
 
 #ifdef _DECLARE_PROCESS_
     std::cout   << "Now start streaming data\n";
@@ -239,12 +151,10 @@ int main( int argv , char** argc )
     tf::Quaternion temp_quaternion;
     double temp_RPY[3];
 #endif
-    unsigned int limit_number;    
-    while( ( ptr_node_handle->ok() && ( ! skip_process ) ) )
+
+    unsigned int limit_number = 10;    
+    while( ptr_node_handle->ok() )
     {
-#ifdef _PRINT_DATA_STREAM_
-        std::cout   << "Read data form IMU\n";
-#endif // _PRINT_DATA_STREAM_
         status_file = imu.read_stream();
         if( status_file )
         {
@@ -255,12 +165,12 @@ int main( int argv , char** argc )
             {
                 std::cout << "This not packet for data stream skip out\n";
                 continue;
-            }
+            } 
             // start at position 5 indent 0 1 2 3  
             // because 0 - 4 is header and description of data packet
             // pattern of packet for 0 1 2 3 4 are u e DESC_Packet Payload_length Field_length
             limit_number = imu.size_member() - 2 ;
-            for( unsigned int run = 5 ; ( run < limit_number ) && ( ! skip_process ) ; )
+            for( unsigned int run = 5 ; ( run < limit_number ) && ptr_node_handle->ok() ; )
             {
                 switch (imu.access_data( run ) )
                 {
@@ -290,34 +200,25 @@ int main( int argv , char** argc )
                     break;
                 default :
                     std::cout   << "Switch case error for convert bits data to ros message\n";
-                    skip_process = true;
+                    ros::shutdown();
                     break;
                 }
                 temporary_message.header.stamp = ros::Time::now();
             } // loop for of get data
-            if( ptr_mutex_data->try_lock() )
-            {
-                message = temporary_message;
-                ptr_mutex_data->unlock();
+            message = temporary_message;
+            ptr_mutex_data->unlock();
 #ifdef _DECLARE_UPDATED_
-                std::cout   << zeabus::escape_code::bold_yellow
-                            << "Update IMU data\n" << zeabus::escape_code::normal_white;
+            std::cout   << zeabus::escape_code::bold_yellow
+                        << "Update IMU data\n" << zeabus::escape_code::normal_white;
 #endif // _DECLARE_UPDATED_
 #ifdef _SUMMARY_
-                zeabus::ros_interfaces::convert::quaternion_tf( 
-                        &temporary_message.orientation , &temp_quaternion );
-                tf::Matrix3x3( temp_quaternion ).getRPY( temp_RPY[0], temp_RPY[1], temp_RPY[2] );
-                std::cout   << "Data in Euler is " << temp_RPY[0] << " " << temp_RPY[1] 
-                            << " " << temp_RPY[2] << "\n";
+            zeabus::ros_interfaces::convert::quaternion_tf( 
+                    &temporary_message.orientation 
+                    , &temp_quaternion );
+            tf::Matrix3x3( temp_quaternion ).getRPY( temp_RPY[0], temp_RPY[1], temp_RPY[2] );
+            std::cout   << "Data in Euler is " << temp_RPY[0] << " " << temp_RPY[1] 
+                        << " " << temp_RPY[2] << "\n";
 #endif
-            }
-#ifdef _DECLARE_UPDATED_
-            else
-            {
-                std::cout   << zeabus::escape_code::bold_red  << "Did't update IMU data\n" 
-                            << zeabus::escape_code::normal_white;
-            }
-#endif //  _DECLARE_UPDATED_ 
         } // condition have packet of data stream
 #ifdef _DECLARE_UPDATED_
         else
@@ -328,8 +229,9 @@ int main( int argv , char** argc )
 #endif // _DECLARE_UPDATED_
     } // loop while for doing in ros system
 
+    // Below step we want to ensure in case we not use imu. Imu will stop process data stream
     round = 0; // set init value counter is 0 for start process
-    while( imu.port_is_open() ) //
+    while( imu.port_is_open() ) 
     {
         round++;
         status_file = imu.set_idle(); // try to set imu to idle state
@@ -344,6 +246,8 @@ int main( int argv , char** argc )
         }
     }
 
+    ros::shutdown();
+
     std::cout   << "Now close port of imu\n";
     imu.close_port();
 
@@ -351,4 +255,5 @@ int main( int argv , char** argc )
     std::cout   << "Wait join from thread\n";
     imu_node.join();
 
+    return 0;
 }
