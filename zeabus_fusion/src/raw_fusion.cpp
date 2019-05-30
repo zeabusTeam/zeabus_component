@@ -9,6 +9,7 @@
 //  _ROBOT_DATA_    : This mean will show current data of robot by all sensor include position
 //  _RAW_DATA_      : This macro will show you raw data to get from filter
 //  _PROCESS_       : This macro use you can know about process of this code
+//  _DELAY_DVL_     : This use when you worry about dvl have low speed
 
 // README
 //  This will you data from 3 node to fusion but use only simple equation to fusion data
@@ -87,7 +88,7 @@ int main( int argv , char** argc )
     static std::string dvl_topic = "/filter/dvl";
     static std::string imu_topic = "/sensor/imu";
     static std::string pressure_topic = "/filter/pressure";
-    static double temp_RPY[3] = { 0 , 0 , zeabus::radian::negate_half_pi };
+    static double temp_RPY[3] = { 0 , 0 , 0 };
     static tf::Quaternion offset_quaternion;;
     offset_quaternion.setRPY( temp_RPY[0] , temp_RPY[1] , temp_RPY[2] );
 
@@ -178,19 +179,19 @@ int main( int argv , char** argc )
         }
         else
         {
+#ifdef _DELAY_DVL_
             // we worry about data dvl doesn't fast to get new data
             count_dvl++;
+#else
+            status_data &= 0b110; // bit DVL false
+#endif
         }
 
         // IMU CHECK
         if( imu_stamp != imu_data.header.stamp )
         {
             imu_stamp = imu_data.header.stamp;
-            zeabus::ros_interfaces::convert::vector3_quaternion( &(imu_data.angular_velocity ) 
-                    , &temp_quaternion );
-            temp_quaternion = offset_quaternion *temp_quaternion* (offset_quaternion.inverse());
-            zeabus::ros_interfaces::convert::quaternion_vector3( 
-                    &temp_quaternion , &(temp_data.data.twist.twist.angular) );
+            temp_data.data.twist.twist.angular = imu_data.anngular_velocity; 
 #ifdef _PROCESS_
             std::cout   << "Update angular_velocity!\n";
 #endif // _PROCESS_
@@ -211,6 +212,7 @@ int main( int argv , char** argc )
         {
             status_data &= 0b011;
         }
+
         // Next we will rotation imu data
         if( (status_data & 0b010) != 0 )
         {
