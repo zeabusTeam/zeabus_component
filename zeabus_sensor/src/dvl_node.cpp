@@ -96,7 +96,7 @@ int main( int argv , char** argc )
     std::thread thread_id;
     geometry_msgs::Vector3Stamped message;
     geometry_msgs::Vector3Stamped temp_message;
-    message.header.frame_id = "dvl";
+    message.header.frame_id = "base_link_dvl";
     zeabus::service::get_data::GeometryVector3Stamped dvl_server( ptr_node_handle );
     dvl_server.register_data( &message );
     dvl_server.setup_ptr_mutex_data( ptr_mutex_data );
