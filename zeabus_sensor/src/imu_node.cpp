@@ -17,11 +17,15 @@
 //#define _PRINT_DATA_STREAM_
 //#define _DECLARE_UPDATED_
 #define _SUMMARY_
-#define _IMU_ENU_SYSTEM_
+#define _IMU_NED_MODE_
 
 // MACRO CONDITION
 #ifdef _SUMMARY_
     #define _DECLARE_UPDATED_
+#endif
+
+#ifdef _IMU_NED_MODE_
+    #define _SUMMARY_
 #endif
 
 #include    <vector>
@@ -35,6 +39,8 @@
 #include    <zeabus/escape_code.hpp>
 
 #include    <tf/LinearMath/Matrix3x3.h>
+
+#include    <tf/LinearMath/Quaternion.h>
 
 #include    <zeabus/sensor/IMU/connector.hpp>
 
@@ -55,7 +61,15 @@ int main( int argv , char** argc )
 {
     zeabus::sensor::IMU::Connector imu("/dev/microstrain/3dm_gx5_45_0000__6251.65903" , 100 );
 
-    zeabus::ros_interfaces::SingleThread imu_node( argv , argc , "imu_node");
+#ifdef _IMU_NED_MODE_
+    std::string node_name = "imu_node_ned";
+    const static tf::Quaternion convert_conventions( 0.7071 , 0.7071 , 0 , 0 );
+#else
+    std::string node_name = "imu_node";
+#endif
+
+
+    zeabus::ros_interfaces::SingleThread imu_node( argv , argc , node_name );
 
     std::shared_ptr< ros::NodeHandle > ptr_node_handle = 
             std::make_shared< ros::NodeHandle >("");
@@ -68,7 +82,7 @@ int main( int argv , char** argc )
 
     bool status_file = true ; // use collect response of function
     unsigned int round = 0;
-    unsigned int limit_round = 6; // if you want to try n round set limit_round = n + 1
+    unsigned int limit_round = 20; // if you want to try n round set limit_round = n + 1
 
     status_file = imu.open_port();
     if(  ! status_file )
@@ -108,7 +122,7 @@ int main( int argv , char** argc )
             std::cout   << "round " << round << " : Success command set idle\n\n";
             break; // jump success this process
         }
-        if( round == (limit_round * 20) )
+        if( round == (limit_round) )
         {
             ros::shutdown();
         }
@@ -116,18 +130,17 @@ int main( int argv , char** argc )
 
     if( ptr_node_handle->ok() )
     {
-        status_file = imu.ping();
+        (void)imu.ping();
 
         imu.set_IMU_rate( 50 ); 
-
-        status_file = imu.set_IMU_message_format( 
+        (void)imu.set_IMU_message_format( 
                 IMUProtocal::DATA::IMU_DATA_SET::SCALED_ACCELEROMETER_VECTOR 
                 , IMUProtocal::DATA::IMU_DATA_SET::SCALED_GYRO_VECTOR
                 , IMUProtocal::DATA::IMU_DATA_SET::CF_QUATERNION );
 
-        status_file = imu.enable_IMU_data_stream();
+        (void)imu.enable_IMU_data_stream();
 
-        status_file = imu.resume();
+        (void)imu.resume();
     }
 
 #ifdef _DECLARE_PROCESS_
@@ -136,7 +149,7 @@ int main( int argv , char** argc )
 
     sensor_msgs::Imu message;
     sensor_msgs::Imu temporary_message;
-    message.header.frame_id = "imu";
+    message.header.frame_id = "base_link_imu";
 
     zeabus::service::get_data::SensorImu imu_server( ptr_node_handle );
     imu_server.register_data( &message );
@@ -205,12 +218,26 @@ int main( int argv , char** argc )
                 }
                 temporary_message.header.stamp = ros::Time::now();
             } // loop for of get data
+
+            // Below macro condtion if use set IMU is NED conventions we will convert before out
+#ifdef _SUMMARY_
+            zeabus::escape_code::clear_screen();
+#endif // _SUMMARY_ 
+#ifdef _IMU_NED_MODE_
+            zeabus::ros_interfaces::convert::quaternion_tf(
+                    &temporary_message.orientation , &temp_quaternion );
+            tf::Matrix3x3( temp_quaternion ).getRPY( temp_RPY[0], temp_RPY[1], temp_RPY[2] );
+            std::cout   << "NED system : " << temp_RPY[0] << " " << temp_RPY[1] 
+                        << " " << temp_RPY[2] << "\n";
+            temp_quaternion = convert_conventions*temp_quaternion;
+            zeabus::ros_interfaces::convert::tf_quaternion(
+                    &temp_quaternion , &temporary_message.orientation );
+#endif
+
+            ptr_mutex_data->lock();
             message = temporary_message;
             ptr_mutex_data->unlock();
-#ifdef _DECLARE_UPDATED_
-            std::cout   << zeabus::escape_code::bold_yellow
-                        << "Update IMU data\n" << zeabus::escape_code::normal_white;
-#endif // _DECLARE_UPDATED_
+
 #ifdef _SUMMARY_
             zeabus::ros_interfaces::convert::quaternion_tf( 
                     &temporary_message.orientation 
@@ -219,6 +246,12 @@ int main( int argv , char** argc )
             std::cout   << "Data in Euler is " << temp_RPY[0] << " " << temp_RPY[1] 
                         << " " << temp_RPY[2] << "\n";
 #endif
+
+#ifdef _DECLARE_UPDATED_
+            std::cout   << zeabus::escape_code::bold_yellow
+                        << "Update IMU data\n" << zeabus::escape_code::normal_white;
+#endif // _DECLARE_UPDATED_
+
         } // condition have packet of data stream
 #ifdef _DECLARE_UPDATED_
         else
@@ -248,12 +281,12 @@ int main( int argv , char** argc )
 
     ros::shutdown();
 
-    std::cout   << "Now close port of imu\n";
     imu.close_port();
+    std::cout   << "Now close port of imu\n";
 
     // We want to ensure other thread have been close defend core dump
-    std::cout   << "Wait join from thread\n";
     imu_node.join();
+    std::cout   << "finish join from thread\n";
 
     return 0;
 }
