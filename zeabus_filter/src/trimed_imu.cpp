@@ -91,7 +91,7 @@ int main( int argv , char** argc )
     // Third part shared variable in this case is variable for input and output
     sensor_msgs::Imu input_data;
     sensor_msgs::Imu output_data;
-    output_data.header.frame_id = "filter/imu";
+    output_data.header.frame_id = "base_link_imu";
     ros::Time time_stamp = ros::Time::now();
     ros::Rate rate( frequency );
     double input_filter[3];
