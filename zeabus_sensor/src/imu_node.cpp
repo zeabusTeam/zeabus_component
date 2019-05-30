@@ -149,7 +149,7 @@ int main( int argv , char** argc )
 
     sensor_msgs::Imu message;
     sensor_msgs::Imu temporary_message;
-    message.header.frame_id = "base_link_imu";
+    message.header.frame_id = "base_imu";
 
     zeabus::service::get_data::SensorImu imu_server( ptr_node_handle );
     imu_server.register_data( &message );

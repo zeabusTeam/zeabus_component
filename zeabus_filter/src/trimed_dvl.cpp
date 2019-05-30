@@ -64,7 +64,7 @@ int main( int argv , char** argc )
     // Third part shared variable in this case is variable for input and output
     geometry_msgs::Vector3Stamped input_data;
     geometry_msgs::Vector3Stamped output_data;
-    output_data.header.frame_id = "base_link_dvl";
+    output_data.header.frame_id = "base_dvl";
     ros::Time time_stamp = ros::Time::now();
     ros::Rate rate( frequency );
 

@@ -61,7 +61,6 @@
 
 #include    <zeabus/ros_interfaces/convert/geometry_msgs.hpp>
 
-void NED_to_ENU( tf::Quaternion* data );
 void rotation_linear( const geometry_msgs::Vector3* source , geometry_msgs::Vector3* result 
         , tf::Quaternion* rotation );
 
@@ -128,7 +127,7 @@ int main( int argv , char** argc )
 
     ros::Rate rate( frequency );
     // Init data first time
-    service_data.data.header.frame_id = "robot";
+    service_data.data.header.frame_id = "odom";
     service_data.data.twist.twist.linear.x = 0;
     service_data.data.twist.twist.linear.y = 0;
     service_data.data.twist.twist.linear.z = 0;
@@ -139,12 +138,15 @@ int main( int argv , char** argc )
     {
 #ifdef _PROCESS_
         std::cout   << "Time start call : " << zeabus::ros_interfaces::time::string() << "\n";
-#endif
+#endif // _PROCESS_
+
         client_data.all_call(); 
         client_data.thread_join();
+
 #ifdef _PROCESS_
         std::cout   << "Time end call : " << zeabus::ros_interfaces::time::string() << "\n";
-#endif
+#endif // _PROCESS_
+
 #ifdef _RAW_DATA_
         std::cout   << "DVL data time : " << dvl_data.header.stamp.sec << "."
                     << dvl_data.header.stamp.nsec << "\n"
@@ -159,8 +161,10 @@ int main( int argv , char** argc )
                     << pressure_data.header.stamp.nsec << " data is "
                     << pressure_data.data << "\n";
 #endif // _RAW_DATA_
+
         // This part will check about time stamp and set status of message
         status_data = 0b111; // start at every data is ok
+
         // DVL CHECK
         if( dvl_stamp != dvl_data.header.stamp )
         {
@@ -170,12 +174,15 @@ int main( int argv , char** argc )
             temp_data.data.twist.twist.linear.z = dvl_data.vector.z/1000;
 #ifdef _PROCESS_
             std::cout   << "Update linear_velocity!\n";
-#endif
+#endif // _PROCESS_
         }
         else
         {
+            // we worry about data dvl doesn't fast to get new data
             count_dvl++;
         }
+
+        // IMU CHECK
         if( imu_stamp != imu_data.header.stamp )
         {
             imu_stamp = imu_data.header.stamp;
@@ -186,12 +193,13 @@ int main( int argv , char** argc )
                     &temp_quaternion , &(temp_data.data.twist.twist.angular) );
 #ifdef _PROCESS_
             std::cout   << "Update angular_velocity!\n";
-#endif
+#endif // _PROCESS_
         }
         else
-        {
+        {   // We sure imu should have new data
             status_data &= 0b101; 
         }
+
         if( pressure_stamp != pressure_data.header.stamp )
         {
 #ifdef _PROCESS_
@@ -208,7 +216,6 @@ int main( int argv , char** argc )
         {
             zeabus::ros_interfaces::convert::quaternion_tf( &(imu_data.orientation) 
                     , &temp_quaternion );
-            NED_to_ENU( &temp_quaternion ); 
             temp_quaternion = offset_quaternion * temp_quaternion ;
 #ifdef _ROBOT_DATA_
             tf::Matrix3x3( temp_quaternion ).getRPY( temp_RPY[0], temp_RPY[1], temp_RPY[2] );

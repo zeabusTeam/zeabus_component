@@ -80,7 +80,7 @@ int main( int argv, char** argc )
     // Third part shared variable in this case is variable for input and output
     zeabus_utility::HeaderFloat64 input_data;
     zeabus_utility::HeaderFloat64 output_data;
-    output_data.header.frame_id = "base_link_pressure";
+    output_data.header.frame_id = "base_pressure";
     ros::Time time_stamp = ros::Time::now(); // Time stamp for check new or old data
     ros::Rate rate( frequency ); 
     
