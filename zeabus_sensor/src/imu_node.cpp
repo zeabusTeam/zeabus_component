@@ -165,6 +165,7 @@ int main( int argv , char** argc )
     double temp_RPY[3];
 #endif
 
+    imu_node.spin();
     unsigned int limit_number = 10;    
     while( ptr_node_handle->ok() )
     {
@@ -229,7 +230,10 @@ int main( int argv , char** argc )
             tf::Matrix3x3( temp_quaternion ).getRPY( temp_RPY[0], temp_RPY[1], temp_RPY[2] );
             std::cout   << "NED system : " << temp_RPY[0] << " " << temp_RPY[1] 
                         << " " << temp_RPY[2] << "\n";
-            temp_quaternion = convert_conventions*temp_quaternion;
+            temp_quaternion = convert_conventions*temp_quaternion*convert_conventions.inverse();
+            std::cout   << "Use quaternion convert : " << convert_conventions.x() << " "
+                        << convert_conventions.y() << " " << convert_conventions.z() 
+                        << " " << convert_conventions.w() << "\n";
             zeabus::ros_interfaces::convert::tf_quaternion(
                     &temp_quaternion , &temporary_message.orientation );
 #endif
