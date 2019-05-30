@@ -191,7 +191,7 @@ int main( int argv , char** argc )
         if( imu_stamp != imu_data.header.stamp )
         {
             imu_stamp = imu_data.header.stamp;
-            temp_data.data.twist.twist.angular = imu_data.anngular_velocity; 
+            temp_data.data.twist.twist.angular = imu_data.angular_velocity; 
 #ifdef _PROCESS_
             std::cout   << "Update angular_velocity!\n";
 #endif // _PROCESS_

@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<package format="2">
+
+    <name>zeabus_model</name>
+    <author>K.Supasan</author>
+
+    <version>0.5.0</version>
+    <description>This package have purpose to promote or declare about model of robot include tf transform to help about visualize in rviz</description>
+
+    <maintainer email="supasan.k@ku.th">K.Supasan</maintainer>
+
+    <license>MIT</license>
+
+    <buildtool_depend>catkin</buildtool_depend>
+
+    <build_depend>roscpp</build_depend>
+    <exec_depend>roscpp</exec_depend>
+
+    <build_depend>tf</build_depend>
+    <exec_depend>tf</exec_depend>
+
+</package>
