@@ -4,6 +4,8 @@
 
 #include    <iostream>
 
+#include    <zeabus/escape_code.hpp>
+
 // This file header have purpose to include file for convert string to another type
 // Type available 
 //      interger
