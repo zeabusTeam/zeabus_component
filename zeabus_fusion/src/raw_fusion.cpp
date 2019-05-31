@@ -24,7 +24,7 @@
 #define _IMU_CONVERTER_
 #define _SUMMARY_
 //#define _PROCESS_
-//#define _DELAY_DVL_
+#define _DELAY_DVL_
 #define _BOUND_ZERO_
 
 // MACRO CONDITION
@@ -91,7 +91,7 @@ int main( int argv , char** argc )
     // Insert optional part param part
     static signed int frequency = 30;
     static std::string dvl_topic = "/filter/dvl";
-    static std::string imu_topic = "/sensor/imu";
+    static std::string imu_topic = "/filter/imu";
     static std::string pressure_topic = "/filter/pressure";
     static double temp_RPY[3] = { 0 , 0 , 0 };
     static tf::Quaternion offset_quaternion;;
@@ -130,6 +130,7 @@ int main( int argv , char** argc )
 #ifdef _DELAY_DVL_
     static unsigned int count_dvl = 5;
 #endif
+    static unsigned int count_imu = 0;
     static tf::Quaternion temp_quaternion;
     // But first time is only about dvl time_stamp
 
@@ -206,9 +207,14 @@ int main( int argv , char** argc )
 #ifdef _PROCESS_
             std::cout   << "Update angular_velocity!\n";
 #endif // _PROCESS_
+            count_imu = 0;
+        }
+        else if( count_imu < 3 )
+        {   // We sure imu should have new data
+            count_imu++;
         }
         else
-        {   // We sure imu should have new data
+        {
             status_data &= 0b101; // bit IMU failure 
         }
 
@@ -257,6 +263,7 @@ int main( int argv , char** argc )
 #endif
             else
             {
+                count_dvl = 0;
                 robot_distance.x = ( service_data.data.twist.twist.linear.x 
                         + temp_data.data.twist.twist.linear.x ) / ( frequency * 2 );
                 robot_distance.y = ( service_data.data.twist.twist.linear.y 
@@ -283,6 +290,12 @@ int main( int argv , char** argc )
                             << world_distance.x << " : " << world_distance.y << std::endl;
 #endif // _SUMMARY_ 
             }
+        }
+        else
+        {
+            std::cout   << zeabus::escape_code::bold_margenta
+                        << "condition imu didn't ok\n"
+                        << zeabus::escape_code::normal_white;
         }
 #ifdef _SUMMARY_
         std::cout   << "ROBOT Position < x , y , z > : < " 
