@@ -4,7 +4,6 @@
 // MAINTAINER	: K.Supasan
 
 // MACRO DETAIL
-// _PROCESS_    : You to declare your process of calculate
 // _SHOW_DATA_  : You will see all data to help you check calculate
 // _SHOW_RPY_   : This will print RPY of target and current
 
@@ -14,7 +13,6 @@
 // REFERENCE
 
 // MACRO SET
-//#define _PROCESS_
 #define _SHOW_DATA_
 #define _SHOW_RPY_
 
@@ -55,6 +53,7 @@
 #include    <zeabus/client/single_thread/send_control_command.hpp>
 
 int read_bit_value( unsigned char status );
+std::string read_bool( bool data );
 
 int main( int argv , char** argc )
 {
@@ -117,15 +116,8 @@ int main( int argv , char** argc )
         zeabus::escape_code::clear_screen();
 #endif
 
-#ifdef _PROCESS_
-        std::cout   << zeabus::ros_interfaces::string() 
-                    <<" : Control Interfaces start normal_call AUVState\n";
-#endif
         (client_control_state).normal_call();
-#ifdef _PROCESS_
-        std::cout   << zeabus::ros_interfaces::string()
-                    << " : Control Interfaces finish normal_call AUVState\n";
-#endif
+
         // loop part : zero step tune current state
         zeabus::ros_interfaces::convert::quaternion_tf( 
                 &current_state.data.pose.pose.orientation , &current_quaternion ); 
@@ -138,11 +130,8 @@ int main( int argv , char** argc )
             tf::Matrix3x3( target_quaternion ).getRPY( buffer[3] , buffer[4] , buffer[5] );
             continue;
         } // one time delay
+
         // loop part : first compare about new command?
-#ifdef _PROCESS_
-        std::cout   << zeabus::ros_interfaces::string()
-                    << " : Control Interfaces Start part compare new command\n";
-#endif
         ptr_mutex_data->lock();
         for(unsigned int run = 0 ; run < 6 ; run++ )
         {
@@ -153,10 +142,7 @@ int main( int argv , char** argc )
             }
         }
         ptr_mutex_data->unlock();
-#ifdef _PROCESS_
-        std::cout   << zeabus::ros_interfaces::string()
-                    << " : Control Interfaces Finish part compare new command\n";
-#endif
+
         // loop part : second set a target
         target_quaternion.setRPY( buffer[3] , buffer[4] , buffer[5] );
         target_state.data.pose.pose.position.x = buffer[0];
@@ -164,10 +150,7 @@ int main( int argv , char** argc )
         target_state.data.pose.pose.position.z = buffer[2];
         zeabus::ros_interfaces::convert::tf_quaternion( 
                 &target_quaternion , &target_state.data.pose.pose.orientation );
-#ifdef _PROCESS_
-        std::cout   << zeabus::ros_interfaces::string()
-                    << " : step three find different\n";
-#endif
+
         // loop part : third find different
         (error.target)[0] = ptr_target_position->x - ptr_current_position->x;
         (error.target)[1] = ptr_target_position->y - ptr_current_position->y;
@@ -182,14 +165,9 @@ int main( int argv , char** argc )
         //          --> d that is dvl status
         //          --> i that is imu status
         //          --> p that is pressure status
-#ifdef _PROCESS_
-        std::cout   << zeabus::ros_interfaces::string()
-                    << " : step status of state decision\n";
-#endif
-        for( unsigned int run = 0 ; run < 6 ; run++ )
-        {
-            (error.mask)[run] = false;
-        }
+
+        error.mask.assign( false );
+
         if( (current_state.status & 0b011 ) == 3 ) // dvl and imu and ok
         {
             (error.mask)[0] = true;
@@ -203,6 +181,10 @@ int main( int argv , char** argc )
             (error.mask)[3] = true;
             (error.mask)[4] = true;
             (error.mask)[5] = true;
+        }
+        else
+        {
+            ;
         }
         if( (current_state.status & 0b100 ) == 4 ) // only pressure ok
         {
@@ -219,14 +201,14 @@ int main( int argv , char** argc )
                     << ptr_target_position->y << " " << ptr_target_position->z
                     << "\nerror potision   : " << (error.target)[0] << " " << (error.target)[1]
                     <<  " " << (error.target)[2] << std::endl;
-#ifdef _SHOW_RPY_
+    #ifdef _SHOW_RPY_
         tf::Matrix3x3( current_quaternion ).getRPY( euler[0] , euler[1] , euler[2] );
         std::cout   << "current RPY: " << euler[0] << " " << euler[1] << " " << euler[2] << "\n";
         tf::Matrix3x3( target_quaternion ).getRPY( euler[0] , euler[1] , euler[2] );
         std::cout   << "target RPY : " << euler[0] << " " << euler[1] << " " << euler[2] << "\n"
                     << "diff RPY   : " << (error.target)[0] << " " << (error.target)[1]
                     << " " << (error.target)[2] << "\n";
-#else
+    #else
         std::cout   << "current quaternion : " << current_quaternion.x() << " " 
                     << current_quaternion.y() << " " << current_quaternion.z() << " "
                     << current_quaternion.w() << "\n"
@@ -236,11 +218,13 @@ int main( int argv , char** argc )
                     << "diff quaternion : " << diff_quaternion.x() << " " 
                     << diff_quaternion.y() << " " << diff_quaternion.z() << " "
                     << diff_quaternion.w() << "\n";
-#endif
+    #endif
         std::cout   << "STATUS OF STATE " << read_bit_value( current_state.status )
-                    << "\nMASK : " << (error.mask)[0] << " " << (error.mask)[1] << " " 
-                    << (error.mask)[2] << " " << (error.mask)[3] << " " << (error.mask)[4] 
-                    << " " << (error.mask)[5] << "\n";        
+                    << "\nMASK : " 
+                    << read_bool( (error.mask)[0] ) << " " 
+                    << read_bool( (error.mask)[1] ) << " " << read_bool( (error.mask)[2] ) 
+                    << " " << read_bool( (error.mask)[3] ) << " " 
+                    << read_bool( (error.mask)[4] ) << " " << (error.mask)[5] << "\n";        
 #endif 
     }
     ros::shutdown();
@@ -248,11 +232,34 @@ int main( int argv , char** argc )
     return 0; 
 }
 
+std::string read_bool( bool data )
+{
+    std::string result;
+    if( data )
+    {
+        result = "True";
+    }
+    else
+    {
+        result = "False";
+    }
+    return result;
+}
+
 int read_bit_value( unsigned char status )
 {
     int result = 0;
-    if( (status & 0b001) == 1 ) result += 1;
-    if( (status & 0b010) == 1 ) result += 2;
-    if( (status & 0b100) == 1 ) result += 4;
+    if( (status & 0b001) == 1 ) 
+    {
+        result += 1;
+    }
+    if( (status & 0b010) == 1 ) 
+    {
+        result += 2;
+    }
+    if( (status & 0b100) == 1 ) 
+    {
+        result += 4;
+    }
     return result;
 }
