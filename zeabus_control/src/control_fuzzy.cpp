@@ -4,12 +4,15 @@
 // MAINTAINER	: K.Supasan
 
 // MACRO DETAIL
+// _SUMMARY_    : If you macro this, code will show you about input and output for connection
+//              between interface and command thruster of control
 
 // README
 
 // REFERENCE
 
 // MACRO SET
+#define _SUMMARY_
 
 // MACRO CONDITION
 
@@ -24,6 +27,8 @@
 #include    <ros/ros.h>
 
 #include    <zeabus/count.hpp>
+
+#include    <zeabus/escape_code.hpp>
 
 #include    <zeabus/fuzzy/control_error.hpp>
 
@@ -119,6 +124,9 @@ int main( int argv , char** argc )
     while( ptr_node_handle->ok() )
     {
         rate.sleep();
+#ifdef _SUMMARY_
+        zeabus::escape_code::clear_screen();
+#endif
         ptr_mutex_data->lock();
         temp = error;
         ptr_mutex_data->unlock();
@@ -134,6 +142,15 @@ int main( int argv , char** argc )
                 (force.target)[ run ] = 0;
             }
         }
+#ifdef _SUMMARY_
+        std::cout   << "Input\tMask\tOutput\n";
+        for( unsigned int run = 0 ; run < 6 ; run++ )
+        {
+            std::cout   << temp.target[run] << "\t" << temp.mask[run] << "\t" 
+                        << force.target[run] << "\n";
+        } // loop for for print summary case macro
+#endif
+        client_control_fuzzy.normal_call();
     }
     ros::shutdown();
     node_control_fuzzy.join();
