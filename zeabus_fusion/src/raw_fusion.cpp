@@ -6,10 +6,11 @@
 // MACRO DETAIL
 //  _IMU_CONVERTER_ : This macro use in file function_helper.cpp about convert value from imu.
 //                  That about convert coordinate from NED to ENU
-//  _ROBOT_DATA_    : This mean will show current data of robot by all sensor include position
+//  _SUMMARY_       : This mean will show current data of robot by all sensor include position
 //  _RAW_DATA_      : This macro will show you raw data to get from filter
 //  _PROCESS_       : This macro use you can know about process of this code
 //  _DELAY_DVL_     : This use when you worry about dvl have low speed
+//  _BOUND_ZERO_    : This use when you think dobuble position zero isn't ok we will bound zero
 
 // README
 //  This will you data from 3 node to fusion but use only simple equation to fusion data
@@ -21,13 +22,17 @@
 
 // MACRO SET
 #define _IMU_CONVERTER_
-#define _ROBOT_DATA_
+#define _SUMMARY_
 //#define _PROCESS_
+//#define _DELAY_DVL_
+#define _BOUND_ZERO_
 
 // MACRO CONDITION
 #ifdef _RAW_DATA_
-    #undef _ROBOT_DATA_
+    #undef _SUMMARY_
 #endif
+
+#include    <cmath>
 
 #include    <thread>
 
@@ -122,7 +127,9 @@ int main( int argv , char** argc )
     static geometry_msgs::Vector3 robot_distance;
     static geometry_msgs::Vector3 world_distance;
     // In the future we will function to reset this
+#ifdef _DELAY_DVL_
     static unsigned int count_dvl = 5;
+#endif
     static tf::Quaternion temp_quaternion;
     // But first time is only about dvl time_stamp
 
@@ -137,6 +144,10 @@ int main( int argv , char** argc )
     node_sensor_fusion.spin();
     while( ptr_node_handle->ok() )
     {
+        rate.sleep();
+#ifdef _SUMMARY_
+        zeabus::escape_code::clear_screen();
+#endif        
 #ifdef _PROCESS_
         std::cout   << "Time start call : " << zeabus::ros_interfaces::time::string() << "\n";
 #endif // _PROCESS_
@@ -170,9 +181,9 @@ int main( int argv , char** argc )
         if( dvl_stamp != dvl_data.header.stamp )
         {
             dvl_stamp = dvl_data.header.stamp;
-            temp_data.data.twist.twist.linear.x = dvl_data.vector.x/1000;
-            temp_data.data.twist.twist.linear.y = dvl_data.vector.y/1000;
-            temp_data.data.twist.twist.linear.z = dvl_data.vector.z/1000;
+            temp_data.data.twist.twist.linear.x = 1.0*dvl_data.vector.x/1000;
+            temp_data.data.twist.twist.linear.y = 1.0*dvl_data.vector.y/1000;
+            temp_data.data.twist.twist.linear.z = 1.0*dvl_data.vector.z/1000;
 #ifdef _PROCESS_
             std::cout   << "Update linear_velocity!\n";
 #endif // _PROCESS_
@@ -183,7 +194,7 @@ int main( int argv , char** argc )
             // we worry about data dvl doesn't fast to get new data
             count_dvl++;
 #else
-            status_data &= 0b110; // bit DVL false
+            status_data &= 0b110; // bit DVL failure
 #endif
         }
 
@@ -198,7 +209,7 @@ int main( int argv , char** argc )
         }
         else
         {   // We sure imu should have new data
-            status_data &= 0b101; 
+            status_data &= 0b101; // bit IMU failure 
         }
 
         if( pressure_stamp != pressure_data.header.stamp )
@@ -210,7 +221,7 @@ int main( int argv , char** argc )
         }
         else
         {
-            status_data &= 0b011;
+            status_data &= 0b011; // bit pressure failure
         }
 
         // Next we will rotation imu data
@@ -219,7 +230,7 @@ int main( int argv , char** argc )
             zeabus::ros_interfaces::convert::quaternion_tf( &(imu_data.orientation) 
                     , &temp_quaternion );
             temp_quaternion = offset_quaternion * temp_quaternion ;
-#ifdef _ROBOT_DATA_
+#ifdef _SUMMARY_
             tf::Matrix3x3( temp_quaternion ).getRPY( temp_RPY[0], temp_RPY[1], temp_RPY[2] );
             std::cout   << "ROBOT Euler " << "Roll : " << temp_RPY[0]
                         << " Pitch : " << temp_RPY[1] << " Yaw : " << temp_RPY[2] << "\n";
@@ -237,42 +248,55 @@ int main( int argv , char** argc )
                             << zeabus::escape_code::normal_white;     
                 status_data &= 0b110;
             }
+#else
+            if( (status_data & 0b001) == 0 )
+            {
+                std::cout   << zeabus::escape_code::bold_red << "FATAL! DVL lose data\n"
+                            << zeabus::escape_code::normal_white;
+            }
+#endif
             else
             {
-#endif
                 robot_distance.x = ( service_data.data.twist.twist.linear.x 
                         + temp_data.data.twist.twist.linear.x ) / ( frequency * 2 );
                 robot_distance.y = ( service_data.data.twist.twist.linear.y 
                         + temp_data.data.twist.twist.linear.y ) / ( frequency * 2 );
                 rotation_linear( &robot_distance , &world_distance , &temp_quaternion );
+#ifdef _BOUND_ZERO_
+                if( abs(world_distance.x) < 0.001 )
+                {
+                    world_distance.x = 0;
+                }
+                if( abs(world_distance.y) < 0.001 )
+                {
+                    world_distance.y = 0;
+                }
+#endif
                 temp_data.data.pose.pose.position.x += world_distance.x;
                 temp_data.data.pose.pose.position.y += world_distance.y;
 #ifdef _PROCESS_
                 std::cout   << "Update position\n";
 #endif
-#ifdef _ROBOT_DATA_
+#ifdef _SUMMARY_
                 std::cout   << "robot_distance x : y <---> " << robot_distance.x << " : "
                             << robot_distance.y << "\nworld_distance x: y <---> " 
                             << world_distance.x << " : " << world_distance.y << std::endl;
-#endif // _ROBOT_DATA_ 
-#ifdef _DELAY_DVL_
+#endif // _SUMMARY_ 
             }
-#endif
         }
-#ifdef _ROBOT_DATA_
+#ifdef _SUMMARY_
         std::cout   << "ROBOT Position < x , y , z > : < " 
                     << temp_data.data.pose.pose.position.x << " , "
                     << temp_data.data.pose.pose.position.y << " , "
                     << temp_data.data.pose.pose.position.z << " >\n";   
         std::cout   << "ROBOT State " << status_data << "\n";
-#endif // _ROBOT_DATA_
+#endif // _SUMMARY_
         ptr_mutex_data->lock();
         service_data.data.header.stamp = ros::Time::now();
         service_data.data.pose = temp_data.data.pose;
         service_data.data.twist = temp_data.data.twist;
         service_data.status = status_data;
         ptr_mutex_data->unlock();
-        rate.sleep();        
     }
     ros::shutdown();
     node_sensor_fusion.join();
