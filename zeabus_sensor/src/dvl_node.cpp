@@ -6,7 +6,7 @@
 // _SUMMARY_    : This macro will help you to see summary data
 
 // MACRO SET
-//#define _SUMMARY_
+#define _SUMMARY_
 
 // MACRO CONDITION
 
@@ -31,8 +31,6 @@
 #include    <zeabus/service/get_data/geometry_vector3_stamped.hpp>
 
 namespace Asio = boost::asio;
-void thread_copy_data( geometry_msgs::Vector3Stamped* source 
-        , geometry_msgs::Vector3Stamped* target , std::shared_ptr< std::mutex > lock_data );
 
 int main( int argv , char** argc )
 {
@@ -74,9 +72,10 @@ int main( int argv , char** argc )
     else
     {
         std::cout   << "Failure to set idel\n";
+        ros::shutdown();
     }
 
-    if( status_file ) // open port is success
+    if( ptr_node_handle->ok() ) // open port is success
     {
         (void)dvl.load_parameter();
         (void)dvl.bottom_track( "001" );
@@ -100,28 +99,31 @@ int main( int argv , char** argc )
     zeabus::service::get_data::GeometryVector3Stamped dvl_server( ptr_node_handle );
     dvl_server.register_data( &message );
     dvl_server.setup_ptr_mutex_data( ptr_mutex_data );
+    dvl_server.setup_server_service( "/sensor/dvl");
     int temp_velocity[4] = { 0 , 0 , 0 , 0 }; // for collect data from function
     char ok_data;
 
-    if( status_file )
+    if( ptr_node_handle->ok() )
     {
         dvl_node.spin();
     }
-    
-    while( status_file && ptr_node_handle->ok() )
+
+    unsigned int length_data;    
+    while( ptr_node_handle->ok() )
     {
-        (void)dvl.read_data( &raw_data );
+        length_data = dvl.read_data( &raw_data );
         type_line.clear() ; // make string are empty
         type_line.push_back( raw_data[1] );
         type_line.push_back( raw_data[2] );
         // get type of data
         if( type_line == "BS" )
         {
-            zeabus::sensor::DVL::PD6_code_BS( &raw_data , &(temp_velocity[0]) 
-                    , &(temp_velocity[1]) , &(temp_velocity[2]) , &ok_data );
 #ifdef _SUMMARY_
             zeabus::escape_code::clear_screen();
+            std::cout   << "Raw data is " << raw_data << "\n";
 #endif // _SUMMARY_
+            zeabus::sensor::DVL::PD6_code_BS( &raw_data , &(temp_velocity[0]) 
+                    , &(temp_velocity[1]) , &(temp_velocity[2]) , &ok_data );
             if( ok_data == 'A' ) // if data BS is ok
             {
                 std::cout   << "DVL GOOD DATA\n";
@@ -132,10 +134,10 @@ int main( int argv , char** argc )
                 temp_message.vector.x = temp_velocity[0];
                 temp_message.vector.y = temp_velocity[1];
                 temp_message.vector.z = temp_velocity[2];
-                temp_message.header.stamp = ros::Time();
-                thread_id.join();
-                thread_id =  std::thread( thread_copy_data , &temp_message 
-                        , &message , ptr_mutex_data ); 
+                temp_message.header.stamp = ros::Time::now();
+                ptr_mutex_data->lock();
+                message = temp_message;
+                ptr_mutex_data->unlock(); 
             }
             else
             {
@@ -146,17 +148,9 @@ int main( int argv , char** argc )
 
     dvl.close_port();
 
+    ros::shutdown();
+
     dvl_node.join();
     
     return 0;
 } // function main
-
-void thread_copy_data( geometry_msgs::Vector3Stamped* source 
-        , geometry_msgs::Vector3Stamped* target , std::shared_ptr< std::mutex > lock_data )
-{
-    std::cout   << "Start copy thread\n";
-    lock_data->lock();
-    *target = *source;
-    lock_data->unlock();
-    std::cout   << "Finish copy thread\n";
-}

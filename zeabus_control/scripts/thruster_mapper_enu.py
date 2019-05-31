@@ -128,56 +128,22 @@ class ThrusterMapper:
         self.header = Header()
         self.header.frame_id = "robot"
 
-    def update_state(self):
-        current_auv_state = self.client_state()
-        self.current_quaternion = current_auv_state.auv_state.data.pose.pose.orientation
-        if(constant.THRUSTER_MAPPER_UPDATED):
-            if(constant.THRUSTER_MAPPER_EULER):
-                print("UPDATED CURRENT EULER : ",
-                      tf_handle.euler_from_quaternion( ( self.current_quaternion.x 
-                                , self.current_quaternion.y 
-                                , self.current_quaternion.z
-                                , self.current_quaternion.w ) ) )
-            else:
-                print("UPDATED CURRENT QUATERNION : ", self.current_quaternion)
-
     def callback(self, request):
 
-        if(constant.THRUSTER_MAPPER_AUV_STATE):
-            self.update_state()
-            temp_quaternion = ( (request.command.target)[0] 
-                        , (request.command.target)[1] 
-                        , (request.command.target)[2] 
-                        , 0 )
-            my_quaternion =  ( self.current_quaternion.x , self.current_quaternion.y
-                        , self.current_quaternion.z , self.current_quaternion.w ) 
-            temp_quaternion = tf_handle.quaternion_multiply( my_quaternion 
-                , temp_quaternion ) 
-            inverse_quaternion = tf_handle.quaternion_inverse( my_quaternion )
-            temp_quaternion = tf_handle.quaternion_multiply( temp_quaternion 
-                , inverse_quaternion)
-
-            robot_linear_force = []
-            robot_linear_force.append( temp_quaternion[0] )
-            robot_linear_force.append( temp_quaternion[1] )
-            robot_linear_force.append( temp_quaternion[2] )
-
-        if(constant.THRUSTER_MAPPER_CALCULATE_PROCESS):
-            print("Force linear target : ", (request.command.target)[0:3])
-            if(constant.THRUSTER_MAPPER_EULER):
-                print("Current euler : ", tf_handle.euler_from_quaternion(
-                    my_quaternion ) )
+        temp_force = []
+        for run in range( 0 , 8 ):
+            if( (request.commad.mask)[run] ):
+                temp_force.append( (request.commad.target)[run] )
             else:
-                print("Current quaternion  : ", my_quaternion)
-            print("Force linear robot : ", robot_linear_force[0:3])
+                temp_force.append( 0 )
 
-        force = numpy.array([
-            robot_linear_force[0]
-            , robot_linear_force[1]
-            , robot_linear_force[2]
-            , (request.command.target)[3]
-            , (request.command.target)[4]
-            , (request.command.target)[5]])
+        force = numpy.array( [
+            (temp_force)[0]
+            , (temp_force)[1]
+            , (temp_force)[2]
+            , (temp_force)[3]
+            , (temp_force)[4]
+            , (temp_force)[5]])
 
         if(constant.THRUSTER_MAPPER_CALCULATE_PROCESS):
             print("Force result robot frame : ", force)
@@ -186,13 +152,16 @@ class ThrusterMapper:
 
         cmd = []
         for run in range(0, 8):
-            cmd.append(self.lookup_handle.find_pwm(torque[run]))
+            if( run < 4 ):
+                cmd.append( int(self.lookup_handle.find_pwm(torque[run]) ) )
+            else:
+                cmd.append( int(0) )
 
         self.header.stamp = rospy.get_rostime()
         pwm = tuple(cmd)
 
         if(constant.THRUSTER_MAPPER_RESULT):
-            print("{:6f} {:6f} {:6f} {:6f} {:6f} {:6f} {:6f} {:6f}".format(
+            print("{:6d} {:6d} {:6d} {:6d} {:6d} {:6d} {:6d} {:6d}".format(
                   pwm[0], pwm[1], pwm[2], pwm[3], pwm[4], pwm[5], pwm[6], pwm[7]))
 
         self.client_throttle(self.header, pwm)

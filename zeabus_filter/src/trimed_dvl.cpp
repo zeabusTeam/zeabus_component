@@ -128,7 +128,7 @@ int main( int argv , char** argc )
         ptr_node_handle->shutdown();
     }
 
-    if( ! (node_dvl_filter.spin() ) )
+    if( node_dvl_filter.spin()  )
     {
         while( ! (node_dvl_filter.status() ) )
         {
@@ -137,7 +137,7 @@ int main( int argv , char** argc )
     }
     else
     {
-        std::cout   << zeabus::escape_code::bold_red << "Please fine why we can\'t create thread"
+        std::cout   << zeabus::escape_code::bold_red << "Please find why we can\'t create thread"
                     << zeabus::escape_code::normal_white << "\n";
         ptr_node_handle->shutdown();
     }
@@ -171,8 +171,8 @@ int main( int argv , char** argc )
         }
         else if( time_over )
         {
-        std::cout   << zeabus::escape_code::bold_red << "FATAL DVL don't send new data\n"
-                    << zeabus::escape_code::normal_white;
+            std::cout   << zeabus::escape_code::bold_red << "FATAL DVL don't send new data\n"
+                        << zeabus::escape_code::normal_white;
         }
         else
         {

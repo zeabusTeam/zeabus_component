@@ -42,6 +42,9 @@ namespace string
                     else // that mean we find sign between number
                     {
                         return_value = false;
+                        std::cout   << zeabus::escape_code::bold_red  
+                                    << "Have sign between number\n" 
+                                    << zeabus::escape_code::normal_white;
                     }
                     break;
                 case '-' : // case we find '-'
@@ -55,7 +58,7 @@ namespace string
                     }
                     break;
                 default :
-                    return_value = false;
+                    break;
                 } // switch case
             }
             running++;
