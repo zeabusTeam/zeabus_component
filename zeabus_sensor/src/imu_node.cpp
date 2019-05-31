@@ -17,14 +17,14 @@
 //#define _PRINT_DATA_STREAM_
 //#define _DECLARE_UPDATED_
 #define _SUMMARY_
-#define _IMU_NED_MODE_
+#define _IMU_ENU_SYSTEM_
 
 // MACRO CONDITION
 #ifdef _SUMMARY_
     #define _DECLARE_UPDATED_
 #endif
 
-#ifdef _IMU_NED_MODE_
+#ifdef _IMU_ENU_SYSTEM_
     #define _SUMMARY_
 #endif
 
@@ -59,9 +59,9 @@ namespace IMUProtocal = zeabus::sensor::IMU::LORD_MICROSTRAIN;
 
 int main( int argv , char** argc )
 {
-    zeabus::sensor::IMU::Connector imu("/dev/microstrain/3dm_gx5_45_0000__6251.65901" , 100 );
+    zeabus::sensor::IMU::Connector imu("/dev/microstrain/3dm_gx5_45_0000__6251.65903" , 100 );
 
-#ifdef _IMU_NED_MODE_
+#ifdef _IMU_ENU_SYSTEM_
     std::string node_name = "imu_node_ned";
     const static tf::Quaternion convert_conventions( 0.7071 , 0.7071 , 0 , 0 );
 #else
@@ -224,7 +224,7 @@ int main( int argv , char** argc )
 #ifdef _SUMMARY_
             zeabus::escape_code::clear_screen();
 #endif // _SUMMARY_ 
-#ifdef _IMU_NED_MODE_
+#ifdef _IMU_ENU_SYSTEM_
             zeabus::ros_interfaces::convert::quaternion_tf(
                     &temporary_message.orientation , &temp_quaternion );
             tf::Matrix3x3( temp_quaternion ).getRPY( temp_RPY[0], temp_RPY[1], temp_RPY[2] );
