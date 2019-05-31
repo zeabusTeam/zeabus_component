@@ -15,8 +15,8 @@
 
 // MACRO SET
 //#define _PROCESS_
-//#define _SHOW_DATA_
-//#define _SHOW_RPY_
+#define _SHOW_DATA_
+#define _SHOW_RPY_
 
 // MACRO CONDITION
 
@@ -31,6 +31,8 @@
 #include    <zeabus/count.hpp>
 
 #include    <geometry_msgs/Point.h>
+
+#include    <zeabus/escape_code.hpp>
 
 #include    <tf/LinearMath/Matrix3x3.h>
 
@@ -51,6 +53,8 @@
 #include    <zeabus/ros_interfaces/convert/geometry_msgs.hpp>
 
 #include    <zeabus/client/single_thread/send_control_command.hpp>
+
+int read_bit_value( unsigned char status );
 
 int main( int argv , char** argc )
 {
@@ -109,6 +113,10 @@ int main( int argv , char** argc )
     while( ptr_node_handle->ok() )
     {
         rate.sleep();
+#ifdef _SHOW_DATA_
+        zeabus::escape_code::clear_screen();
+#endif
+
 #ifdef _PROCESS_
         std::cout   << zeabus::ros_interfaces::string() 
                     <<" : Control Interfaces start normal_call AUVState\n";
@@ -209,14 +217,14 @@ int main( int argv , char** argc )
                     << ptr_current_position->y << " " << ptr_current_position->z
                     << "\ntarget position  : " << ptr_target_position->x << " "
                     << ptr_target_position->y << " " << ptr_target_position->z
-                    << "\nerror potision   : " << (error.target)[0] << " " (error.target)[1]
+                    << "\nerror potision   : " << (error.target)[0] << " " << (error.target)[1]
                     <<  " " << (error.target)[2] << std::endl;
 #ifdef _SHOW_RPY_
         tf::Matrix3x3( current_quaternion ).getRPY( euler[0] , euler[1] , euler[2] );
         std::cout   << "current RPY: " << euler[0] << " " << euler[1] << " " << euler[2] << "\n";
         tf::Matrix3x3( target_quaternion ).getRPY( euler[0] , euler[1] , euler[2] );
-        std::cout   << "target RPY : " << euler[0] << " " << euler[1] << " " << euler[2] << "\n";
-                    << "diff RPY   : " << (errror.target)[0] << " " << (error.target)[1]
+        std::cout   << "target RPY : " << euler[0] << " " << euler[1] << " " << euler[2] << "\n"
+                    << "diff RPY   : " << (error.target)[0] << " " << (error.target)[1]
                     << " " << (error.target)[2] << "\n";
 #else
         std::cout   << "current quaternion : " << current_quaternion.x() << " " 
@@ -227,16 +235,24 @@ int main( int argv , char** argc )
                     << target_quaternion.w() << "\n"
                     << "diff quaternion : " << diff_quaternion.x() << " " 
                     << diff_quaternion.y() << " " << diff_quaternion.z() << " "
-                    << diff_quaternion.w() << "\n"
+                    << diff_quaternion.w() << "\n";
 #endif
-        std::cout   << "STATUS OF STATE " << current_state.status
-                    << "\n MASK : " << (error.mask)[0] << " " << (error.mask)[1] << " " 
-                    << (error.mask)[2] << (error.mask)[3] << " " << (error.mask)[4] 
-                    << " " << (error.mask)[5] << "\n\n";        
-                
+        std::cout   << "STATUS OF STATE " << read_bit_value( current_state.status )
+                    << "\nMASK : " << (error.mask)[0] << " " << (error.mask)[1] << " " 
+                    << (error.mask)[2] << " " << (error.mask)[3] << " " << (error.mask)[4] 
+                    << " " << (error.mask)[5] << "\n";        
 #endif 
     }
     ros::shutdown();
     node_control_interfaces.join();
     return 0; 
+}
+
+int read_bit_value( unsigned char status )
+{
+    int result = 0;
+    if( (status & 0b001) == 1 ) result += 1;
+    if( (status & 0b010) == 1 ) result += 2;
+    if( (status & 0b100) == 1 ) result += 4;
+    return result;
 }
