@@ -128,7 +128,7 @@ int main( int argv , char** argc )
 
     ros::Rate rate( frequency );
     // Init data first time
-    service_data.data.header.frame_id = "odom";
+    service_data.data.header.frame_id = "base_link";
     service_data.data.twist.twist.linear.x = 0;
     service_data.data.twist.twist.linear.y = 0;
     service_data.data.twist.twist.linear.z = 0;
@@ -230,6 +230,7 @@ int main( int argv , char** argc )
 #endif
             zeabus::ros_interfaces::convert::tf_quaternion( &temp_quaternion 
                     , &(temp_data.data.pose.pose.orientation ) );
+#ifdef _DELAY_DVL_
             if( count_dvl > 5 )
             {
                 std::cout   << zeabus::escape_code::bold_red << "FATAL! DVL Lose data\n"
@@ -238,6 +239,7 @@ int main( int argv , char** argc )
             }
             else
             {
+#endif
                 robot_distance.x = ( service_data.data.twist.twist.linear.x 
                         + temp_data.data.twist.twist.linear.x ) / ( frequency * 2 );
                 robot_distance.y = ( service_data.data.twist.twist.linear.y 
@@ -253,7 +255,9 @@ int main( int argv , char** argc )
                             << robot_distance.y << "\nworld_distance x: y <---> " 
                             << world_distance.x << " : " << world_distance.y << std::endl;
 #endif // _ROBOT_DATA_ 
+#ifdef _DELAY_DVL_
             }
+#endif
         }
 #ifdef _ROBOT_DATA_
         std::cout   << "ROBOT Position < x , y , z > : < " 
