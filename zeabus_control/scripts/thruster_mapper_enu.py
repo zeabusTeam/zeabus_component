@@ -44,7 +44,7 @@ from zeabus_utility.srv import SendThrottle,  SendControlCommand, GetAUVState
 from zeabus_utility.msg import ControlCommand
 from std_msgs.msg import Header
 from tf import transformations as tf_handle
-from constant import *
+import constant
 
 
 class ThrusterMapper:
@@ -64,10 +64,10 @@ class ThrusterMapper:
             '/fusion/auv_state', GetAUVState)
 
         self.server = rospy.Service(
-            '/control/thruster', SendControlCommand, self.callback)
+            '/control/thruster', SendControlCommand(), self.callback )
 
         self.lookup_handle = lookup_pwm_force(
-            "zeabus_control", "scripts", "4th_t200_16.txt")
+            "zeabus_control", "scripts", "blue_robotics_2018.txt")
 
         cos_45 = math.cos(math.radians(45))
         sin_45 = math.sin(math.radians(45))
@@ -128,55 +128,45 @@ class ThrusterMapper:
         self.header = Header()
         self.header.frame_id = "robot"
 
-    def update_state(self):
-        current_auv_state = self.client_state()
-        self.current_quaternion = current_auv_state.auv_state.pose.pose.orieantation
-        if(THRUSTER_MAPPER_UPDATED):
-            if(THRUSTER_MAPPER_EULER):
-                print("UPDATED CURRENT EULER : ",
-                      tf_handle.euler_from_quaternion(self.current_quaternion))
-            else:
-                print("UPDATED CURRENT QUATERNION : ", self.current_quaternion)
-
     def callback(self, request):
 
-        if(THRUSTER_MAPPER_AUV_STATE):
-            self.update_state()
-            robot_linear_force = (tf_handle.quaternion_multiply(
-                tf_handle.quaternion_multiply(
-                    self.current_quaternion, (request.target)[0:3]), tf_handle.quaternion_inverse(self.current_quaternion)))[0:3]
-
-        if(THRUSTER_MAPPER_CALCULATE_PROCESS):
-            print("Force linear target : ", (request.command)[0:3])
-            if(THRUSTER_MAPPER_EULER):
-                print("Current euler : ", tf_handle.euler_from_quaternion(
-                    self.current_quaternion))
+        temp_force = []
+        for run in range( 0 , 8 ):
+            if( (request.commad.mask)[run] ):
+                temp_force.append( (request.commad.target)[run] )
             else:
-                print("Current quaternion  : ", self.current_quaternion)
-            print("Force linear robot : ", robot_linear_force[0:3])
+                temp_force.append( 0 )
 
-        force = numpy.array([
-            robot_linear_force[0], robot_linear_force[1], robot_linear_force[2], (request.command)[3], (request.command)[4], (request.command[5])])
+        force = numpy.array( [
+            (temp_force)[0]
+            , (temp_force)[1]
+            , (temp_force)[2]
+            , (temp_force)[3]
+            , (temp_force)[4]
+            , (temp_force)[5]])
 
-        if(THRUSTER_MAPPER_CALCULATE_PROCESS):
+        if(constant.THRUSTER_MAPPER_CALCULATE_PROCESS):
             print("Force result robot frame : ", force)
 
         torque = numpy.matmul(self.direction_inverse.T, force.T)
 
         cmd = []
         for run in range(0, 8):
-            cmd.append(self.lookup_handle.find_pwm(torque[run]))
+            if( run < 4 ):
+                cmd.append(self.lookup_handle.find_pwm(torque[run]))
+            else:
+                cmd.append( 0 )
 
         self.header.stamp = rospy.get_rostime()
         pwm = tuple(cmd)
 
-        if(THRUSTER_MAPPER_RESULT):
-            print("{:6d} {:6d} {:6d} {:6d} {:6d} {:6d} {:6d} {:6d}".format(
+        if(constant.THRUSTER_MAPPER_RESULT):
+            print("{:6f} {:6f} {:6f} {:6f} {:6f} {:6f} {:6f} {:6f}".format(
                   pwm[0], pwm[1], pwm[2], pwm[3], pwm[4], pwm[5], pwm[6], pwm[7]))
 
         self.client_throttle(self.header, pwm)
 
 
 if __name__ == '__main__':
-    thruster_mapper = ThrusterMapper
+    thruster_mapper = ThrusterMapper()
     rospy.spin()
