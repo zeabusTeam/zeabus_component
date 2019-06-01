@@ -26,6 +26,8 @@
 
 #include    <ros/ros.h>
 
+#include    "read_data.cpp"
+
 #include    <zeabus/count.hpp>
 
 #include    <zeabus/escape_code.hpp>
@@ -176,7 +178,7 @@ int main( int argv , char** argc )
         std::cout   << "Input\tMask\tOutput\n";
         for( unsigned int run = 0 ; run < 6 ; run++ )
         {
-            std::cout   << temp.target[run] << "\t" << temp.mask[run] << "\t" 
+            std::cout   << temp.target[run] << "\t" << read_bool(temp.mask[run]) << "\t" 
                         << force.target[run] << "\n";
         } // loop for for print summary case macro
 #endif // _SUMMARY_

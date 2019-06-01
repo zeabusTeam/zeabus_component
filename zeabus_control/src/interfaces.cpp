@@ -24,6 +24,8 @@
 
 #include    <iostream>
 
+#include    "read_data.cpp"
+
 #include    <zeabus/time.hpp>
 
 #include    <zeabus/count.hpp>
@@ -51,9 +53,6 @@
 #include    <zeabus/ros_interfaces/convert/geometry_msgs.hpp>
 
 #include    <zeabus/client/single_thread/send_control_command.hpp>
-
-int read_bit_value( unsigned char status );
-std::string read_bool( bool data );
 
 int main( int argv , char** argc )
 {
@@ -232,34 +231,3 @@ int main( int argv , char** argc )
     return 0; 
 }
 
-std::string read_bool( bool data )
-{
-    std::string result;
-    if( data )
-    {
-        result = "True";
-    }
-    else
-    {
-        result = "False";
-    }
-    return result;
-}
-
-int read_bit_value( unsigned char status )
-{
-    int result = 0;
-    if( (status & 0b001) == 1 ) 
-    {
-        result += 1;
-    }
-    if( (status & 0b010) == 1 ) 
-    {
-        result += 2;
-    }
-    if( (status & 0b100) == 1 ) 
-    {
-        result += 4;
-    }
-    return result;
-}
