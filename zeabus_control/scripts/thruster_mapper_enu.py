@@ -64,7 +64,7 @@ class ThrusterMapper:
             '/fusion/auv_state', GetAUVState)
 
         self.server = rospy.Service(
-            '/control/thruster', SendControlCommand(), self.callback )
+            '/control/thruster', SendControlCommand(), self.callback)
 
         self.lookup_handle = lookup_pwm_force(
             "zeabus_control", "scripts", "blue_robotics_2018.txt")
@@ -129,21 +129,15 @@ class ThrusterMapper:
         self.header.frame_id = "robot"
 
     def callback(self, request):
-
         temp_force = []
-        for run in range( 0 , 8 ):
-            if( (request.commad.mask)[run] ):
-                temp_force.append( (request.commad.target)[run] )
+        for run in range(0, 8):
+            if((request.commad.mask)[run]):
+                temp_force.append((request.commad.target)[run])
             else:
-                temp_force.append( 0 )
+                temp_force.append(0)
 
-        force = numpy.array( [
-            (temp_force)[0]
-            , (temp_force)[1]
-            , (temp_force)[2]
-            , (temp_force)[3]
-            , (temp_force)[4]
-            , (temp_force)[5]])
+        force = numpy.array([
+            (temp_force)[0], (temp_force)[1], (temp_force)[2], (temp_force)[3], (temp_force)[4], (temp_force)[5]])
 
         if(constant.THRUSTER_MAPPER_CALCULATE_PROCESS):
             print("Force result robot frame : ", force)
@@ -152,10 +146,10 @@ class ThrusterMapper:
 
         cmd = []
         for run in range(0, 8):
-            if( run < 4 ):
-                cmd.append( int(self.lookup_handle.find_pwm(torque[run]) ) )
+            if(run < 4):
+                cmd.append(int(self.lookup_handle.find_pwm(torque[run])))
             else:
-                cmd.append( int(0) )
+                cmd.append(int(0))
 
         self.header.stamp = rospy.get_rostime()
         pwm = tuple(cmd)

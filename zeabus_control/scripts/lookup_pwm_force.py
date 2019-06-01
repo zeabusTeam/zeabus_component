@@ -22,8 +22,6 @@ from read_file import read_file
 rospack = rospkg.RosPack()
 
 
-
-
 class lookup_pwm_force:
     """
     3 parameter will point to fild to collect data
@@ -31,6 +29,7 @@ class lookup_pwm_force:
       subdirectory will use append to package path
       and file_name will be name file to end of string full path
     """
+
     def __init__(self,  package_name, subdirectory, file_name):
         fullpath = rospack.get_path(package_name) + \
             "/" + subdirectory + "/" + file_name
@@ -44,8 +43,8 @@ class lookup_pwm_force:
         self.length_pwm_table = len(self.pwm_table)
         self.length_force_table = len(self.force_table)
 
-    def _float_equal(self,in1, in2, epsilon=0.000001):
-        #    "checking float equality"
+    def _float_equal(self, in1, in2, epsilon=1e-6):
+        """checking float equality"""
         return True if abs(in1-in2) < epsilon else False
 
     def find_pwm(self, force):
@@ -57,7 +56,7 @@ class lookup_pwm_force:
             pwm = self.pwm_table[0]
         elif(idx == len(self.force_table)):
             pwm = self.pwm_table[self.length_force_table - 1]
-        elif self._float_equal(force, self.force_table[idx]):
+        elif(self._float_equal(force, self.force_table[idx])):
             pwm = self.pwm_table[idx]
         else:
             pwm = (self.pwm_table[idx-1]
@@ -75,7 +74,7 @@ class lookup_pwm_force:
             force = self.force_table[0]
         elif(idx == len(self.pwm_table)):
             force = self.force_table[self.length_pwm_table - 1]
-        elif self._float_equal(pwm, self.pwm_table[idx]):
+        elif(self._float_equal(pwm, self.pwm_table[idx])):
             force = self.force_table[idx]
         else:
             force = (self.force_table[idx-1]
