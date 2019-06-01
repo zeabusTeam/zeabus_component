@@ -162,7 +162,8 @@ int main( int argv , char** argc )
                 (force.target)[ run ] = 0;
             }
         }
-        
+
+        // we will rotation force of linear in odom frame to world frame        
         temp_quaternion = tf::Quaternion( (force.target)[0] , (force.target)[1]
                 , (force.target)[2] , 0 );
         zeabus::ros_interfaces::convert::tf_quaternion( &state_quaternion 
