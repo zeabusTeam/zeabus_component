@@ -6,15 +6,32 @@
 // MACRO DETAIL
 // _SUMMARY_    : If you macro this, code will show you about input and output for connection
 //              between interface and command thruster of control
+// _SHOW_ROTATION_
+//              : Will show you about rotation from output in world frame to robot frame
+// --> WARNING MACRO OF FUZZY LIB
+// _SHOW_DATA_  : This is macro will show you see about process of fuzzy logic and your data
+// _SHOW_OUTPUT_CONDITION_
+//              : This macro specific about output_condtion of fuzzy logic
+// _SHOW_RULE_TABLE_
+//              : This macro will alway show data of multiple index data
 
 // README
+//  Main code and process of this program is library of normal fuzzy control. Please read
+//  zeabus_library_cpp/include/zeabus/fuzzy/control_error.hpp
 
 // REFERENCE
 
 // MACRO SET
 #define _SUMMARY_
+//#define _SHOW_DATA_
+//#define _SHOW_ROTATION_
+//#define _SHOW_OUTPUT_CONDITION_
+//#define _SHOW_RULE_TABLE_
 
 // MACRO CONDITION
+#ifdef _SHOW_DATA_
+    #define _SHOW_OUTPUT_CONDITION_
+#endif
 
 #include    <array>
 
@@ -61,57 +78,78 @@ int main( int argv , char** argc )
 
     // Insert optional part param part
     const static unsigned int frequency = 10;
+    const static unsigned int start_run = 0;
+    const static unsigned int size_buffer_fuzzy = 5;
+    unsigned int count_loop = 0 ; // Use for make we print equal loop of fuzzy
     static ros::Time time_stamp = ros::Time::now();
     zeabus_utility::ControlCommand error; // received error
     zeabus_utility::ControlCommand force; // send_force
-    zeabus_utility::ControlCommand temp;
-    zeabus_utility::AUVState current_state;
+    zeabus_utility::ControlCommand temp; // this temp for use get value from error
+    zeabus_utility::AUVState current_state; // this use for get state of auv
     ros::Rate rate( frequency );
-
-    zeabus::client::single_thread::GetAUVState client_control_state;
-    client_control_state.setup_ptr_node_handle( ptr_node_handle );
-    client_control_state.setup_ptr_data( &current_state );
-    client_control_state.setup_client( "/fusion/auv_state" );
+    // 2 array below will help you can skip error, mistake, not-continous data for 1 time
+    std::array< bool , 6 > help_mask = { false , false , false , false , false , false };
+    std::array< double , 6 > help_error = { 0 , 0 , 0 , 0 , 0 , 0 };
 
     // Part about fuzzy logic
-    std::array< std::array< signed char , 7 > , 7 > fuzzy_rule = {
-            1 , 1 , 2 , 3 , 3 , 3 , 3 
-            , -1 , 0 , 1 , 2 , 2 , 3 , 3
-            , -2 , 1 , 0 , 1 , 2 , 3 , 3
-            , -2 , -2 , -1 , 0 , 1 , 2 , 2
-            , -3 , -3 , -2 , -1 , 0 , 1 , 2 
-            , -3 , -3 , -2 , -2 , -1 , 0 , 1
-            , -3 , -3 , -3 , -3 , 2 , 1 , 1
+    //  We design two you two dimension for follow setup you should think follow this 
+    //      - x is horizontal line
+    //      - y is vertical line
+    //      - x is range of error value -3 , -2 , -1 , 0 , 1 , 2 , 3 
+    //      - y is range of different error value -3 , -2 , -1 , 0 , 1 , 2 , 3 
+    std::array< std::array< int , 7 > , 7 > fuzzy_rule = {
+               0 , 1  ,  1 ,  2 ,  2 , 3 , 3  
+            , -1 , 0  ,  1 ,  1 ,  2 , 2 , 3
+            , -1 , -1 ,  0 ,  1 ,  2 , 2 , 2
+            , -2 , -1 , -1 ,  0 ,  1 , 1 , 2
+            , -2 , -2 , -1 , -1 ,  0 , 1 , 1 
+            , -3 , -3 , -2 , -1 , -1 , 0 , 1
+            , -3 , -3 , -2 , -2 , -1 ,-1 , 0
     };
 
-    zeabus::fuzzy::ControlError<5> fuzzy_logic[6];
+    // Can study about this object on package of zeabus_library_cpp
+    zeabus::fuzzy::ControlError< size_buffer_fuzzy > fuzzy_logic[6];
     
     // Pattern is x y z roll pitch yaw
-    double offset_value[6] = { 0 , 0 , -1 , 0 , 0 , 0 };
+    double offset_value[6] = { 0 , 0 , -1.9 , 0 , 0 , 0 };
     // The next 1 type have 3 value
-    double relative_value[18] = { 0.05 , 0.1 , 0.2 
-            , 0.05 , 0.1 , 0.2
-            , 0.1 , 0.15 , 0.3 
-            , 0.01 , 0.05 , 0.1
-            , 0.01 , 0.05 , 0.1
-            , 0.05 , 0.1 , 0.15 };
+    double relative_value[18] = { 
+            0.05 , 0.1 , 0.16   // x 
+            , 0.05 , 0.12 , 0.2 // y
+            , 0.02 , 0.05 , 0.1 // z
+            , 0.01 , 0.05 , 0.1 // roll
+            , 0.01 , 0.05 , 0.1 // pitch
+            , 0.01 , 0.02 , 0.04 // yaw 
+    };
 
-    double error_range[18] = { 0.05 , 1.5 , 5 
-            , 0.05 , 1.5 , 5 
-            , 0.1 , 2 , 3 
-            , 0.1 , 1 , 2 
-            , 0.1 , 1 , 2 
-            , 0.1 , 1 , 2 };
+    double error_range[18] = { 
+            0.1 , 1.5 , 5 // x
+            , 0.1 , 1.5 , 5 // y
+            , 0.1 , 0.5 , 1 // z
+            , 0.1 , 1 , 2  // roll
+            , 0.1 , 1 , 2  // pitch
+            , 0.1 , 1 , 2 // yaw
+    };
 
-    double diff_range[18] = { 0.05 , 0.1 , 0.2 
-            , 0.05 , 0.1 , 0.2 
-            , 0.1 , 0.2 , 0.4 
-            , 0.01 , 0.15 , 0.3
-            , 0.01 , 0.15 , 0.3
-            , 0.05 , 0.2 , 0.5 };
+    double diff_range[18] = { 
+            0.05 , 0.1 , 0.2 // x
+            , 0.05 , 0.1 , 0.2 // y
+            , 0.05 , 0.2 , 0.5 // z
+            , 0.01 , 0.15 , 0.3 // roll
+            , 0.01 , 0.15 , 0.3 // pitch
+            , 0.01 , 0.05 , 0.1 // yaw
+    }; 
 
-    double force_range[18]; // not use now
+    // this force is have affect about output condition very much
+    double force_range[18] = { 
+            0.5 , 1.5 , 3 
+            , 0.8 , 1.8 , 3.8
+            , 2 , 2.5 , 3 
+            , 0.1 , 0.3 , 0.7
+            , 0.1 , 0.3 , 0.7
+            , 0.05 , 0.2 , 0.4 };
 
+    // This part we will send many data to use setup value of fuzzy logic
     for( unsigned int run = 0 ; run < 6 ; run++ )
     {
         fuzzy_logic[ run ].set_rule_condition( &fuzzy_rule );
@@ -122,14 +160,22 @@ int main( int argv , char** argc )
                 , error_range[ run * 3 + 1 ] , error_range[ run * 3 + 2 ] );
         fuzzy_logic[ run ].set_diff_range( diff_range[ run * 3 + 0 ] 
                 , diff_range[ run * 3 + 1 ] , diff_range[ run * 3 + 2 ] );
+        fuzzy_logic[ run ].set_force_range( force_range[ run * 3 + 0 ] 
+                , force_range[ run * 3 + 1 ] , force_range[ run * 3 + 2 ] );
         fuzzy_logic[ run ].clear_system();
     }
 
-    // part of client
+    // part of client for send command
     zeabus::client::single_thread::SendControlCommand client_control_fuzzy;
     client_control_fuzzy.setup_ptr_node_handle( ptr_node_handle );
     client_control_fuzzy.setup_ptr_data( &force );
     client_control_fuzzy.setup_client( "/control/thruster");
+
+    // part of client for send auv_state command
+    zeabus::client::single_thread::GetAUVState client_control_state;
+    client_control_state.setup_ptr_node_handle( ptr_node_handle );
+    client_control_state.setup_ptr_data( &current_state );
+    client_control_state.setup_client( "/fusion/auv_state" );
 
     // part of service
     zeabus::service::ControlCommand server_control_fuzzy;
@@ -145,22 +191,36 @@ int main( int argv , char** argc )
     while( ptr_node_handle->ok() )
     {
         rate.sleep();
-#ifdef _SUMMARY_
-        zeabus::escape_code::clear_screen();
-#endif // _SUMMARY_
-        client_control_state.normal_call();
+        (client_control_state).normal_call();
         ptr_mutex_data->lock();
         temp = error;
         ptr_mutex_data->unlock();
-        for( unsigned int run = 0 ; run <6 ; run++ )
+        for( unsigned int run = start_run ; run <6 ; run++ )
         {
             if( (temp.mask)[run] && ( run != 3 ) && ( run != 4 ))
             {
                 (force.target)[ run ] = fuzzy_logic[ run ].push( (temp.target)[run] );
                 (force.mask)[run] = true;
+                help_mask[ run ] = true;
+                help_error[ run ] = (temp.target)[ run ];
+            }
+            else if( help_mask[ run ] )
+            {
+                (force.target)[ run ] = fuzzy_logic[ run ].push( help_error[run] );
+                (force.mask)[run] = true;
+                help_mask[ run ] = false;
             }
             else
             {
+#ifdef _SHOW_OUTPUT_CONDITION_
+                if( count_loop == (size_buffer_fuzzy -1 ) )
+                {
+                    std::cout   << zeabus::escape_code::bold_red
+                                << "------------------>\n"
+                                << "\tWarning! You clear system\n"
+                                << zeabus::escape_code::normal_white;
+                }
+#endif
                 fuzzy_logic[ run ].clear_system();
                 (force.target)[ run ] = 0;
                 (force.mask)[run] = false;
@@ -170,23 +230,44 @@ int main( int argv , char** argc )
         // we will rotation force of linear in odom frame to world frame        
         temp_quaternion = tf::Quaternion( (force.target)[0] , (force.target)[1]
                 , (force.target)[2] , 0 );
-        zeabus::ros_interfaces::convert::tf_quaternion( &state_quaternion 
-                , &current_state.data.pose.pose.orientation );
-
+        zeabus::ros_interfaces::convert::quaternion_tf(
+                &(current_state.data.pose.pose.orientation)
+                , &state_quaternion );
         temp_quaternion = state_quaternion * temp_quaternion * state_quaternion.inverse();
+#ifdef _SHOW_ROTATION_
+        if( count_loop == ( size_buffer_fuzzy - 1 ) )
+        {
+            std::cout   << "force quaternion is " << temp_quaternion.x() << " " 
+                        << temp_quaternion.y() << " " << temp_quaternion.z() << " " 
+                        << temp_quaternion.w() << "\n";
+            std::cout   << "Quaternion convert is " << state_quaternion.x() << " " 
+                        << state_quaternion.y() << " " << state_quaternion.z() << " " 
+                        << state_quaternion.w() << "\n";
+            std::cout   << "Temp convert is " << temp_quaternion.x() << " " 
+                        << temp_quaternion.y() << " " << temp_quaternion.z() << " " 
+                        << temp_quaternion.w() << "\n";
+        } 
+#endif
+
+#ifdef _SUMMARY_
+        count_loop++;
+        if( count_loop == size_buffer_fuzzy )
+        {
+            std::cout   << "Input\t\tMask\tOutput\t\t\tMask\n";
+            for( unsigned int run = start_run ; run < 6 ; run++ )
+            {
+                std::cout   << temp.target[run] << "\t" << read_bool(temp.mask[run]) << "\t" 
+                            << force.target[run] << "\t" << read_bool(force.mask[run]) << "\n";
+            } // loop for for print summary case macro
+            count_loop = 0;
+        }
+#endif // _SUMMARY_
+
 
         (force.target)[ 0 ] = temp_quaternion.x();
         (force.target)[ 1 ] = temp_quaternion.y();
         (force.target)[ 2 ] = temp_quaternion.z();
 
-#ifdef _SUMMARY_
-        std::cout   << "Input\tMask\tOutput\tMask\n";
-        for( unsigned int run = 0 ; run < 6 ; run++ )
-        {
-            std::cout   << temp.target[run] << "\t" << read_bool(temp.mask[run]) << "\t" 
-                        << force.target[run] << "\t" << read_bool(force.mask[run]) << "\n";
-        } // loop for for print summary case macro
-#endif // _SUMMARY_
         client_control_fuzzy.normal_call();
     }
     ros::shutdown();
