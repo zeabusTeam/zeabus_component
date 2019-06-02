@@ -69,7 +69,7 @@ int main( int argv, char** argc )
 
     // Insert optional part param part  
     const static unsigned int buffer_size = 10; // size of buffer to use collect data
-    const static unsigned int trimed_size = 2; // size of buffer will trimed
+    const static unsigned int trimed_size = 3; // size of buffer will trimed
     const static unsigned int frequency = 60; // frequency of client to request data for sensor
     const static unsigned int limit_same_time = 5; // limit to warning when receive 10 time
 
