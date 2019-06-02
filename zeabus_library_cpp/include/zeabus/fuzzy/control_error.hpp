@@ -24,6 +24,8 @@
 
 #include    <iostream>
 
+#include    <zeabus/escape_code.hpp>
+
 #ifndef _ZEABUS_FUZZY_CONTROL_ERROR_HPP__
 #define _ZEABUS_FUZZY_CONTROL_ERROR_HPP__
 
@@ -66,7 +68,7 @@ namespace fuzzy
             double get_result();
 
             // function to get rule condition 
-            void set_rule_condition( std::array< std::array< signed char , 7> , 7 >* rule );
+            void set_rule_condition( std::array< std::array< int , 7> , 7 >* rule );
 
         protected:
             // function output condition we have input is this->output and will edit value
@@ -88,13 +90,15 @@ namespace fuzzy
             std::array< double , 3 > error_range;
             std::array< double , 3 > diff_range;
             std::array< double , 3 > force_range;
-            std::array< double , 3 > relative_value;
+            std::array< double , 4 > relative_value;
             // use rule_condition to updated 2 below variable
-            signed char error_fuzzy;
-            signed char diff_fuzzy; 
-            signed char result_fuzzy;
+            int error_fuzzy;
+            int previous_error_fuzzy;
+            int diff_fuzzy; 
+            int result_fuzzy;
             // This will use to collect rule_condition
-            std::array< std::array<signed char , 7 > , 7 > rule_table;
+            std::array< std::array< int , 7 > , 7 > rule_table;
+            bool reverse_state;
             
     }; // class object ControlError
 
