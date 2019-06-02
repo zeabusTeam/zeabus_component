@@ -40,7 +40,7 @@ import math
 import rospy
 import numpy
 from lookup_pwm_force import lookup_pwm_force
-from zeabus_utility.srv import SendThrottle,  SendControlCommand, GetAUVState
+from zeabus_utility.srv import SendThrottle,  SendControlCommand, GetAUVState, SendControlCommandResponse
 from zeabus_utility.msg import ControlCommand
 from std_msgs.msg import Header
 from tf import transformations as tf_handle
@@ -152,10 +152,11 @@ class ThrusterMapper:
 
         cmd = []
         for run in range(0, 8):
-            if( run < 8 ):
-                cmd.append( int(self.lookup_handle.find_pwm(torque[run]) ) )
+            temp = int(self.lookup_handle.find_pwm(torque[run]) )
+            if( 1480 < temp and temp < 1520 ):
+                cmd.append( int( 1500 ) )
             else:
-                cmd.append( int(1500) )
+                cmd.append( int( temp ) )
 
         self.header.stamp = rospy.get_rostime()
         pwm = tuple(cmd)
@@ -165,7 +166,7 @@ class ThrusterMapper:
                   pwm[0], pwm[1], pwm[2], pwm[3], pwm[4], pwm[5], pwm[6], pwm[7]))
 
         self.client_throttle(self.header, pwm)
-        return None
+        return SendControlCommandResponse()
 
 if __name__ == '__main__':
     thruster_mapper = ThrusterMapper()
