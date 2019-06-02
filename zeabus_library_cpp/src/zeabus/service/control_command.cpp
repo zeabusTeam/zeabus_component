@@ -71,6 +71,7 @@ namespace service
     {
         this->ptr_mutex_data->lock();
         *(this->ptr_control_command) = request.command;
+        this->ptr_mutex_data->unlock();
         return true;
     } // function callback
 

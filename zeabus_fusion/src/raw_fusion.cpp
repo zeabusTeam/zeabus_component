@@ -70,6 +70,8 @@
 void rotation_linear( const geometry_msgs::Vector3* source , geometry_msgs::Vector3* result 
         , tf::Quaternion* rotation );
 
+int read_bit_value( unsigned char number );
+
 #include    "function_helper.cpp"
 
 int main( int argv , char** argc )
@@ -176,7 +178,7 @@ int main( int argv , char** argc )
 #endif // _RAW_DATA_
 
         // This part will check about time stamp and set status of message
-        status_data = 0b111; // start at every data is ok
+        status_data = 0b111U; // start at every data is ok
 
         // DVL CHECK
         if( dvl_stamp != dvl_data.header.stamp )
@@ -195,7 +197,7 @@ int main( int argv , char** argc )
             // we worry about data dvl doesn't fast to get new data
             count_dvl++;
 #else
-            status_data &= 0b110; // bit DVL failure
+            status_data &= 0b110U; // bit DVL failure
 #endif
         }
 
@@ -215,9 +217,10 @@ int main( int argv , char** argc )
         }
         else
         {
-            status_data &= 0b101; // bit IMU failure 
+            status_data &= 0b101U; // bit IMU failure 
         }
 
+        // pressure check
         if( pressure_stamp != pressure_data.header.stamp )
         {
 #ifdef _PROCESS_
@@ -302,7 +305,7 @@ int main( int argv , char** argc )
                     << temp_data.data.pose.pose.position.x << " , "
                     << temp_data.data.pose.pose.position.y << " , "
                     << temp_data.data.pose.pose.position.z << " >\n";   
-        std::cout   << "ROBOT State " << status_data << "\n";
+        std::cout   << "ROBOT State " << read_bit_value(status_data) << "\n";
 #endif // _SUMMARY_
         ptr_mutex_data->lock();
         service_data.data.header.stamp = ros::Time::now();

@@ -108,6 +108,7 @@ int main( int argv , char** argc )
     client_control_command.setup_client( "/control/fuzzy" );  // set topic where error will send
 
     node_control_interfaces.spin();
+    std::cout   << "Start loop\n";
     while( ptr_node_handle->ok() )
     {
         rate.sleep();
@@ -205,8 +206,8 @@ int main( int argv , char** argc )
         std::cout   << "current RPY: " << euler[0] << " " << euler[1] << " " << euler[2] << "\n";
         tf::Matrix3x3( target_quaternion ).getRPY( euler[0] , euler[1] , euler[2] );
         std::cout   << "target RPY : " << euler[0] << " " << euler[1] << " " << euler[2] << "\n"
-                    << "diff RPY   : " << (error.target)[0] << " " << (error.target)[1]
-                    << " " << (error.target)[2] << "\n";
+                    << "diff RPY   : " << (error.target)[3] << " " << (error.target)[4]
+                    << " " << (error.target)[5] << "\n";
     #else
         std::cout   << "current quaternion : " << current_quaternion.x() << " " 
                     << current_quaternion.y() << " " << current_quaternion.z() << " "
@@ -221,9 +222,11 @@ int main( int argv , char** argc )
         std::cout   << "STATUS OF STATE " << read_bit_value( current_state.status )
                     << "\nMASK : " 
                     << read_bool( (error.mask)[0] ) << " " 
-                    << read_bool( (error.mask)[1] ) << " " << read_bool( (error.mask)[2] ) 
-                    << " " << read_bool( (error.mask)[3] ) << " " 
-                    << read_bool( (error.mask)[4] ) << " " << (error.mask)[5] << "\n";        
+                    << read_bool( (error.mask)[1] ) << " " 
+                    << read_bool( (error.mask)[2] ) << " " 
+                    << read_bool( (error.mask)[3] ) << " " 
+                    << read_bool( (error.mask)[4] ) << " " 
+                    << read_bool( (error.mask)[5] )<< "\n";        
 #endif 
     }
     ros::shutdown();

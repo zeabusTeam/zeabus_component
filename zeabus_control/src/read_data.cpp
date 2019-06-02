@@ -34,11 +34,11 @@ int read_bit_value( unsigned char status )
     {
         result += 1;
     }
-    if( (status & 0b010) == 1 ) 
+    if( (status & 0b010) == 2 ) 
     {
         result += 2;
     }
-    if( (status & 0b100) == 1 ) 
+    if( (status & 0b100) == 4 ) 
     {
         result += 4;
     }

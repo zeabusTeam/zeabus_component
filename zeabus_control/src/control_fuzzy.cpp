@@ -128,18 +128,20 @@ int main( int argv , char** argc )
     // part of client
     zeabus::client::single_thread::SendControlCommand client_control_fuzzy;
     client_control_fuzzy.setup_ptr_node_handle( ptr_node_handle );
-    client_control_fuzzy.setup_ptr_data( &error );
+    client_control_fuzzy.setup_ptr_data( &force );
     client_control_fuzzy.setup_client( "/control/thruster");
 
     // part of service
     zeabus::service::ControlCommand server_control_fuzzy;
     server_control_fuzzy.setup_ptr_node_handle( ptr_node_handle );
     server_control_fuzzy.setup_ptr_mutex_data( ptr_mutex_data );
+    server_control_fuzzy.setup_ptr_data( &error );
     server_control_fuzzy.setup_server_service( "/control/fuzzy" );
 
     node_control_fuzzy.spin();
     tf::Quaternion temp_quaternion;
     tf::Quaternion state_quaternion;
+    std::cout   << "Start loop\n";
     while( ptr_node_handle->ok() )
     {
         rate.sleep();
@@ -152,14 +154,16 @@ int main( int argv , char** argc )
         ptr_mutex_data->unlock();
         for( unsigned int run = 0 ; run <6 ; run++ )
         {
-            if( (force.mask)[run] )
+            if( (temp.mask)[run] && ( run != 3 ) && ( run != 4 ))
             {
                 (force.target)[ run ] = fuzzy_logic[ run ].push( (temp.target)[run] );
+                (force.mask)[run] = true;
             }
             else
             {
                 fuzzy_logic[ run ].clear_system();
                 (force.target)[ run ] = 0;
+                (force.mask)[run] = false;
             }
         }
 
@@ -176,11 +180,11 @@ int main( int argv , char** argc )
         (force.target)[ 2 ] = temp_quaternion.z();
 
 #ifdef _SUMMARY_
-        std::cout   << "Input\tMask\tOutput\n";
+        std::cout   << "Input\tMask\tOutput\tMask\n";
         for( unsigned int run = 0 ; run < 6 ; run++ )
         {
             std::cout   << temp.target[run] << "\t" << read_bool(temp.mask[run]) << "\t" 
-                        << force.target[run] << "\n";
+                        << force.target[run] << "\t" << read_bool(force.mask[run]) << "\n";
         } // loop for for print summary case macro
 #endif // _SUMMARY_
         client_control_fuzzy.normal_call();

@@ -27,3 +27,21 @@ void rotation_linear( const geometry_msgs::Vector3* source , geometry_msgs::Vect
     result->y = temp_quaternion.y();
     result->z = temp_quaternion.z();
 } // function rotation_linear
+
+int read_bit_value( unsigned char number )
+{
+    int result = 0;
+    if( (number & 0b001) == 1)
+    {
+        result += 1;
+    }
+    if( (number & 0b010) == 2)
+    {
+        result += 2;
+    }
+    if( (number & 0b100) == 4)
+    {
+        result += 4;
+    }
+    return result;
+}

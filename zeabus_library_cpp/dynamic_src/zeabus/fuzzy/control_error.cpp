@@ -88,8 +88,8 @@ namespace fuzzy
         if( this->point_element == buffer_size )
         {
             this->point_element = 0;
-            this->fuzzy_condition( error );
         }
+        this->fuzzy_condition( error );
         return this->get_result(); 
     } // function push
 
@@ -110,7 +110,7 @@ namespace fuzzy
     template< unsigned int buffer_size >
     void ControlError< buffer_size >::rule_condition()
     {
-        this->result_fuzzy = (this->rule_table)[ this->error_fuzzy ][ this->diff_error ];
+        this->result_fuzzy = (this->rule_table)[ this->error_fuzzy ][ this->diff_fuzzy ];
         double temp_data = (this->relative_value)[ fabs( this->result_fuzzy ) ];
         double temp_sign = 1.0*this->result_fuzzy;
         this->output = this->buffer_output + copysign( temp_data  , temp_sign );
@@ -149,7 +149,7 @@ namespace fuzzy
             this->diff_fuzzy = copysign( 1 , this->sum_buffer );
         }
         else this->diff_fuzzy = 0;
-        
+        this->rule_condition(); 
     } // function fuzzy_condition
 
     

@@ -78,10 +78,10 @@ class ThrusterMapper:
             [0, 0, 1],              # thruster id 1
             [0, 0, 1],              # thruster id 2
             [0, 0, 1],              # thruster id 3
-            [-cos_45, sin_45, 0],   # thruster id 4
-            [-cos_45, -sin_45, 0],  # thruster id 5
-            [cos_45, sin_45, 0],    # thruster id 6
-            [cos_45, -sin_45, 0]    # thruster id 7
+            [cos_45, -sin_45, 0],   # thruster id 4
+            [cos_45, sin_45, 0],  # thruster id 5
+            [-cos_45, -sin_45, 0],    # thruster id 6
+            [-cos_45, sin_45, 0]    # thruster id 7
         ])
 
         self.distance = numpy.array([
@@ -131,9 +131,9 @@ class ThrusterMapper:
     def callback(self, request):
 
         temp_force = []
-        for run in range( 0 , 8 ):
-            if( (request.commad.mask)[run] ):
-                temp_force.append( (request.commad.target)[run] )
+        for run in range( 0 , 6 ):
+            if( (request.command.mask)[run] ):
+                temp_force.append( (request.command.target)[run] )
             else:
                 temp_force.append( 0 )
 
@@ -152,10 +152,10 @@ class ThrusterMapper:
 
         cmd = []
         for run in range(0, 8):
-            if( run < 4 ):
+            if( run < 8 ):
                 cmd.append( int(self.lookup_handle.find_pwm(torque[run]) ) )
             else:
-                cmd.append( int(0) )
+                cmd.append( int(1500) )
 
         self.header.stamp = rospy.get_rostime()
         pwm = tuple(cmd)
@@ -165,7 +165,7 @@ class ThrusterMapper:
                   pwm[0], pwm[1], pwm[2], pwm[3], pwm[4], pwm[5], pwm[6], pwm[7]))
 
         self.client_throttle(self.header, pwm)
-
+        return None
 
 if __name__ == '__main__':
     thruster_mapper = ThrusterMapper()
