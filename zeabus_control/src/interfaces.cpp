@@ -6,6 +6,7 @@
 // MACRO DETAIL
 // _SHOW_DATA_  : You will see all data to help you check calculate
 // _SHOW_RPY_   : This will print RPY of target and current
+// _CHECK_FIND_ERROR_RPY_ : This will show about data form find error RPY
 
 // README
 //  This file will use to calculate about error by 10 Hz
@@ -15,6 +16,7 @@
 // MACRO SET
 #define _SHOW_DATA_
 #define _SHOW_RPY_
+#define _CHECK_FIND_ERROR_RPY_
 
 // MACRO CONDITION
 
@@ -29,6 +31,8 @@
 #include    <zeabus/time.hpp>
 
 #include    <zeabus/count.hpp>
+
+#include    <zeabus/radian.hpp>
 
 #include    <geometry_msgs/Point.h>
 
@@ -158,6 +162,18 @@ int main( int argv , char** argc )
         diff_quaternion = target_quaternion * current_quaternion.inverse();
         tf::Matrix3x3( diff_quaternion ).getRPY( 
                 (error.target)[3] , (error.target)[4] , (error.target)[5] );
+
+#ifdef _CHECK_FIND_ERROR_RPY_
+        std::cout   << "Before " << error.target[3] << " " << error.target[4] << " "
+                    << error.target[5] << "\n";
+#endif 
+        zeabus::radian::bound( &( ( error.target )[3] ) );
+        zeabus::radian::bound( &( ( error.target )[4] ) );
+        zeabus::radian::bound( &( ( error.target )[5] ) );
+#ifdef _CHECK_FIND_ERROR_RPY_
+        std::cout   << "After " << error.target[3] << " " << error.target[4] << " "
+                    << error.target[5] << "\n";
+#endif
 
         // loop part : forth status of state decision
         //  state you can look by use binay format 3 bit

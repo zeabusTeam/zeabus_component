@@ -28,7 +28,7 @@ namespace radian
             {
                 answer += negate_two_pi;
             }
-            else if( answer < -pi )
+            else if( answer < negate_pi )
             {
                 answer += two_pi;
             }
