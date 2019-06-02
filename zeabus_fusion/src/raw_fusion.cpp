@@ -4,8 +4,6 @@
 // MAINTAINER	: K.Supasan
 
 // MACRO DETAIL
-//  _IMU_CONVERTER_ : This macro use in file function_helper.cpp about convert value from imu.
-//                  That about convert coordinate from NED to ENU
 //  _SUMMARY_       : This mean will show current data of robot by all sensor include position
 //  _RAW_DATA_      : This macro will show you raw data to get from filter
 //  _PROCESS_       : This macro use you can know about process of this code
@@ -21,7 +19,6 @@
 // REFERENCE
 
 // MACRO SET
-#define _IMU_CONVERTER_
 #define _SUMMARY_
 //#define _PROCESS_
 #define _DELAY_DVL_
@@ -92,7 +89,7 @@ int main( int argv , char** argc )
 
     // Insert optional part param part
     static signed int frequency = 30;
-    static std::string dvl_topic = "/filter/dvl";
+    static std::string dvl_topic = "/sensor/dvl";
     static std::string imu_topic = "/filter/imu";
     static std::string pressure_topic = "/filter/pressure";
     static double temp_RPY[3] = { 0 , 0 , 0 };
@@ -106,7 +103,7 @@ int main( int argv , char** argc )
     static ros::Time dvl_stamp = ros::Time::now();
     static ros::Time imu_stamp = ros::Time::now();
     static ros::Time pressure_stamp = ros::Time::now();
-    static unsigned char status_data = 0b000;
+    static unsigned char status_data = 0b000U;
     static zeabus_utility::AUVState service_data; // this use in server we will lock this
     static zeabus_utility::AUVState temp_data;
 
@@ -190,6 +187,9 @@ int main( int argv , char** argc )
 #ifdef _PROCESS_
             std::cout   << "Update linear_velocity!\n";
 #endif // _PROCESS_
+#ifdef _DELAY_DVL_
+            count_dvl = 0;
+#endif // _DELAY_DVL_
         }
         else
         {
@@ -245,9 +245,6 @@ int main( int argv , char** argc )
                         << " Pitch : " << temp_RPY[1] << " Yaw : " << temp_RPY[2] << "\n";
 #endif
             // data orientation of robot
-#ifdef _PROCESS_
-            std::cout   << "Update orientation!\n";
-#endif
             zeabus::ros_interfaces::convert::tf_quaternion( &temp_quaternion 
                     , &(temp_data.data.pose.pose.orientation ) );
 #ifdef _DELAY_DVL_
@@ -266,7 +263,6 @@ int main( int argv , char** argc )
 #endif
             else
             {
-                count_dvl = 0;
                 robot_distance.x = ( service_data.data.twist.twist.linear.x 
                         + temp_data.data.twist.twist.linear.x ) / ( frequency * 2 );
                 robot_distance.y = ( service_data.data.twist.twist.linear.y 
@@ -284,9 +280,6 @@ int main( int argv , char** argc )
 #endif
                 temp_data.data.pose.pose.position.x += world_distance.x;
                 temp_data.data.pose.pose.position.y += world_distance.y;
-#ifdef _PROCESS_
-                std::cout   << "Update position\n";
-#endif
 #ifdef _SUMMARY_
                 std::cout   << "robot_distance x : y <---> " << robot_distance.x << " : "
                             << robot_distance.y << "\nworld_distance x: y <---> " 
@@ -299,13 +292,14 @@ int main( int argv , char** argc )
             std::cout   << zeabus::escape_code::bold_margenta
                         << "condition imu didn't ok\n"
                         << zeabus::escape_code::normal_white;
+            status_data &= 0b110;
         }
 #ifdef _SUMMARY_
         std::cout   << "ROBOT Position < x , y , z > : < " 
                     << temp_data.data.pose.pose.position.x << " , "
                     << temp_data.data.pose.pose.position.y << " , "
                     << temp_data.data.pose.pose.position.z << " >\n";   
-        std::cout   << "ROBOT State " << read_bit_value(status_data) << "\n";
+        std::cout   << "ROBOT State " << unsigned(status_data) << "\n";
 #endif // _SUMMARY_
         ptr_mutex_data->lock();
         service_data.data.header.stamp = ros::Time::now();
