@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<package format="2">
+
+    <name>zeabus_library_python</name>
+
+    <version>0.0.0</version>
+    <desciption>This will collect library of python language</desciption>
+
+    <author email="supasan.k@ku.th">K.Supasan</author>
+
+    <maintainer email="supasan.k@ku.th">K.Supasan</maintainer>
+
+    <license>MIT</license>
+
+    <buildtool_depend>catkin</buildtool_depend>
+
+    <build_depend>rospy</build_depend>
+    <exec_depend>rospy</exec_depend>
+</package>
