@@ -1,14 +1,15 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
+# FILE			: __init__.py
+# AUTHOR		: K.Supasan
+# CREATE ON		: 2019, June 03 (UTC+0)
+# MAINTAINER	: K.Supasan
 
-from deistutile.core import setup
-from catkin_pkg.python_setup import generate_distutiles_setup
+# README
 
-#Reference
-#   ref1    : http://wiki.ros.org/rospy_tutorials/Tutorials/Makefile?fbclid=IwAR2A9UVzczVQoIe31XKCcw6TY180kRGY0WTpahvKoLr72S99Lrg5FKCUa9A
+# REFERENCE
+#   ref01 : http://wiki.ros.org/rospy_tutorials/Tutorials/Makefile?fbclid=IwAR2irqBJ3v1D7Dfjb-Ntk9r9msVopoe-1ucXjbYyumbYog3QGNweMvRZEmg
+#   ref02 : https://docs.python.org/3/tutorial/modules.html
 
-setup_argc =generate_distutiles_setup(
-    packaged = ['zeabus_librarry_python']
-    , package_dif = { '' : 'src' }
-)
+import version
 
-setup( **setup_args )
+__all__ = ["version"]

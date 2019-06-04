@@ -7,3 +7,9 @@ project( zeabus_library_python )
 find_package( catkin REQUIRED COMPONENTS rospy )
 
 catkin_package()
+
+catkin_python_setup()
+
+catkin_install_python( PROGRAMS bin/zeabus_lib_python
+    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
