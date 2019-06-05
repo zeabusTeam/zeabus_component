@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 
 ZEABUS_LIBRARY_PYTHON_VERSION = "0.0.0"
 

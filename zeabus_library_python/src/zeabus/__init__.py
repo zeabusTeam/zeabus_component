@@ -9,7 +9,4 @@
 # REFERENCE
 #   ref01 : http://wiki.ros.org/rospy_tutorials/Tutorials/Makefile?fbclid=IwAR2irqBJ3v1D7Dfjb-Ntk9r9msVopoe-1ucXjbYyumbYog3QGNweMvRZEmg
 #   ref02 : https://docs.python.org/3/tutorial/modules.html
-
-import version
-
-__all__ = ["version"]
+#   ref03 :https://docs.python.org/2/tutorial/modules.html
