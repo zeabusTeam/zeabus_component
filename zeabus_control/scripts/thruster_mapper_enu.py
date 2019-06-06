@@ -67,7 +67,7 @@ class ThrusterMapper:
             '/control/thruster', SendControlCommand(), self.callback )
 
         self.lookup_handle = lookup_pwm_force(
-            "zeabus_control", "scripts", "blue_robotics_2018.txt")
+            "zeabus_control", "scripts", "4th_t200_16.txt")
 
         cos_45 = math.cos(math.radians(45))
         sin_45 = math.sin(math.radians(45))
