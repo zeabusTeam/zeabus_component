@@ -146,7 +146,7 @@ int main( int argv , char** argc )
         ptr_mutex_data->unlock(); 
         if( time_different > timeout )
         {
-            reset_value( &target_pwm , 1500 , thruster_size );
+            reset_value( &target_pwm , 0 , thruster_size );
             std::cout   << zeabus::escape_code::normal_yellow << "Time out of PWM command "
                         << timeout << " now go home\n" << zeabus::escape_code::normal_white;
         }
