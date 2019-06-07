@@ -47,9 +47,9 @@
 
 #include    <geometry_msgs/Vector3.h>
 
+#define TF_EULER_DEFAULT_ZYX
 #include    <tf/LinearMath/Matrix3x3.h>
 
-#define TF_EULER_DEFAULT_ZYX
 #include    <tf/LinearMath/Quaternion.h>
 
 #include    <zeabus/convert/to_string.hpp>
