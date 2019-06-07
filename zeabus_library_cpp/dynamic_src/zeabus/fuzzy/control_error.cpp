@@ -260,7 +260,7 @@ namespace fuzzy
                     << ( this->error_fuzzy ) << "\n";
 #endif
         // get value to diff_fuzzy
-        temp_data = fabs( this->sum_buffer / buffer_size );
+        temp_data = fabs( this->sum_buffer );
         if( temp_data > this->diff_range[2] ) 
         {
             this->diff_fuzzy = copysign( 3 ,this->sum_buffer );
