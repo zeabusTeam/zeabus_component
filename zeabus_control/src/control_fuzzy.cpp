@@ -233,7 +233,7 @@ int main( int argv , char** argc )
         zeabus::ros_interfaces::convert::quaternion_tf(
                 &(current_state.data.pose.pose.orientation)
                 , &state_quaternion );
-        temp_quaternion = state_quaternion * temp_quaternion * state_quaternion.inverse();
+        temp_quaternion = state_quaternion.inverse() * temp_quaternion * state_quaternion;
 #ifdef _SHOW_ROTATION_
         if( count_loop == ( size_buffer_fuzzy - 1 ) )
         {
