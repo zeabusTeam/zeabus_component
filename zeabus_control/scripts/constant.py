@@ -14,15 +14,19 @@ REFERENCE
 
 # part of file thruster_mapper_enu
 # Below constant will about show process of data
-THRUSTER_MAPPER_CHOOSE_PROCESS = True
+THRUSTER_MAPPER_CHOOSE_PROCESS = False
 # Below constant will about show all calculate process
 THRUSTER_MAPPER_CALCULATE_PROCESS = False
 # Below constant will show you a result
-THRUSTER_MAPPER_RESULT = False
+THRUSTER_MAPPER_RESULT = True
 # Below constant will show about callback have been called
-THRUSTER_MAPPER_CALLBACK_CALLED = True
+THRUSTER_MAPPER_CALLBACK_CALLED = False
 # Below constant will consider about time out of data
 THRUSTER_MAPPER_TIME_OUT = 1.0 
+# Below constant will help you to send command don't worry about time stamp
+THRUSTER_MAPPER_AUTO_TIME = False
+# Below constant will help you to manage about loop to print value result
+THRUSTER_MAPPER_COUNT = 5
 
 if(THRUSTER_MAPPER_CALCULATE_PROCESS):
     THRUSTER_MAPPER_RESULT = True
