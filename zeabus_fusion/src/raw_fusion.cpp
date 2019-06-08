@@ -9,6 +9,7 @@
 //  _PROCESS_       : This macro use you can know about process of this code
 //  _DELAY_DVL_     : This use when you worry about dvl have low speed
 //  _BOUND_ZERO_    : This use when you think dobuble position zero isn't ok we will bound zero
+//  _COLLECT_LOG_   : This use when you want to colllect log of data input & output this node
 
 // README
 //  This will you data from 3 node to fusion but use only simple equation to fusion data
@@ -23,6 +24,7 @@
 //#define _PROCESS_
 #define _DELAY_DVL_
 #define _BOUND_ZERO_
+#define _COLLECT_LOG_
 
 // MACRO CONDITION
 #ifdef _RAW_DATA_
@@ -38,6 +40,8 @@
 #include    <iostream>
 
 #include    <ros/ros.h>
+
+#include    <zeabus/time.hpp>
 
 #include    <zeabus/radian.hpp>
 
@@ -61,6 +65,10 @@
 #include    <zeabus/service/get_data/auv_state.hpp>
 
 #include    <zeabus/ros_interfaces/single_thread.hpp>
+
+#ifdef _COLLECT_LOG_
+#include    <zeabus/ros_interfaces/file/raw_fusion.hpp>
+#endif
 
 #include    <zeabus/ros_interfaces/convert/geometry_msgs.hpp>
 
@@ -132,6 +140,22 @@ int main( int argv , char** argc )
     static unsigned int count_imu = 0;
     static tf::Quaternion temp_quaternion;
     // But first time is only about dvl time_stamp
+
+#ifdef _COLLECT_LOG_
+    zeabus::ros_interfaces::file::RawFusion log_file;
+    log_file.setup_package( "zeabus_log" );
+    log_file.setup_subdirectory( "log/fusion" );
+    log_file.setup_file_name( "raw_fusion" + zeabus::local_time( 6 ) + ".txt" );
+    if( ! log_file.open() )
+    {
+        std::cout   << zeabus::escape_code::normal_yellow << "WARNING! can't open file for log"
+                    << zeabus::escape_code::normal_white << "\n";
+    }
+    log_file.write_column();
+    log_file.setup_ptr_dvl_data( &(dvl_data.vector) );
+    log_file.setup_ptr_imu_data( &(imu_data) );
+    log_file.setup_ptr_pressure_data( &(pressure_data.data) );
+#endif
 
     ros::Rate rate( frequency );
     // Init data first time
@@ -307,8 +331,15 @@ int main( int argv , char** argc )
         service_data.data.twist = temp_data.data.twist;
         service_data.status = status_data;
         ptr_mutex_data->unlock();
+#ifdef _COLLECT_LOG_
+        log_file.logging( &service_data );
+#endif // _COLLECT_LOG_
     }
     ros::shutdown();
     node_sensor_fusion.join();
+
+#ifdef _COLLECT_LOG_
+    log_file.close();
+#endif
 
 }

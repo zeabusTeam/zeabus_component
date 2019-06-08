@@ -40,6 +40,7 @@ set( SHARED_LIBS
 
 set( ROS_LIBS
     ROSConvert
+    ROSRawFusion
     ROSInterfaces
     ROSSingleFilter
     ROSVector3Filter
