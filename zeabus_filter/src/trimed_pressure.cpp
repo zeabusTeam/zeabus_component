@@ -62,6 +62,8 @@ int main( int argv, char** argc )
     std::shared_ptr< ros::NodeHandle > ptr_node_handle = 
             std::make_shared< ros::NodeHandle >("");
 
+	ros::Publisher pressure_publisher = ptr_node_handle->advertise<zeabus_utility::HeaderFloat64>("/filter/pressure", 1);
+
     bool process_code = true; // this use to collect process of code
 
     // This lock will use only about server because we don't know when have request result
@@ -176,6 +178,7 @@ int main( int argv, char** argc )
             output_data.header.stamp = ros::Time::now();
             output_data.data = filter_pressure.get_result();
             ptr_mutex_data->unlock();
+			pressure_publisher.publish(output_data);
 #ifdef _COLLECT_LOG_
             my_file.logging( &(output_data.header.stamp) , &(input_data.data) 
                     , &(output_data.data) );
