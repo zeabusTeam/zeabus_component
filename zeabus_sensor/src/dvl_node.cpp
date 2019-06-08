@@ -34,6 +34,7 @@ namespace Asio = boost::asio;
 
 int main( int argv , char** argc )
 {
+
     zeabus::sensor::DVL::Connector dvl("/dev/usb2serial/ftdi_FT2VR5PM_02");
 
     zeabus::ros_interfaces::SingleThread dvl_node( argv , argc , "dvl_node" );
@@ -42,6 +43,9 @@ int main( int argv , char** argc )
             std::make_shared< ros::NodeHandle >("");
 
     std::shared_ptr< std::mutex > ptr_mutex_data = std::make_shared< std::mutex >();
+
+	ros::Publisher dvl_publisher = 
+			ptr_node_handle->advertise<geometry_msgs::Vector3Stamped>("/sensor/dvl" , 1);
 
     bool status_file = true; // if true that mean not status are ok
 
@@ -137,7 +141,8 @@ int main( int argv , char** argc )
                 temp_message.header.stamp = ros::Time::now();
                 ptr_mutex_data->lock();
                 message = temp_message;
-                ptr_mutex_data->unlock(); 
+                ptr_mutex_data->unlock();
+				dvl_publisher.publish(message);
             }
             else
             {
