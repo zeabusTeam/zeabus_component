@@ -87,6 +87,8 @@ int main( int argv , char** argc )
     std::shared_ptr< ros::NodeHandle > ptr_node_handle = 
             std::make_shared< ros::NodeHandle >("");
 
+    ros::Publisher fusion_publisher = ptr_node_handle->advertise<zeabus_utility::AUVState>("/fusion/auv_state", 1);
+
     std::shared_ptr< std::mutex > dvl_mutex = std::make_shared< std::mutex >();
     std::shared_ptr< std::mutex > imu_mutex = std::make_shared< std::mutex >();
     std::shared_ptr< std::mutex > pressure_mutex = std::make_shared< std::mutex >();
@@ -331,6 +333,7 @@ int main( int argv , char** argc )
         service_data.data.twist = temp_data.data.twist;
         service_data.status = status_data;
         ptr_mutex_data->unlock();
+        fusion_publisher.publish(service_data);
 #ifdef _COLLECT_LOG_
         log_file.logging( &service_data );
 #endif // _COLLECT_LOG_
