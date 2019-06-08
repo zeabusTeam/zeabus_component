@@ -4,14 +4,14 @@
     ref01   : https://cssgenerator.org/rgba-and-hex-color-generator.html
 -->
 
-<robot xmlns::xacro="http://www.ros.org/wiki/xacro" name="zeabus_robot" >
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="zeabus_robot" >
 
     <material name="green">
-        <color rgba="$(82/255) $(199/255) $(72/255) 0.8">
+        <color rgba="${82/255} ${199/255} ${72/255} 0.8"/>
     </material>
 
     <material name="red">
-        <color rgba="$(255/255) $(0/255) $(0/255) 0.81">
+        <color rgba="${255/255} ${0/255} ${0/255} 0.81"/>
     </material>
 
     <link name="base_link_robot">
@@ -22,7 +22,7 @@
                 <cylinder length="0.92" radius="0.105"/>
             </geometry>
 
-            <origin rpy="1.57075 0 0" xyz="0 0 0"/>
+            <origin rpy="0 1.57075 0" xyz="0 0 0"/>
 
             <material name="green"/>
 
@@ -38,6 +38,8 @@
                 <cylinder length="0.15" radius="0.105"/>
             </geometry>
 
+            <origin rpy="0 1.57075 0" xyz="0 0 0"/>
+
             <material name="red"/>
 
         </visual>
@@ -47,7 +49,7 @@
     <joint name="point_header_robot" type="fixed">
         <parent link="base_link_robot"/>
         <child link="base_link_header"/>
-        <origin xyz="0 0 0.385"/>
+        <origin xyz="0.385 0 0" rpy="0 0 0"/>
     </joint>
 
 </robot>
