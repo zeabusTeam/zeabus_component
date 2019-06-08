@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<launch>
+    <node pkg="zeabus_sensor" type="imu_node" name="imu" />
+    <node pkg="zeabus_sensor" type="dvl_node" name="dvl" />
+</launch>

@@ -74,6 +74,8 @@ int main( int argv , char** argc )
     std::shared_ptr< ros::NodeHandle > ptr_node_handle =
             std::make_shared< ros::NodeHandle >("");
 
+    ros::Publisher control_fuzzy_publisher = ptr_node_handle->advertise<zeabus_utility::ControlCommand>("/control/thruster", 1);
+
     std::shared_ptr< std::mutex > ptr_mutex_data = std::make_shared< std::mutex >();
 
     // Insert optional part param part
@@ -170,6 +172,7 @@ int main( int argv , char** argc )
     client_control_fuzzy.setup_ptr_node_handle( ptr_node_handle );
     client_control_fuzzy.setup_ptr_data( &force );
     client_control_fuzzy.setup_client( "/control/thruster");
+    control_fuzzy_publisher.publish(force);
 
     // part of client for send auv_state command
     zeabus::client::single_thread::GetAUVState client_control_state;

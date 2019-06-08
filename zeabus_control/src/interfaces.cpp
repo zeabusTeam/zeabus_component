@@ -66,6 +66,7 @@ int main( int argv , char** argc )
 
     std::shared_ptr< ros::NodeHandle > ptr_node_handle = 
             std::make_shared< ros::NodeHandle >("");
+    ros::Publisher interface_publisher = ptr_node_handle->advertise<zeabus_utility::ControlCommand>("/control/fuzzy", 1);
 
     std::shared_ptr< std::mutex > ptr_mutex_data = std::make_shared< std::mutex >();
 
@@ -209,6 +210,7 @@ int main( int argv , char** argc )
         
         // loop part : send error command
         client_control_command.normal_call();
+        interface_publisher.publish(error);
 #ifdef _SHOW_DATA_
         std::cout   << "\n--------------------------------------------------------------\n"
                     << "current position : " << ptr_current_position->x << " " 
