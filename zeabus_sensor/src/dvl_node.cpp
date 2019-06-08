@@ -112,10 +112,9 @@ int main( int argv , char** argc )
         dvl_node.spin();
     }
 
-    unsigned int length_data;    
     while( ptr_node_handle->ok() )
     {
-        length_data = dvl.read_data( &raw_data );
+        (void)dvl.read_data( &raw_data );
         type_line.clear() ; // make string are empty
         type_line.push_back( raw_data[1] );
         type_line.push_back( raw_data[2] );
