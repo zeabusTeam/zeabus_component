@@ -73,6 +73,8 @@ int main( int argv , char** argc )
     std::shared_ptr< ros::NodeHandle > ptr_node_handle = 
             std::make_shared< ros::NodeHandle >("");
 
+	ros::Publisher imu_publisher = ptr_node_handle->advertise<sensor_msgs::Imu>("/filter/imu", 1);
+
     bool process_code = true;
 
     // This lock will use only about server because we don't know when have request result
@@ -231,6 +233,7 @@ int main( int argv , char** argc )
             zeabus::ros_interfaces::convert::tf_quaternion( &quaternion 
                     , &(output_data.orientation) );
             ptr_mutex_data->unlock();
+			imu_publisher.publish(output_data);
 #ifdef _LOG_FILTER_
             file_filter.logging( &time_stamp , input_filter , output_filter );
 #endif // _LOG_FILTER_
