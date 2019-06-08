@@ -76,6 +76,8 @@ int main( int argv , char** argc )
 
     std::shared_ptr< std::mutex > ptr_mutex_data = std::make_shared< std::mutex >();
 
+	ros::Publisher imu_publisher = ptr_node_handle->advertise<sensor_msgs::Imu>("/sensor/imu", 1);
+
 #ifdef _DECLARE_PROCESS_
     std::cout   << "Finish declare basic object of IMU node\n";
 #endif // _DECLARE_PROCESS_
@@ -241,6 +243,7 @@ int main( int argv , char** argc )
             ptr_mutex_data->lock();
             message = temporary_message;
             ptr_mutex_data->unlock();
+			imu_publisher.publish(message);
 
 #ifdef _SUMMARY_
             zeabus::ros_interfaces::convert::quaternion_tf( 
