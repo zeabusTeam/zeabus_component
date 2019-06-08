@@ -13,17 +13,21 @@ REFERENCE
 """
 
 # part of file thruster_mapper_enu
-# Below constant will about data when updated time
-THRUSTER_MAPPER_UPDATED = True
+# Below constant will about show process of data
+THRUSTER_MAPPER_CHOOSE_PROCESS = True
 # Below constant will about show all calculate process
-THRUSTER_MAPPER_CALCULATE_PROCESS = True
+THRUSTER_MAPPER_CALCULATE_PROCESS = False
 # Below constant will show you a result
-THRUSTER_MAPPER_RESULT = True
-# Below constant will help you to see RPY instead quaternion
-THRUSTER_MAPPER_EULER = True
-# Below constant will know about can call service to auv_state or not
-THRUSTER_MAPPER_AUV_STATE = True
+THRUSTER_MAPPER_RESULT = False
+# Below constant will show about callback have been called
+THRUSTER_MAPPER_CALLBACK_CALLED = True
+# Below constant will consider about time out of data
+THRUSTER_MAPPER_TIME_OUT = 1.0 
 
 if(THRUSTER_MAPPER_CALCULATE_PROCESS):
     THRUSTER_MAPPER_RESULT = True
 # In the result is one part of PROCESS CALCULATE
+
+
+# Below constant help to manage about tuple
+FALSE_MASK = ( False , False , False , False , False , False )

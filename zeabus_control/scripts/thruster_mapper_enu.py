@@ -32,6 +32,7 @@ REFERENCE
   ref03 : https://pyformat.info/
   ref04 : https://www.w3schools.com/python/ref_func_print.asp
   ref05 : https://docs.python.org/3/whatsnew/3.0.html
+  ref06 : https://docs.python.org/2/library/thread.html
 """
 
 from __future__ import print_function
@@ -39,8 +40,10 @@ from __future__ import print_function
 import math
 import rospy
 import numpy
+import thread
 from lookup_pwm_force import lookup_pwm_force
-from zeabus_utility.srv import SendThrottle,  SendControlCommand, GetAUVState, SendControlCommandResponse
+from zeabus_utility.srv import SendThrottle,  SendControlCommand, GetAUVState
+from zeabus_utility.srv import SendControlCommandRequest, SendControlCommandResponse
 from zeabus_utility.msg import ControlCommand
 from std_msgs.msg import Header
 from tf import transformations as tf_handle
@@ -55,6 +58,7 @@ class ThrusterMapper:
 
     def __init__(self):
 
+        # Setup about variable in ROS System to use for connect with other node
         rospy.init_node('control_thruster')
 
         self.client_throttle = rospy.ServiceProxy(
@@ -63,14 +67,20 @@ class ThrusterMapper:
         self.client_state = rospy.ServiceProxy(
             '/fusion/auv_state', GetAUVState)
 
-        self.server = rospy.Service(
+        self.server_service = rospy.Service(
             '/control/thruster', SendControlCommand(), self.callback )
+
+        self.server_subscriber = rospy.Service(
+            '/control/thruster' , ControlCommand , self.callback_subscriber )
 
         self.lookup_handle = lookup_pwm_force(
             "zeabus_control", "scripts", "4th_t200_16.txt")
 
         cos_45 = math.cos(math.radians(45))
         sin_45 = math.sin(math.radians(45))
+
+        # In the below function we use to declare matrix for using about calculating 
+        # force and torque of robot
 
         # this variable will show about position to calculate force
         self.direction_linear = numpy.array([
@@ -96,7 +106,7 @@ class ThrusterMapper:
         ])
 
         # this variable will show about momentum to calculate about rotatio by euler
-        self.direction_angular = numpy.array([
+        self.direction_angular = numpy.array( [
             # thruster id 0
             numpy.cross(self.distance[0], self.direction_linear[0]),
             # thruster id 1
@@ -113,7 +123,7 @@ class ThrusterMapper:
             numpy.cross(self.distance[6], self.direction_linear[6]),
             # thruster id 7
             numpy.cross(self.distance[7], self.direction_linear[7])
-        ])
+        ] )
 
         self.direction = numpy.concatenate(
             (self.direction_linear, self.direction_angular), axis=1)
@@ -126,16 +136,83 @@ class ThrusterMapper:
         #   that make us have convert world frame to robot frame
 
         self.header = Header()
-        self.header.frame_id = "robot"
+        self.header.frame_id = "base_link"
+   
+        self.client_data = SendControlCommandRequest()
 
-    def callback(self, request):
+        self.control_message = ControlCommand()
+        self.mission_message = ControlCommand()
+        # Two line above will have critical section for read and write that make us have to
+        #   use lock to protec about critical senstion
+        self.control_lock = thread.allocate_lock()
+        self.mission_lock = thread.allocate_lock() 
 
+        # In above 4 variable we have data and lock for manage about critical section next
+        #   we have to manage about time out of data
+        self.control_stamp = rospy.rostime.Time()
+        self.mission_stamp = rospy.rostime.Time()
+ 
+        self.spin_id = thread.start_new_thread( rospy.spin() )
+        print "Already spin and thread identifier is "
+        print self.spin_id
+
+        while( not rospy.is_shutdown() ):
+            rospy.sleep( 0.03 )
+            print rospy.Time.now()
+            self.client_loop()
+            print rospy.Time.now()
+
+    def client_loop(self, request):
+
+        # Zero process we call prepare process because we have to check time out of data 
+        current_time = rospy.Time.now()
+        mission_data = ControlCommand()
+        control_data = ControlCommand()
+
+        # Below condition use to decision about command from mission
+        temp_time = rospy.Duration( current_time , self.mission_stamp )
+
+        if( constant.THRUSTER_MAPPER_CHOOSE_PROCESS ):
+            print "different time of mission is %6f".format( temp_time )
+
+        self.mission_lock.acquire( 0 ) # start crtical section of mission data
+        if( temp_time > constant.THRUSTER_MAPPER_TIME_OUT ):
+            mission_data.mask = constant.FALSE_MASK 
+        else:
+            mission_data = self.mission_message
+        self.mission_lock.release() # end critical section of mission data
+
+        # Below condition use to decision about command from control
+        temp_time = rospy.Duration( current_time , self.control_stamp )
+
+        if( constant.THRUSTER_MAPPER_CHOOSE_PROCESS ):
+            print "different time of control is %6f".format( temp_time )
+
+        self.control_lock.acquire( 0 ) #start critical section of control data
+        if( temp_time > constant.THRUSTER_MAPPER_TIME_OUT ):
+            control_data.mask = constant.FALSE_MASK
+        else:
+            control_data = self.control_message 
+        self.control_lock.release() # end critical section of control data
+
+        # First process is about get value from command of mission and control
+        #   We will make piority in order mission, control and 0 data
         temp_force = []
         for run in range( 0 , 6 ):
-            if( (request.command.mask)[run] ):
-                temp_force.append( (request.command.target)[run] )
+            if( mission_data.mask[ run ] ):
+                temp_force.append( mission_data.target[ run ] )
+                if( constant.THRUSTER_MAPPER_CHOOSE_PROCESS ):
+                    print "id %3d choose mission data is %6f".format( run
+                            , mission_data.target[run] )
+            elif( control_data.mask[ run ] ):
+                temp_force.append( control_data.target[ run ] )
+                if( constant.THRUSTER_MAPPER_CHOOSE_PROCESS ):
+                    print "id %3d choose control data is %6f".format( run
+                            , control_data.target[run] )
             else:
-                temp_force.append( 0 )
+                temp_force.append( 0 ) 
+                if( constant.THRUSTER_MAPPER_CHOOSE_PROCESS ):
+                    print "id %3d choose zero data is 0"
 
         force = numpy.array( [
             (temp_force)[0]
@@ -145,6 +222,7 @@ class ThrusterMapper:
             , (temp_force)[4]
             , (temp_force)[5]])
 
+        # PRINT CONDITION
         if(constant.THRUSTER_MAPPER_CALCULATE_PROCESS):
             print("Force result robot frame : ", force)
 
@@ -161,13 +239,43 @@ class ThrusterMapper:
         self.header.stamp = rospy.get_rostime()
         pwm = tuple(cmd)
 
+        # PRINT CONDITION
         if(constant.THRUSTER_MAPPER_RESULT):
             print("{:6d} {:6d} {:6d} {:6d} {:6d} {:6d} {:6d} {:6d}".format(
                   pwm[0], pwm[1], pwm[2], pwm[3], pwm[4], pwm[5], pwm[6], pwm[7]))
 
-        self.client_throttle(self.header, pwm)
+        self.client_data.header = self.header
+        self.client_data.data = pwm
+        self.client_throttle( self.client_data )
+
+    def callback_subscriber( self ,  message ):
+
+        # PRINT_CONDTION
+        if( constant.THRUSTER_MAPPER_CALLBACK_CALLED ):
+            print "callback of subscriver have been called!"
+
+        self.mission_lock.acquire( 0 )
+
+        self.mission_message = message
+        self.mission_stamp = message.header.stamp
+
+        self.mission_lock.release( )
+
+    def callback_service( self , request ):
+        
+        # PRINT_CONDTION
+        if( constant.THRUSTER_MAPPER_CALLBACK_CALLED ):
+            print "callback of service server have been called!"
+
+        self.control_lock.acquire( 0 )
+
+        self.control_message = request.command
+        self.control_stamp = request.command.header.stamp
+
+        self.control_lock.release( )
+
+
         return SendControlCommandResponse()
 
 if __name__ == '__main__':
     thruster_mapper = ThrusterMapper()
-    rospy.spin()
