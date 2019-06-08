@@ -6,7 +6,7 @@
     <author>K.Supasan</author>
 
     <version>0.5.0</version>
-    <description>This package have purpose to promote or declare about model of robot include tf transform to help about visualize in rviz</description>
+    <description>This package have purpose to promote or declare about model of robot include tf transform to help about visualize in rviz and will use in all model for use in simulation</description>
 
     <maintainer email="supasan.k@ku.th">K.Supasan</maintainer>
 
