@@ -83,7 +83,6 @@ int main( int argv , char** argc )
     const static unsigned int start_run = 0;
     const static unsigned int size_buffer_fuzzy = 5;
     unsigned int count_loop = 0 ; // Use for make we print equal loop of fuzzy
-    static ros::Time time_stamp = ros::Time::now();
     zeabus_utility::ControlCommand error; // received error
     zeabus_utility::ControlCommand force; // send_force
     zeabus_utility::ControlCommand temp; // this temp for use get value from error
