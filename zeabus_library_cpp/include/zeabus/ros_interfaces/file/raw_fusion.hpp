@@ -42,7 +42,7 @@ namespace file
             RawFusion( std::string full_path = "" );
 
             // We automatic write time for first paragraph
-            void write_cloumn( std::string velocity_x = "dvl_vel_x" 
+            void write_column( std::string velocity_x = "dvl_vel_x" 
                 , std::string velocity_y = "dvl_vel_y" 
                 , std::string velocity_z = "dvl_vel_z" 
                 , std::string orieantation_x = "imu_orieantation_x" 
@@ -54,8 +54,8 @@ namespace file
                 , std::string gyro_z = "imu_gyro_z"
                 , std::string pressure_pose_z = "pressure_pose_z"
                 , std::string output_pose_x = "output_pose_x"
-                , std::string output_pose_x = "output_pose_y"
-                , std::string output_pose_x = "output_pose_z"
+                , std::string output_pose_y = "output_pose_y"
+                , std::string output_pose_z = "output_pose_z"
                 , std::string output_oreantation_x = "output_oreantation_x"
                 , std::string output_oreantation_y = "output_oreantation_y"
                 , std::string output_oreantation_z = "output_oreantation_z"
@@ -65,9 +65,21 @@ namespace file
                 , std::string output_linear_z = "output_vel_z"
                 , std::string output_gyro_x = "output_gyro_x"
                 , std::string output_gyro_y = "output_gyro_y"
-                , std::string output_gyro_z = "output_gyro_x" )
+                , std::string output_gyro_z = "output_gyro_x" 
+                , std::string output_status = "status" )
 
+            void setup_ptr_dvl_data( geometry_msgs::Vector3* ptr_data);
+
+            void setup_ptr_imu_data( sensor_msgs::Imu* ptr_data);
+
+            void setup_ptr_pressure_data( double* ptr_data );       
+ 
             void logging( zeabus_utility::AUVState* data );
+
+        private:
+            geometry_msgs::Vector3* ptr_dvl_data;
+            sensor_msgs::Imu* ptr_imu_data;
+            double* ptr_pressure_data;
     }
 
 } // namespace file
