@@ -22,6 +22,10 @@
 
 #include    <zeabus/convert/to_string.hpp>
 
+#include    <geometry_msgs/Vector3Stamped.h>
+
+#include    <sensor_msgs/Imu.h>
+
 #include    <zeabus_utility/AUVState.h>
 
 #ifndef _ZEABUS_ROS_INTERFACES_FILE_RAW_FUSION_HPP__
@@ -66,7 +70,7 @@ namespace file
                 , std::string output_gyro_x = "output_gyro_x"
                 , std::string output_gyro_y = "output_gyro_y"
                 , std::string output_gyro_z = "output_gyro_x" 
-                , std::string output_status = "status" )
+                , std::string output_status = "status" );
 
             void setup_ptr_dvl_data( geometry_msgs::Vector3* ptr_data);
 
@@ -80,7 +84,7 @@ namespace file
             geometry_msgs::Vector3* ptr_dvl_data;
             sensor_msgs::Imu* ptr_imu_data;
             double* ptr_pressure_data;
-    }
+    };
 
 } // namespace file
 

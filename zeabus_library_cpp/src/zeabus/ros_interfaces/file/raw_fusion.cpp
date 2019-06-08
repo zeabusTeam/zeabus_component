@@ -85,7 +85,7 @@ namespace file
 
     void RawFusion::logging( zeabus_utility::AUVState* data )
     {
-        std::string message = zeabus::convert::to_string( data->data.header.stamp.secs)
+        std::string message = zeabus::convert::to_string( data->data.header.stamp.sec)
             + "." + zeabus::convert::to_string( data->data.header.stamp.nsec )
             + "," + zeabus::convert::to_string( this->ptr_dvl_data->x )
             + "," + zeabus::convert::to_string( this->ptr_dvl_data->y )
@@ -98,20 +98,20 @@ namespace file
             + "," + zeabus::convert::to_string( this->ptr_imu_data->angular_velocity.y )
             + "," + zeabus::convert::to_string( this->ptr_imu_data->angular_velocity.z )
             + "," + zeabus::convert::to_string( *(this->ptr_pressure_data) )
-            + "," + zeabus::convert::to_string( this->data->pose.pose.position.x )
-            + "," + zeabus::convert::to_string( this->data->pose.pose.position.y )
-            + "," + zeabus::convert::to_string( this->data->pose.pose.position.z )
-            + "," + zeabus::convert::to_string( this->data->pose.pose.orientation.x )
-            + "," + zeabus::convert::to_string( this->data->pose.pose.orientation.y )
-            + "," + zeabus::convert::to_string( this->data->pose.pose.orientation.z )
-            + "," + zeabus::convert::to_string( this->data->pose.pose.orientation.w )
-            + "," + zeabus::convert::to_string( this->data->twist.twist.linear.x )
-            + "," + zeabus::convert::to_string( this->data->twist.twist.linear.y )
-            + "," + zeabus::convert::to_string( this->data->twist.twist.linear.z )
-            + "," + zeabus::convert::to_string( this->data->twist.twist.angular.x )
-            + "," + zeabus::convert::to_string( this->data->twist.twist.angular.y )
-            + "," + zeabus::convert::to_string( this->data->twist.twist.angular.z )
-            + "," + zeabus::convert::to_string( this->data->status );
+            + "," + zeabus::convert::to_string( data->data.pose.pose.position.x )
+            + "," + zeabus::convert::to_string( data->data.pose.pose.position.y )
+            + "," + zeabus::convert::to_string( data->data.pose.pose.position.z )
+            + "," + zeabus::convert::to_string( data->data.pose.pose.orientation.x )
+            + "," + zeabus::convert::to_string( data->data.pose.pose.orientation.y )
+            + "," + zeabus::convert::to_string( data->data.pose.pose.orientation.z )
+            + "," + zeabus::convert::to_string( data->data.pose.pose.orientation.w )
+            + "," + zeabus::convert::to_string( data->data.twist.twist.linear.x )
+            + "," + zeabus::convert::to_string( data->data.twist.twist.linear.y )
+            + "," + zeabus::convert::to_string( data->data.twist.twist.linear.z )
+            + "," + zeabus::convert::to_string( data->data.twist.twist.angular.x )
+            + "," + zeabus::convert::to_string( data->data.twist.twist.angular.y )
+            + "," + zeabus::convert::to_string( data->data.twist.twist.angular.z )
+            + "," + zeabus::convert::to_string( data->status );
         this->writeline( &message );
     } // function logging
 
