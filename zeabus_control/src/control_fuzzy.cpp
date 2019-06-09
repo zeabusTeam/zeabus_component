@@ -112,15 +112,15 @@ int main( int argv , char** argc )
     zeabus::fuzzy::ControlError< size_buffer_fuzzy > fuzzy_logic[6];
     
     // Pattern is x y z roll pitch yaw
-    double offset_value[6] = { 0 , 0 , -1.9 , 0 , 0 , 0 };
+    double offset_value[6] = { 0 , 0 , -2.5 , 0 , 0 , 0 };
     // The next 1 type have 3 value
     double relative_value[18] = { 
-            0.05 , 0.1 , 0.16   // x 
-            , 0.05 , 0.12 , 0.2 // y
-            , 0.02 , 0.05 , 0.1 // z
+            0.08 , 0.15 , 0.27   // x 
+            , 0.1 , 0.2 , 0.35 // y
+            , 0.05 , 0.1 , 0.2 // z
             , 0.01 , 0.05 , 0.1 // roll
             , 0.01 , 0.05 , 0.1 // pitch
-            , 0.01 , 0.02 , 0.04 // yaw 
+            , 0.05 , 0.1 , 0.18 // yaw 
     };
 
     double error_range[18] = { 
@@ -135,17 +135,17 @@ int main( int argv , char** argc )
     double diff_range[18] = { 
             0.05 , 0.1 , 0.2 // x
             , 0.05 , 0.1 , 0.2 // y
-            , 0.05 , 0.2 , 0.5 // z
+            , 0.1 , 0.2 , 0.5 // z
             , 0.01 , 0.15 , 0.3 // roll
             , 0.01 , 0.15 , 0.3 // pitch
-            , 0.01 , 0.05 , 0.1 // yaw
+            , 0.05 , 0.1 , 0.2 // yaw
     }; 
 
     // this force is have affect about output condition very much
     double force_range[18] = { 
-            0.5 , 1.5 , 3 
-            , 0.8 , 1.8 , 3.8
-            , 2 , 2.5 , 3 
+            1.2 , 3 , 6.5 
+            , 1.8 , 4 , 8
+            , 3 , 5 , 8 
             , 0.1 , 0.3 , 0.7
             , 0.1 , 0.3 , 0.7
             , 0.05 , 0.2 , 0.4 };
