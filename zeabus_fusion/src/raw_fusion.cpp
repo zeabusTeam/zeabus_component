@@ -56,6 +56,8 @@
 
 #include    <tf/LinearMath/Quaternion.h>
 
+#include    <tf/transform_broadcaster.h>
+
 #include    <zeabus/convert/to_string.hpp>
 
 #include    <zeabus/ros_interfaces/time.hpp>
@@ -143,6 +145,10 @@ int main( int argv , char** argc )
     static tf::Quaternion temp_quaternion;
     // But first time is only about dvl time_stamp
 
+    // Sixth part of about tf transformation
+    static tf::TransformBroadcaster broadcaster; // use to broadcast tf data
+    tf::Transform tf_data; // this data tpe use in tf system
+    
 #ifdef _COLLECT_LOG_
     zeabus::ros_interfaces::file::RawFusion log_file;
     log_file.setup_package( "zeabus_log" );
@@ -265,6 +271,7 @@ int main( int argv , char** argc )
             zeabus::ros_interfaces::convert::quaternion_tf( &(imu_data.orientation) 
                     , &temp_quaternion );
             temp_quaternion = offset_quaternion * temp_quaternion ;
+            tf_data.setRotation( temp_quaternion );
 #ifdef _SUMMARY_
             tf::Matrix3x3( temp_quaternion ).getRPY( temp_RPY[0], temp_RPY[1], temp_RPY[2] );
             std::cout   << "ROBOT Euler " << "Roll : " << temp_RPY[0]
@@ -327,6 +334,15 @@ int main( int argv , char** argc )
                     << temp_data.data.pose.pose.position.z << " >\n";   
         std::cout   << "ROBOT State " << unsigned(status_data) << "\n";
 #endif // _SUMMARY_
+        // below function set position in tf mode
+        tf_data.setOrigin( tf::Vector3( temp_data.data.pose.pose.position.x 
+                , temp_data.data.pose.pose.position.y 
+                , temp_data.data.pose.pose.position.z ) );
+        broadcaster.sendTransform( tf::StampedTransform( tf_data
+                , ros::Time::now() 
+                , "odom"
+                , "base_link_robot" ) );
+
         ptr_mutex_data->lock();
         service_data.data.header.stamp = ros::Time::now();
         service_data.data.pose = temp_data.data.pose;
