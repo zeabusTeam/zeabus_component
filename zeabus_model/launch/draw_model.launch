@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<launch>
+
+
+    <arg name="node_name" default="draw_flage"/>
+    <arg name="model_file" default="$(find zeabus_model)/urdf/flag.urdf"/>
+
+    <param name="robo_description" command="$(find xacro)/xacro.py $(arg model_file)"/>
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="$(arg node_name)"/>
+
+</launch>
