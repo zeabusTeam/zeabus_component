@@ -26,4 +26,7 @@ add_library( ROSRawFusion SHARED
     path_file.cpp
     raw_fusion.cpp 
 )
+add_dependencies( ROSRawFusion 
+    ${catkin_EXPORTED_TARGETS}
+)
 target_link_libraries( ROSRawFusion ${catkin_LIBRARIES} )
