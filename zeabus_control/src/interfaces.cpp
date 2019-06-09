@@ -42,9 +42,12 @@
 
 #include    <zeabus/escape_code.hpp>
 
+#define TF_EULER_DEFAULT_ZYX
 #include    <tf/LinearMath/Matrix3x3.h>
 
 #include    <zeabus_utility/AUVState.h>
+
+#include    <tf/transform_broadcaster.h>
 
 #include    <tf/LinearMath/Quaternion.h>
 
@@ -114,6 +117,10 @@ int main( int argv , char** argc )
     client_control_command.setup_ptr_node_handle( ptr_node_handle );
     client_control_command.setup_ptr_data( &error ); // error use ConttrolCommand
     client_control_command.setup_client( "/control/fuzzy" );  // set topic where error will send
+
+    // part of tf systemp
+    static tf::TransformBroadcaster broadcaster;
+    tf::Transform tf_data;
 
     // Addition part setup publisher send error command
     ros::Publisher interface_publisher = 
@@ -186,6 +193,14 @@ int main( int argv , char** argc )
         diff_quaternion = target_quaternion * current_quaternion.inverse();
         tf::Matrix3x3( diff_quaternion ).getRPY( 
                 (error.target)[3] , (error.target)[4] , (error.target)[5] );
+        tf_data.setRotation( diff_quaternion );
+        tf_data.setOrigin( tf::Vector3( (error.target)[0] 
+                , (error.target)[1] 
+                , (error.target)[2] ) );
+        broadcaster.sendTransform( tf::StampedTransform( tf_data 
+                , ros::Time::now() 
+                , "base_link_robot"
+                , "flag_target" ) );
 
 #ifdef _CHECK_FIND_ERROR_RPY_
         std::cout   << "Before " << error.target[3] << " " << error.target[4] << " "
