@@ -31,7 +31,7 @@ class Quaternion :
         self.w = quaternion[3]
 
     def set_euler (self , yaw , pitch , roll):
-        self = tf_handle.quaternion_from_euler(yaw, pitch, roll, axes='sxyz')
+        self = tf_handle.quaternion_from_euler(yaw, pitch, roll, axes='rzyx')
 
     def print_quaternion(self):
         print self.x , self.y , self.z , self.w
