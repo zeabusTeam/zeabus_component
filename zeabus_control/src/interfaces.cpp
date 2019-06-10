@@ -6,6 +6,9 @@
 // MACRO DETAIL
 // _SHOW_DATA_  : You will see all data to help you check calculate
 // _SHOW_RPY_   : This will print RPY of target and current
+// _SHOW_RESET_TARGET_
+//              : This macro will show and warning you to know about problem of data and
+//                  have to reset target valuu
 // _CHECK_FIND_ERROR_RPY_ : This will show about data form find error RPY
 
 // README
@@ -14,7 +17,8 @@
 // REFERENCE
 
 // MACRO SET
-#define _SHOW_DATA_
+//#define _SHOW_DATA_
+#define _SHOW_RESET_TARGET_
 #define _SHOW_RPY_
 #define _CHECK_FIND_ERROR_RPY_
 
@@ -38,9 +42,12 @@
 
 #include    <zeabus/escape_code.hpp>
 
+#define TF_EULER_DEFAULT_ZYX
 #include    <tf/LinearMath/Matrix3x3.h>
 
 #include    <zeabus_utility/AUVState.h>
+
+#include    <tf/transform_broadcaster.h>
 
 #include    <tf/LinearMath/Quaternion.h>
 
@@ -70,10 +77,10 @@ int main( int argv , char** argc )
     std::shared_ptr< std::mutex > ptr_mutex_data = std::make_shared< std::mutex >();
 
     // Insert optional part param part
-    const static unsigned int frequency = 10;
-    static ros::Time time_stamp = ros::Time::now();
+    const unsigned int frequency = 10;
     zeabus_utility::ControlCommand command; // receive command 
     zeabus_utility::ControlCommand error; // send error
+    ros::Time state_stamp = ros::Time::now();
 
     // Second part setup varialbe have to use
     zeabus_utility::AUVState target_state; // collect target state
@@ -111,16 +118,40 @@ int main( int argv , char** argc )
     client_control_command.setup_ptr_data( &error ); // error use ConttrolCommand
     client_control_command.setup_client( "/control/fuzzy" );  // set topic where error will send
 
+    // part of tf systemp
+    static tf::TransformBroadcaster broadcaster;
+    tf::Transform tf_data;
+
+    // Addition part setup publisher send error command
+    ros::Publisher interface_publisher = 
+            ptr_node_handle->advertise<zeabus_utility::ControlCommand>("/control/fuzzy", 1);
+
     node_control_interfaces.spin();
     std::cout   << "Start loop\n";
     while( ptr_node_handle->ok() )
     {
         rate.sleep();
 #ifdef _SHOW_DATA_
-        zeabus::escape_code::clear_screen();
-#endif
+//        zeabus::escape_code::clear_screen();
+#endif // _SHOW_DATA_
 
         (client_control_state).normal_call();
+
+        // loop part : check timeout data
+        if( state_stamp != current_state.data.header.stamp )
+        {
+            state_stamp = current_state.data.header.stamp;
+        }
+        else
+        {
+            force_target = true;
+#ifdef _SHOW_RESET_TARGET_
+            std::cout   << zeabus::escape_code::bold_red << "Warning same data of AUVState\n"
+                        << zeabus::escape_code::normal_white;
+#endif // _SHOW_RESET_TARGET_
+        }
+        // Because now current state have been same data we must to set all target
+        
 
         // loop part : zero step tune current state
         zeabus::ros_interfaces::convert::quaternion_tf( 
@@ -162,6 +193,14 @@ int main( int argv , char** argc )
         diff_quaternion = target_quaternion * current_quaternion.inverse();
         tf::Matrix3x3( diff_quaternion ).getRPY( 
                 (error.target)[3] , (error.target)[4] , (error.target)[5] );
+        tf_data.setRotation( diff_quaternion );
+        tf_data.setOrigin( tf::Vector3( (error.target)[0] 
+                , (error.target)[1] 
+                , (error.target)[2] ) );
+        broadcaster.sendTransform( tf::StampedTransform( tf_data 
+                , ros::Time::now() 
+                , "base_link_robot"
+                , "flag_target" ) );
 
 #ifdef _CHECK_FIND_ERROR_RPY_
         std::cout   << "Before " << error.target[3] << " " << error.target[4] << " "
@@ -181,6 +220,8 @@ int main( int argv , char** argc )
         //          --> d that is dvl status
         //          --> i that is imu status
         //          --> p that is pressure status
+        // This part will include about part reset buffer of target in second process
+        //  We will use in version of control interface 1.1.0 digram above
 
         error.mask.assign( false );
 
@@ -191,24 +232,53 @@ int main( int argv , char** argc )
             (error.mask)[3] = true;
             (error.mask)[4] = true;
             (error.mask)[5] = true;
+            // This part we don't have to edit some value
         }
         else if( (current_state.status & 0b010 ) == 2 ) // only imu ok
         {
             (error.mask)[3] = true;
             (error.mask)[4] = true;
             (error.mask)[5] = true;
+            // This part we have to edit value about dvl { position }
+            buffer[ 0 ] = ptr_current_position->x; 
+            buffer[ 1 ] = ptr_current_position->y;
+#ifdef _SHOW_RESET_TARGET_
+            std::cout   << zeabus::escape_code::bold_margenta 
+                        << "Warning reset data about DVL\n"
+                        << zeabus::escape_code::normal_white;
+#endif // _SHOW_RESET_TARGET_
         }
         else
         {
-            ;
+            // This part we have to edit value about dvl and imu { position , orientation }
+            buffer[ 0 ] = ptr_current_position->x; 
+            buffer[ 1 ] = ptr_current_position->y; 
+            tf::Matrix3x3( current_quaternion ).getRPY( buffer[3], buffer[4], buffer[5] ); 
+#ifdef _SHOW_RESET_TARGET_
+            std::cout   << zeabus::escape_code::bold_margenta 
+                        << "Warning reset data about DVL & IMU\n"
+                        << zeabus::escape_code::normal_white;
+#endif // _SHOW_RESET_TARGET_
         }
+
         if( (current_state.status & 0b100 ) == 4 ) // only pressure ok
         {
             (error.mask)[2] = true;
         }
+        else
+        {
+            buffer[2] = ptr_current_position->z;
+#ifdef _SHOW_RESET_TARGET_
+            std::cout   << zeabus::escape_code::bold_margenta 
+                        << "Warning reset data about PRESSURE\n"
+                        << zeabus::escape_code::normal_white;
+#endif // _SHOW_RESET_TARGET_
+        }
         
         // loop part : send error command
         client_control_command.normal_call();
+        interface_publisher.publish(error);
+
 #ifdef _SHOW_DATA_
         std::cout   << "\n--------------------------------------------------------------\n"
                     << "current position : " << ptr_current_position->x << " " 
@@ -243,7 +313,7 @@ int main( int argv , char** argc )
                     << read_bool( (error.mask)[3] ) << " " 
                     << read_bool( (error.mask)[4] ) << " " 
                     << read_bool( (error.mask)[5] )<< "\n";        
-#endif 
+#endif // _SHOW_DATA_
     }
     ros::shutdown();
     node_control_interfaces.join();

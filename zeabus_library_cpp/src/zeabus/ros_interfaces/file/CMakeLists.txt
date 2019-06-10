@@ -21,3 +21,12 @@ add_library( ROSControlCommand SHARED
     control_command.cpp
 )
 target_link_libraries( ROSControlCommand ${catkin_LIBRARIES} Array)
+
+add_library( ROSRawFusion SHARED
+    path_file.cpp
+    raw_fusion.cpp 
+)
+add_dependencies( ROSRawFusion 
+    ${catkin_EXPORTED_TARGETS}
+)
+target_link_libraries( ROSRawFusion ${catkin_LIBRARIES} )

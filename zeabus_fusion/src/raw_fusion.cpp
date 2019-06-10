@@ -9,6 +9,7 @@
 //  _PROCESS_       : This macro use you can know about process of this code
 //  _DELAY_DVL_     : This use when you worry about dvl have low speed
 //  _BOUND_ZERO_    : This use when you think dobuble position zero isn't ok we will bound zero
+//  _COLLECT_LOG_   : This use when you want to colllect log of data input & output this node
 
 // README
 //  This will you data from 3 node to fusion but use only simple equation to fusion data
@@ -23,6 +24,7 @@
 //#define _PROCESS_
 #define _DELAY_DVL_
 #define _BOUND_ZERO_
+#define _COLLECT_LOG_
 
 // MACRO CONDITION
 #ifdef _RAW_DATA_
@@ -39,6 +41,8 @@
 
 #include    <ros/ros.h>
 
+#include    <zeabus/time.hpp>
+
 #include    <zeabus/radian.hpp>
 
 #include    <nav_msgs/Odometry.h>
@@ -47,10 +51,12 @@
 
 #include    <geometry_msgs/Vector3.h>
 
+#define TF_EULER_DEFAULT_ZYX
 #include    <tf/LinearMath/Matrix3x3.h>
 
-#define TF_EULER_DEFAULT_ZYX
 #include    <tf/LinearMath/Quaternion.h>
+
+#include    <tf/transform_broadcaster.h>
 
 #include    <zeabus/convert/to_string.hpp>
 
@@ -61,6 +67,10 @@
 #include    <zeabus/service/get_data/auv_state.hpp>
 
 #include    <zeabus/ros_interfaces/single_thread.hpp>
+
+#ifdef _COLLECT_LOG_
+#include    <zeabus/ros_interfaces/file/raw_fusion.hpp>
+#endif
 
 #include    <zeabus/ros_interfaces/convert/geometry_msgs.hpp>
 
@@ -78,6 +88,8 @@ int main( int argv , char** argc )
 
     std::shared_ptr< ros::NodeHandle > ptr_node_handle = 
             std::make_shared< ros::NodeHandle >("");
+
+    ros::Publisher fusion_publisher = ptr_node_handle->advertise<zeabus_utility::AUVState>("/fusion/auv_state", 1);
 
     std::shared_ptr< std::mutex > dvl_mutex = std::make_shared< std::mutex >();
     std::shared_ptr< std::mutex > imu_mutex = std::make_shared< std::mutex >();
@@ -132,6 +144,26 @@ int main( int argv , char** argc )
     static unsigned int count_imu = 0;
     static tf::Quaternion temp_quaternion;
     // But first time is only about dvl time_stamp
+
+    // Sixth part of about tf transformation
+    static tf::TransformBroadcaster broadcaster; // use to broadcast tf data
+    tf::Transform tf_data; // this data tpe use in tf system
+    
+#ifdef _COLLECT_LOG_
+    zeabus::ros_interfaces::file::RawFusion log_file;
+    log_file.setup_package( "zeabus_log" );
+    log_file.setup_subdirectory( "log/fusion" );
+    log_file.setup_file_name( "raw_fusion" + zeabus::local_time( 6 ) + ".txt" );
+    if( ! log_file.open() )
+    {
+        std::cout   << zeabus::escape_code::normal_yellow << "WARNING! can't open file for log"
+                    << zeabus::escape_code::normal_white << "\n";
+    }
+    log_file.write_column();
+    log_file.setup_ptr_dvl_data( &(dvl_data.vector) );
+    log_file.setup_ptr_imu_data( &(imu_data) );
+    log_file.setup_ptr_pressure_data( &(pressure_data.data) );
+#endif
 
     ros::Rate rate( frequency );
     // Init data first time
@@ -239,6 +271,7 @@ int main( int argv , char** argc )
             zeabus::ros_interfaces::convert::quaternion_tf( &(imu_data.orientation) 
                     , &temp_quaternion );
             temp_quaternion = offset_quaternion * temp_quaternion ;
+            tf_data.setRotation( temp_quaternion );
 #ifdef _SUMMARY_
             tf::Matrix3x3( temp_quaternion ).getRPY( temp_RPY[0], temp_RPY[1], temp_RPY[2] );
             std::cout   << "ROBOT Euler " << "Roll : " << temp_RPY[0]
@@ -301,14 +334,31 @@ int main( int argv , char** argc )
                     << temp_data.data.pose.pose.position.z << " >\n";   
         std::cout   << "ROBOT State " << unsigned(status_data) << "\n";
 #endif // _SUMMARY_
+        // below function set position in tf mode
+        tf_data.setOrigin( tf::Vector3( temp_data.data.pose.pose.position.x 
+                , temp_data.data.pose.pose.position.y 
+                , temp_data.data.pose.pose.position.z ) );
+        broadcaster.sendTransform( tf::StampedTransform( tf_data
+                , ros::Time::now() 
+                , "odom"
+                , "base_link_robot" ) );
+
         ptr_mutex_data->lock();
         service_data.data.header.stamp = ros::Time::now();
         service_data.data.pose = temp_data.data.pose;
         service_data.data.twist = temp_data.data.twist;
         service_data.status = status_data;
         ptr_mutex_data->unlock();
+        fusion_publisher.publish(service_data);
+#ifdef _COLLECT_LOG_
+        log_file.logging( &service_data );
+#endif // _COLLECT_LOG_
     }
     ros::shutdown();
     node_sensor_fusion.join();
+
+#ifdef _COLLECT_LOG_
+    log_file.close();
+#endif
 
 }

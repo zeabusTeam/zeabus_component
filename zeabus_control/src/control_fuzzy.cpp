@@ -74,6 +74,8 @@ int main( int argv , char** argc )
     std::shared_ptr< ros::NodeHandle > ptr_node_handle =
             std::make_shared< ros::NodeHandle >("");
 
+    ros::Publisher control_fuzzy_publisher = ptr_node_handle->advertise<zeabus_utility::ControlCommand>("/control/thruster", 1);
+
     std::shared_ptr< std::mutex > ptr_mutex_data = std::make_shared< std::mutex >();
 
     // Insert optional part param part
@@ -81,7 +83,6 @@ int main( int argv , char** argc )
     const static unsigned int start_run = 0;
     const static unsigned int size_buffer_fuzzy = 5;
     unsigned int count_loop = 0 ; // Use for make we print equal loop of fuzzy
-    static ros::Time time_stamp = ros::Time::now();
     zeabus_utility::ControlCommand error; // received error
     zeabus_utility::ControlCommand force; // send_force
     zeabus_utility::ControlCommand temp; // this temp for use get value from error
@@ -111,15 +112,15 @@ int main( int argv , char** argc )
     zeabus::fuzzy::ControlError< size_buffer_fuzzy > fuzzy_logic[6];
     
     // Pattern is x y z roll pitch yaw
-    double offset_value[6] = { 0 , 0 , -1.9 , 0 , 0 , 0 };
+    double offset_value[6] = { 0 , 0 , -2.5 , 0 , 0 , 0 };
     // The next 1 type have 3 value
     double relative_value[18] = { 
-            0.05 , 0.1 , 0.16   // x 
-            , 0.05 , 0.12 , 0.2 // y
-            , 0.02 , 0.05 , 0.1 // z
+            0.08 , 0.15 , 0.27   // x 
+            , 0.1 , 0.2 , 0.35 // y
+            , 0.05 , 0.1 , 0.2 // z
             , 0.01 , 0.05 , 0.1 // roll
             , 0.01 , 0.05 , 0.1 // pitch
-            , 0.01 , 0.02 , 0.04 // yaw 
+            , 0.05 , 0.1 , 0.18 // yaw 
     };
 
     double error_range[18] = { 
@@ -134,17 +135,17 @@ int main( int argv , char** argc )
     double diff_range[18] = { 
             0.05 , 0.1 , 0.2 // x
             , 0.05 , 0.1 , 0.2 // y
-            , 0.05 , 0.2 , 0.5 // z
+            , 0.1 , 0.2 , 0.5 // z
             , 0.01 , 0.15 , 0.3 // roll
             , 0.01 , 0.15 , 0.3 // pitch
-            , 0.01 , 0.05 , 0.1 // yaw
+            , 0.05 , 0.1 , 0.2 // yaw
     }; 
 
     // this force is have affect about output condition very much
     double force_range[18] = { 
-            0.5 , 1.5 , 3 
-            , 0.8 , 1.8 , 3.8
-            , 2 , 2.5 , 3 
+            1.2 , 3 , 6.5 
+            , 1.8 , 4 , 8
+            , 3 , 5 , 8 
             , 0.1 , 0.3 , 0.7
             , 0.1 , 0.3 , 0.7
             , 0.05 , 0.2 , 0.4 };
@@ -170,6 +171,7 @@ int main( int argv , char** argc )
     client_control_fuzzy.setup_ptr_node_handle( ptr_node_handle );
     client_control_fuzzy.setup_ptr_data( &force );
     client_control_fuzzy.setup_client( "/control/thruster");
+    control_fuzzy_publisher.publish(force);
 
     // part of client for send auv_state command
     zeabus::client::single_thread::GetAUVState client_control_state;
@@ -233,7 +235,7 @@ int main( int argv , char** argc )
         zeabus::ros_interfaces::convert::quaternion_tf(
                 &(current_state.data.pose.pose.orientation)
                 , &state_quaternion );
-        temp_quaternion = state_quaternion * temp_quaternion * state_quaternion.inverse();
+        temp_quaternion = state_quaternion.inverse() * temp_quaternion * state_quaternion;
 #ifdef _SHOW_ROTATION_
         if( count_loop == ( size_buffer_fuzzy - 1 ) )
         {
