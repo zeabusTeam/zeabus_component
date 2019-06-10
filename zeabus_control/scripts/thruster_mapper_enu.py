@@ -247,7 +247,7 @@ class ThrusterMapper:
                 self.count_print = 0
             self.count_print += 1
 
-#        self.client_throttle( self.header , pwm )
+        self.client_throttle( self.header , pwm )
 
     def callback_subscriber( self ,  message ):
 
