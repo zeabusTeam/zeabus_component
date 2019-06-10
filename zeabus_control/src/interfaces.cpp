@@ -17,10 +17,10 @@
 // REFERENCE
 
 // MACRO SET
-//#define _SHOW_DATA_
+#define _SHOW_DATA_
 #define _SHOW_RESET_TARGET_
 #define _SHOW_RPY_
-#define _CHECK_FIND_ERROR_RPY_
+//#define _CHECK_FIND_ERROR_RPY_
 
 // MACRO CONDITION
 
@@ -132,26 +132,10 @@ int main( int argv , char** argc )
     {
         rate.sleep();
 #ifdef _SHOW_DATA_
-//        zeabus::escape_code::clear_screen();
+        zeabus::escape_code::clear_screen();
 #endif // _SHOW_DATA_
 
         (client_control_state).normal_call();
-
-        // loop part : check timeout data
-        if( state_stamp != current_state.data.header.stamp )
-        {
-            state_stamp = current_state.data.header.stamp;
-        }
-        else
-        {
-            force_target = true;
-#ifdef _SHOW_RESET_TARGET_
-            std::cout   << zeabus::escape_code::bold_red << "Warning same data of AUVState\n"
-                        << zeabus::escape_code::normal_white;
-#endif // _SHOW_RESET_TARGET_
-        }
-        // Because now current state have been same data we must to set all target
-        
 
         // loop part : zero step tune current state
         zeabus::ros_interfaces::convert::quaternion_tf( 
@@ -159,6 +143,9 @@ int main( int argv , char** argc )
         if( force_target )
         {
             force_target = false;
+            buffer[0] = ptr_current_position->x;
+            buffer[1] = ptr_current_position->y;
+            buffer[2] = ptr_current_position->z;
             target_state.data = current_state.data;
             zeabus::ros_interfaces::convert::quaternion_tf( 
                     &target_state.data.pose.pose.orientation , &target_quaternion ); 
@@ -240,8 +227,8 @@ int main( int argv , char** argc )
             (error.mask)[4] = true;
             (error.mask)[5] = true;
             // This part we have to edit value about dvl { position }
-            buffer[ 0 ] = ptr_current_position->x; 
-            buffer[ 1 ] = ptr_current_position->y;
+//            buffer[ 0 ] = ptr_current_position->x; 
+//            buffer[ 1 ] = ptr_current_position->y;
 #ifdef _SHOW_RESET_TARGET_
             std::cout   << zeabus::escape_code::bold_margenta 
                         << "Warning reset data about DVL\n"
@@ -251,8 +238,8 @@ int main( int argv , char** argc )
         else
         {
             // This part we have to edit value about dvl and imu { position , orientation }
-            buffer[ 0 ] = ptr_current_position->x; 
-            buffer[ 1 ] = ptr_current_position->y; 
+//            buffer[ 0 ] = ptr_current_position->x; 
+//            buffer[ 1 ] = ptr_current_position->y; 
             tf::Matrix3x3( current_quaternion ).getRPY( buffer[3], buffer[4], buffer[5] ); 
 #ifdef _SHOW_RESET_TARGET_
             std::cout   << zeabus::escape_code::bold_margenta 
