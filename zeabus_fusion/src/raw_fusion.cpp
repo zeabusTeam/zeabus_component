@@ -23,7 +23,7 @@
 #define _SUMMARY_
 //#define _PROCESS_
 #define _DELAY_DVL_
-#define _BOUND_ZERO_
+//#define _BOUND_ZERO_
 #define _COLLECT_LOG_
 
 // MACRO CONDITION
@@ -213,9 +213,9 @@ int main( int argv , char** argc )
         if( dvl_stamp != dvl_data.header.stamp )
         {
             dvl_stamp = dvl_data.header.stamp;
-            temp_data.data.twist.twist.linear.x = 1.0*dvl_data.vector.x/1000;
-            temp_data.data.twist.twist.linear.y = 1.0*dvl_data.vector.y/1000;
-            temp_data.data.twist.twist.linear.z = 1.0*dvl_data.vector.z/1000;
+            temp_data.data.twist.twist.linear.x = 1.0*dvl_data.vector.x;
+            temp_data.data.twist.twist.linear.y = 1.0*dvl_data.vector.y;
+            temp_data.data.twist.twist.linear.z = 1.0*dvl_data.vector.z;
 #ifdef _PROCESS_
             std::cout   << "Update linear_velocity!\n";
 #endif // _PROCESS_
@@ -300,22 +300,24 @@ int main( int argv , char** argc )
                         + temp_data.data.twist.twist.linear.x ) / ( frequency * 2 );
                 robot_distance.y = ( service_data.data.twist.twist.linear.y 
                         + temp_data.data.twist.twist.linear.y ) / ( frequency * 2 );
+                robot_distance.z = ( service_data.data.twist.twist.linear.z 
+                        + temp_data.data.twist.twist.linear.z ) / ( frequency * 2 );
                 rotation_linear( &robot_distance , &world_distance , &temp_quaternion );
 #ifdef _BOUND_ZERO_
-                if( abs(world_distance.x) < 0.001 )
+                if( abs(world_distance.x) < 1 )
                 {
                     world_distance.x = 0;
                 }
-                if( abs(world_distance.y) < 0.001 )
+                if( abs(world_distance.y) < 1 )
                 {
                     world_distance.y = 0;
                 }
 #endif
-                temp_data.data.pose.pose.position.x += world_distance.x;
-                temp_data.data.pose.pose.position.y += world_distance.y;
+                temp_data.data.pose.pose.position.x += ( ( world_distance.x ) / 1000 );
+                temp_data.data.pose.pose.position.y += ( ( world_distance.y ) / 1000 );
 #ifdef _SUMMARY_
-                std::cout   << "robot_distance x : y <---> " << robot_distance.x << " : "
-                            << robot_distance.y << "\nworld_distance x: y <---> " 
+                std::cout   << "robot_distance x : y (mm) <---> " << robot_distance.x << " : "
+                            << robot_distance.y << "\nworld_distance x: y (mm) <---> " 
                             << world_distance.x << " : " << world_distance.y << std::endl;
 #endif // _SUMMARY_ 
             }
