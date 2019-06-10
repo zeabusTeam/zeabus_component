@@ -31,7 +31,12 @@ class Quaternion :
         self.w = quaternion[3]
 
     def set_euler (self , yaw , pitch , roll):
-        self = tf_handle.quaternion_from_euler(yaw, pitch, roll, axes='rzyx')
+        temp = tf_handle.quaternion_from_euler(yaw, pitch, roll, axes='rzyx')
+        self.set_quaternion(temp)
+
+    def get_euler (self):
+        temp = tf_handle.euler_from_quaternion(self.convert_to_tuple(), axes='rzyx')
+        return temp
 
     def print_quaternion(self):
         print self.x , self.y , self.z , self.w
@@ -48,7 +53,9 @@ class Quaternion :
 
     def inverse(self):
         temp = tf_handle.quaternion_inverse(self.convert_to_tuple())
-        self.set_quaternion(temp)
+        q = Quaternion()
+        q.set_quaternion(temp)
+        return q
 
     def nomalize(self):
         temp = tf_handle.unit_vector(self.convert_to_tuple())
