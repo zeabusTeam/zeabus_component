@@ -44,7 +44,8 @@ class Quaternion :
         return temp
 
     def print_quaternion( self , name ):
-        print( "{:s} is {:6.3f} {:6.3f} {:6.3f} {:6.3f}".format( self.vector[0] 
+        print( "{:s} is {:6.3f} {:6.3f} {:6.3f} {:6.3f}".format( name
+            , self.vector[0] 
             , self.vector[1] 
             , self.vector[2]
             , self.vector[3] ) )
@@ -52,10 +53,10 @@ class Quaternion :
     # function inverse of quaternion inverse of quaternion is conjugate all imginary part
     def inverse(self):
         q = Quaternion()
-        q.set_quaternion( -self.vector[0], -self.vector[1], -self.vector[2], self.vector[3] )
+        q.set_quaternion( ( -self.vector[0], -self.vector[1], -self.vector[2], self.vector[3] ) )
         return q
 
-    def nomalize(self):
+    def normalize(self):
         temp = tf_handle.unit_vector( self.vector )
         self.set_quaternion( temp )
 
@@ -63,7 +64,7 @@ class Quaternion :
     def rotation(self, quaternion ):
         temp = Quaternion()
         temp.set_quaternion( quaternion )
-        result = self * temp self.inverse()
+        result = self * temp * self.inverse()
         return result
 
     # This use in pattern of multiple between object quaternion
