@@ -86,7 +86,7 @@ namespace fuzzy
     double ControlError< buffer_size >::push( double error )
     {
         // process about manage buffer
-        double diff_error = this->previous_error - error ;
+        double diff_error = error - this->previous_error;
         this->sum_buffer -= (this->buffer_different)[ this->point_element ];
         (this->buffer_different)[ this->point_element ] = diff_error;
         this->sum_buffer += diff_error;
