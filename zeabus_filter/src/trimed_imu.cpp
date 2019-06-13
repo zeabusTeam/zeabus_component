@@ -81,7 +81,7 @@ int main( int argv , char** argc )
     std::shared_ptr< std::mutex > ptr_mutex_data = std::make_shared< std::mutex >();
 
     // Insert optional part param
-    const static unsigned int buffer_size = 6;
+    const static unsigned int buffer_size = 4;
     const static unsigned int trimed_size = 1;
     const static unsigned int frequency = 50;
     const static unsigned int limit_same_time = 10;
