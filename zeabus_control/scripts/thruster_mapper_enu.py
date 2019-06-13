@@ -158,10 +158,12 @@ class ThrusterMapper:
 
         self.spin_thread = thread.start_new_thread( self.spin , () )
 
+        rate = rospy.Rate( 30 )
+
         if( constant.THRUSTER_MAPPER_RESULT ):
             self.count_print = constant.THRUSTER_MAPPER_COUNT
         while( not rospy.is_shutdown() ):
-            rospy.sleep( 0.035 )
+            rate.sleep()
             self.client_loop()
 
         rospy.signal_shutdown( "End of program of thruster_mapper_enu.py")
@@ -247,6 +249,8 @@ class ThrusterMapper:
                 self.count_print = 0
             self.count_print += 1
 
+        temp = rospy.get_rostime()
+        print( "Time now : {:d}.{:d}".format( temp.secs , temp.nsecs ) )
         self.client_throttle( self.header , pwm )
 
     def callback_subscriber( self ,  message ):
