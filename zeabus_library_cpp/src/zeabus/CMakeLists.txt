@@ -35,3 +35,6 @@ add_subdirectory( service )
 
 # Add library about client
 add_subdirectory( client )
+
+# Add library about fuzzy in part to none dynamic lib
+add_subdirectory( fuzzy )

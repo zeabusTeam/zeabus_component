@@ -36,6 +36,7 @@ set( SHARED_LIBS
     MAESTROConnector
     ClientSingleThread
     ServiceGetData
+    ControlFuzzy
 )
 
 set( ROS_LIBS
