@@ -20,6 +20,7 @@ catkin_package(
 include_directories(
     ${catkin_INCLUDE_DIRS}
     ${zeabus_library_cpp_INCLUDE_DIRS}
+    "${PROJECT_SOURCE_DIR}/include"
 )
 
 add_executable( interfaces
