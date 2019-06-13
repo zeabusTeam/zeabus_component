@@ -3,7 +3,3 @@ add_library( ControlFuzzy SHARED
 )
 add_dependencies( ControlFuzzy ${catkin_EXPORTED_TARGETS})
 target_link_libraries( ControlFuzzy ${catkin_LIBRARIES})
-
-add_subdirectory( convert )
-
-add_subdirectory( file )

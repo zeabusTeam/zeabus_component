@@ -21,7 +21,7 @@
 
 // MACRO CONDITION
 
-#include    <math>
+#include    <cmath>
 
 #include    <array>
 

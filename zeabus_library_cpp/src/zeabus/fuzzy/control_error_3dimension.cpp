@@ -49,7 +49,7 @@ namespace fuzzy
         (this->fuzzy_pub).publish( this->message_pub );
     } // function constuctor of clear_system
 
-    void ControlError3Dimension::push_error( double error )
+    double ControlError3Dimension::push_error( double error )
     {
         // before you save your error as input to meessage we must to calculate diff before
         this->push_diff( error );
@@ -142,8 +142,8 @@ namespace fuzzy
     {
         // We get data fuzzy from our rule
         (this->message_pub).output.fuzzy_data = 
-            this->ptr_defuzzy_rule->at( 
-                (this->message_pub).force.fuzzy_data + 3 ).at(
+            (this->ptr_fuzzy_rule->at( 
+                (this->message_pub).force.fuzzy_data + 3 )).at(
                     (this->message_pub).diff.fuzzy_data + 3 ).at(
                         (this->message_pub).error.fuzzy_data + 3 );
     }
@@ -151,11 +151,12 @@ namespace fuzzy
     void ControlError3Dimension::defuzzification()
     {
         // Now we have to consider about fuzzy output
-        short int temp_fuzzy = abs( this->message_pub ).output.fuzzy_data;
-        ROS_WARN_COND( temp_fuzzy == 4 , "%s I thinsk it impossible case" , this->my_name );
+        short int temp_fuzzy = abs( ( this->message_pub ).output.fuzzy_data );
+        ROS_WARN_COND( temp_fuzzy == 4 , "%s I thinsk it impossible case" 
+            , this->my_name.c_str() );
         if( temp_fuzzy == 0 )
         {
-            (this->message_pub).crisp_data = 0;
+            (this->message_pub).output.crisp_data = 0;
         }
         else if( temp_fuzzy == 1 )
         {
@@ -173,7 +174,7 @@ namespace fuzzy
         {
             if( fabs( (this->message_pub).output.crisp_data) > this->ptr_force_rule->at( 3 ) )
             {
-                ROS_ERROR( "%s It over force I can't add force more" , this->my_name );
+                ROS_ERROR( "%s It over force I can't add force more" , (this->my_name).c_str() );
                 (this->message_pub).output.crisp_data = 0;
             }
             else
