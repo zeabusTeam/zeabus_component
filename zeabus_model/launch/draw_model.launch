@@ -3,10 +3,12 @@
 <launch>
 
 
-    <arg name="node_name" default="draw_flage"/>
+    <arg name="node_name" default="draw_flag"/>
     <arg name="model_file" default="$(find zeabus_model)/urdf/flag.urdf"/>
 
-    <param name="robo_description" command="$(find xacro)/xacro.py $(arg model_file)"/>
-    <node pkg="robot_state_publisher" type="robot_state_publisher" name="$(arg node_name)"/>
+    <param name="$(arg node_name)_description" command="$(find xacro)/xacro.py $(arg model_file)"/>
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="$(arg node_name)">
+        <remap from="robot_description" to="$(arg node_name)_description"/>
+    </node>
 
 </launch>
