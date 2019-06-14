@@ -5,8 +5,11 @@
 // MACRO DETAIL
 // _SUMMARY_    : This macro will help you to see summary data
 
+// REFERENCE
+//  ref01   : http://wiki.ros.org/rosconsole
+
 // MACRO SET
-#define _SUMMARY_
+//#define _SUMMARY_
 
 // MACRO CONDITION
 
@@ -17,6 +20,8 @@
 #include    <iostream>
 
 #include    <ros/ros.h>
+
+#include    <ros/console.h>
 
 #include    <geometry_msgs/Vector3Stamped.h>
 
@@ -31,6 +36,8 @@
 #include    <zeabus/service/get_data/geometry_vector3_stamped.hpp>
 
 namespace Asio = boost::asio;
+
+void helper_status( bool data );
 
 int main( int argv , char** argc )
 {
@@ -47,36 +54,28 @@ int main( int argv , char** argc )
 	ros::Publisher dvl_publisher = 
 			ptr_node_handle->advertise<geometry_msgs::Vector3Stamped>("/sensor/dvl" , 1);
 
-    bool status_file = true; // if true that mean not status are ok
-
-    status_file = dvl.open_port();
-    if( status_file )
+    if( ! dvl.open_port() )
     {
-        std::cout   << "Success to open port dvl\n";
-    }
-    else
-    {
-        std::cout   << "Failure to open port dvl\n";
-    }
-
-	(void)dvl.set_option_port( Asio::serial_port_base::flow_control( 
-							Asio::serial_port_base::flow_control::none ) );
-	(void)dvl.set_option_port( Asio::serial_port_base::parity( 
-							Asio::serial_port_base::parity::none ) );
-	(void)dvl.set_option_port( Asio::serial_port_base::stop_bits( 
-							Asio::serial_port_base::stop_bits::one ) );
-	(void)dvl.set_option_port( Asio::serial_port_base::character_size( (unsigned char) 8 ) );
-	(void)dvl.set_option_port( Asio::serial_port_base::baud_rate( 115200 ) );
-    // idle in importance process because if can help guaruntee success setup
-    status_file = dvl.set_idle( 5 );
-    if( status_file )
-    {
-        std::cout   << "Succress to set idle\n";
-    }
-    else
-    {
-        std::cout   << "Failure to set idel\n";
+        ROS_FATAL_NAMED( "SENSOR_DVL" , "Failure to open port");
         ros::shutdown();
+    }
+
+    if( ptr_node_handle->ok() )
+    {
+	    (void)dvl.set_option_port( Asio::serial_port_base::flow_control( 
+	            Asio::serial_port_base::flow_control::none ) );
+	    (void)dvl.set_option_port( Asio::serial_port_base::parity( 
+				Asio::serial_port_base::parity::none ) );
+	    (void)dvl.set_option_port( Asio::serial_port_base::stop_bits( 
+				Asio::serial_port_base::stop_bits::one ) );
+	    (void)dvl.set_option_port( Asio::serial_port_base::character_size( (unsigned char) 8 ) );
+	    (void)dvl.set_option_port( Asio::serial_port_base::baud_rate( 115200 ) );
+        // idle in importance process because if can help guaruntee success setup
+        if( !dvl.set_idle( 5 ) )
+        {
+            ROS_FATAL_NAMED( "SENSOR_DVL" , "Failure to open port");
+            ros::shutdown();
+        }
     }
 
     if( ptr_node_handle->ok() ) // open port is success
@@ -158,3 +157,24 @@ int main( int argv , char** argc )
     
     return 0;
 } // function main
+
+void helper_status( bool data )
+{
+    static bool status = false;
+    if( ! status )
+    {
+        if( data )
+        {
+            ROS_INFO( "DVL STREAM DATA");
+            status = true;
+        }
+    }
+    else
+    {
+        if( ! data )
+        {
+            ROS_INFO( "DVL CAN'T STREAM DATA");
+            status = false;
+        }
+    }
+}
