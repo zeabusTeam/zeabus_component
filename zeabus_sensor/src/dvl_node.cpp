@@ -128,8 +128,9 @@ int main( int argv , char** argc )
                     , &(temp_velocity[1]) , &(temp_velocity[2]) , &ok_data );
             if( ok_data == 'A' ) // if data BS is ok
             {
-                std::cout   << "DVL GOOD DATA\n";
+                helper_status( true );
 #ifdef _SUMMARY_
+                std::cout   << "DVL GOOD DATA\n";
                 std::cout   << "data is " << temp_velocity[0] << " " << temp_velocity[1]
                             << " " << temp_velocity[2] << "\n";
 #endif // _SUMMARY_
@@ -144,6 +145,7 @@ int main( int argv , char** argc )
             }
             else
             {
+                helper_status( false );
                 std::cout << "DVL BAD DATA\n" ;
             }
         } // condition BS data
@@ -165,7 +167,7 @@ void helper_status( bool data )
     {
         if( data )
         {
-            ROS_INFO( "DVL STREAM DATA");
+            ROS_DEBUG_NAMED( "SENSOR_DVL" , "DVL STREAM DATA");
             status = true;
         }
     }
@@ -173,7 +175,7 @@ void helper_status( bool data )
     {
         if( ! data )
         {
-            ROS_INFO( "DVL CAN'T STREAM DATA");
+            ROS_DEBUG_NAMED( "SENSOR_DVL" , "DVL CAN'T STREAM DATA");
             status = false;
         }
     }

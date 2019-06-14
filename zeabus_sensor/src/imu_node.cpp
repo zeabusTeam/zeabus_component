@@ -16,7 +16,7 @@
 //#define _DECLARE_PROCESS_ 
 //#define _PRINT_DATA_STREAM_
 //#define _DECLARE_UPDATED_
-#define _SUMMARY_
+//#define _SUMMARY_
 #define _IMU_ENU_SYSTEM_
 
 // MACRO CONDITION
@@ -56,6 +56,8 @@
 
 namespace Asio = boost::asio;
 namespace IMUProtocal = zeabus::sensor::IMU::LORD_MICROSTRAIN;
+
+void helper_status( bool data );
 
 int main( int argv , char** argc )
 {
@@ -114,8 +116,7 @@ int main( int argv , char** argc )
     while( ptr_node_handle->ok() )
     {
         round++;
-        status_file = imu.set_idle(); // try to set imu to idle state
-        if( ! status_file )
+        if( ! imu.set_idle() ) // try to set imu to idle state
         {
             std::cout   << "round " << round << " : Failure command set idle\n";
         }
@@ -240,6 +241,7 @@ int main( int argv , char** argc )
                     &temp_quaternion , &temporary_message.orientation );
 #endif
 
+            helper_status( true );
             ptr_mutex_data->lock();
             message = temporary_message;
             ptr_mutex_data->unlock();
@@ -263,8 +265,7 @@ int main( int argv , char** argc )
 #ifdef _DECLARE_UPDATED_
         else
         {
-            std::cout   << zeabus::escape_code::bold_red << "<--- IMU ---> BAD DATA\n\n"
-                        << zeabus::escape_code::normal_white;
+            helper_status( false );
         }
 #endif // _DECLARE_UPDATED_
     } // loop while for doing in ros system
@@ -296,4 +297,25 @@ int main( int argv , char** argc )
     std::cout   << "finish join from thread\n";
 
     return 0;
+}
+
+void helper_status( bool data )
+{
+    static bool status = false;
+    if( status ) // If past event is good data
+    {
+        if( ! data ) // But now are bad data
+        {
+            ROS_DEBUG_NAMED("SENSOR_IMU" , "IMU can't streaming data" );
+            status = false;
+        }
+    }
+    else
+    {
+        if( data )
+        {
+            ROS_DEBUG_NAMED("SENSOR_IMU" , "IMU now are streaming data" );
+            status = true;
+        }
+    }
 }
