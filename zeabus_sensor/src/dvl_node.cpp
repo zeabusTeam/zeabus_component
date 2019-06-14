@@ -7,6 +7,8 @@
 
 // REFERENCE
 //  ref01   : http://wiki.ros.org/rosconsole
+//  ref02   : http://docs.ros.org/melodic/api/roscpp/html/namespaceros_1_1param.html#a78f0407e63d1387348eb81ca47d71d79
+//  ref03   : http://wiki.ros.org/roscpp_tutorials/Tutorials/Parameters
 
 // MACRO SET
 //#define _SUMMARY_
@@ -42,9 +44,25 @@ void helper_status( bool data );
 int main( int argv , char** argc )
 {
 
-    zeabus::sensor::DVL::Connector dvl("/dev/usb2serial/ftdi_FT2VR5PM_02");
-
     zeabus::ros_interfaces::SingleThread dvl_node( argv , argc , "dvl_node" );
+
+    ros::NodeHandle param_handle("~");
+
+    std::string full_path_port; 
+    param_handle.param< std::string >( "full_path_port" 
+        , full_path_port 
+        , "/dev/usb2serial/ftdi_FT2VR5PM_02");
+
+    std::string max_depth;
+    param_handle.param< std::string >( "max_depth" , max_depth , "0060" );
+
+    std::string heading;
+    param_handle.param< std::string >( "heading" , heading , "09000" );
+
+    std::string salinty;
+    param_handle.param< std::string >( "salinty" , salinty , "35" );
+
+    zeabus::sensor::DVL::Connector dvl( full_path_port );
 
     std::shared_ptr< ros::NodeHandle > ptr_node_handle = 
             std::make_shared< ros::NodeHandle >("");
@@ -82,9 +100,9 @@ int main( int argv , char** argc )
     {
         (void)dvl.load_parameter();
         (void)dvl.bottom_track( "001" );
-        (void)dvl.max_depth( "0060"); // 5 meter + 1 meter = 6 meter = 60 decimeter
-        (void)dvl.set_heading( "09000" );
-        (void)dvl.set_salinty( "35" );
+        (void)dvl.max_depth( max_depth ); // 5 meter + 1 meter = 6 meter = 60 decimeter
+        (void)dvl.set_heading( heading );
+        (void)dvl.set_salinty( salinty );
         (void)dvl.time_per_ensemble( "00:00:00.00" );
         (void)dvl.time_between_pings( "00:00.05" );
         (void)dvl.ping_per_ensemble( "00000" );

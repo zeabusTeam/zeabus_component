@@ -61,7 +61,17 @@ void helper_status( bool data );
 
 int main( int argv , char** argc )
 {
-    zeabus::sensor::IMU::Connector imu("/dev/microstrain/3dm_gx5_45_0000__6251.65903" , 100 );
+
+    zeabus::ros_interfaces::SingleThread imu_node( argv , argc , node_name );
+
+    ros::NodeHandle param_handle("~");
+
+    std::string full_path_port;
+    param_handle.param< std::string>( "full_path_port"
+        , full_path_port
+        , "/dev/microstrain/3dm_gx5_45_0000__6251.65903" , 100 );
+
+    zeabus::sensor::IMU::Connector imu( full_path_port , 100 );
 
 #ifdef _IMU_ENU_SYSTEM_
     std::string node_name = "imu_node_ned";
@@ -69,9 +79,6 @@ int main( int argv , char** argc )
 #else
     std::string node_name = "imu_node";
 #endif
-
-
-    zeabus::ros_interfaces::SingleThread imu_node( argv , argc , node_name );
 
     std::shared_ptr< ros::NodeHandle > ptr_node_handle = 
             std::make_shared< ros::NodeHandle >("");
