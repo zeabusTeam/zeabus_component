@@ -7,7 +7,7 @@
 // _CALLBACK_PRINT_ : this will print when callback have been call
 
 // MACRO SET
-#define _CALLBACK_PRINT_
+//#define _CALLBACK_PRINT_
 
 #include    <zeabus/service/get_data/base_class.hpp>
 
