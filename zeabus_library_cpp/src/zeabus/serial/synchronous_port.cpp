@@ -45,17 +45,18 @@ namespace serial
             {
                 std::cout   << "Port unavailable for reading will try again\n";
             }
-            else if( this->error_code == _boost_errc::success )
+            else if( this->error_code == _boost_errc::interrupted )
             {
-                break;
+                std::cout   << "Port have been interrupted by somthing\n";
             }
             else
             {
                 std::cout   << "Failure to reading error_code is " 
-                            << (this->error_code).value() << "\n";
-                size_data = 0;
+                            << (this->error_code).value() << " and have read data is 
+                            << size_data << "\n";
+                break;
             }
-        }while( true );
+        }while( this->error_code != _boost_errc::success );
         return size_data;
     } // function read_data
 
