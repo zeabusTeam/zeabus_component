@@ -52,7 +52,8 @@ namespace serial
             else
             {
                 std::cout   << "Failure to reading error_code is " 
-                            << (this->error_code).value() << " and have read data is 
+                            << (this->error_code).value() 
+                            << " and have read data is" 
                             << size_data << "\n";
                 break;
             }
