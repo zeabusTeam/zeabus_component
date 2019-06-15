@@ -4,6 +4,6 @@
     <node pkg="zeabus_filter" type="imu_filter" name="filter_imu" output="screen">
     </node>
 
-    <node pkg="zeabus_filter" type="pressure_filter" name="filter_dvl" output="screen">
+    <node pkg="zeabus_filter" type="pressure_filter" name="filter_pressure" output="screen">
     </node>
 </launch>

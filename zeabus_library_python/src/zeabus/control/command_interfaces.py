@@ -150,3 +150,26 @@ class CommandInterfaces:
              self.target_pose[0] , self.target_pose[1] , self.target_pose[2]
             , self.target_pose[3] , self.target_pose[4] , self.target_pose[5] ) )
         print( "Mask data are " , self.control_command.mask)
+
+    def check_xy( self , error_x , error_y ):
+        result = False
+        self.get_state()
+        if( abs( self.target_pose[0] - self.current_pose[0] ) < error_x and 
+            abs( self.target_pose[1] - self.current_pose[1] ) < error_y ):
+            result = True
+        return result
+    
+    def check_z( self , error_z ):
+        result = False
+        self.get_state()
+        if( abs( self.target_pose[2] - self.current_pose[2] ) < error_z ):
+            result = True
+        return result 
+
+    def check_yaw( self , error_yaw ):
+        self.get_state()
+        if( abs( zeabus_math.bound_radian( self.target_pose[5] - self.current_pose[5] ) ) 
+                < error_z ):
+            result = True
+        return result 
+        
