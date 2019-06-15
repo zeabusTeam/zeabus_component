@@ -44,14 +44,13 @@ namespace ros_interfaces
 
     void SingleThread::join()
     {
-//        this->mutex_lock.lock();
-//        bool current_status = this->status_thread;
-//        this->mutex_lock.unlock();
-//        if( current_status )
-//        {
-//            (this->thread_id).join();
-//        }
-        (this->thread_id).join();
+        this->mutex_lock.lock();
+        bool current_status = this->status_thread;
+        this->mutex_lock.unlock();
+        if( current_status )
+        {
+            (this->thread_id).join();
+        }
     }
 
     bool SingleThread::status()
