@@ -23,7 +23,7 @@
 #define _COLLECT_LOG_
 //#define _DEBUG_PROCESS_
 //#define _PROCESS_
-#define _SUMMARY_
+//#define _SUMMARY_
 
 // MACRO COMMAND
 #ifdef _COLLECT_LOG_
@@ -81,10 +81,10 @@ int main( int argv , char** argc )
     std::shared_ptr< std::mutex > ptr_mutex_data = std::make_shared< std::mutex >();
 
     // Insert optional part param
-    const static unsigned int buffer_size = 4;
-    const static unsigned int trimed_size = 1;
-    const static unsigned int frequency = 50;
-    const static unsigned int limit_same_time = 10;
+    const unsigned int buffer_size = 4;
+    const unsigned int trimed_size = 1;
+    const unsigned int frequency = 50;
+    const unsigned int limit_same_time = 10;
 
     // Second part of Filter this part mix about data variable
     // template< size of buffeer , size of trimed >
@@ -171,8 +171,7 @@ int main( int argv , char** argc )
         }
     } // for loop full buffer
 
-    process_code = server_imu_filter.setup_server_service( "/filter/imu" );
-    if( ! process_code )
+    if( ! server_imu_filter.setup_server_service( "/filter/imu" ) )
     {
         std::cout   << zeabus::escape_code::bold_red << "Filter imu can't setup server\n"
                     << zeabus::escape_code::normal_white;
@@ -185,8 +184,7 @@ int main( int argv , char** argc )
     quaternion.setRPY( output_filter[0] , output_filter[1] , output_filter[2] );
     zeabus::ros_interfaces::convert::tf_quaternion( &quaternion , &(output_data.orientation) );
 
-    process_code = node_imu_filter.spin(); // This command will split thread to spin
-    if( ! process_code )
+    if( ! node_imu_filter.spin() ) // This command will split thread to spin
     {
         std::cout   << zeabus::escape_code::bold_red << "Filter imu can't spining\n"
                     << zeabus::escape_code::normal_white;
@@ -194,9 +192,6 @@ int main( int argv , char** argc )
     }
     else
     {
-#ifdef _DEBUG_PROCESS_
-        std::cout   << "node_imu_filter waiting to sure we are spining\n";
-#endif
         while( ! ( node_imu_filter.status() ) )
         {
             rate.sleep();
@@ -224,7 +219,9 @@ int main( int argv , char** argc )
             {
                 output_filter[ sub_run ] = RPY_filter[ sub_run ].push( input_filter[ sub_run ] );
             }
+
             time_stamp = ros::Time::now();
+
             ptr_mutex_data->lock();
             output_data.header.stamp = time_stamp;
             output_data.angular_velocity = input_data.angular_velocity;
@@ -233,10 +230,13 @@ int main( int argv , char** argc )
             zeabus::ros_interfaces::convert::tf_quaternion( &quaternion 
                     , &(output_data.orientation) );
             ptr_mutex_data->unlock();
+
 			imu_publisher.publish(output_data);
+
 #ifdef _LOG_FILTER_
             file_filter.logging( &time_stamp , input_filter , output_filter );
 #endif // _LOG_FILTER_
+
 #ifdef _SUMMARY_
             std::cout   << "Input Euler  : " << input_filter[0] << " "
                         << input_filter[1] << " " << input_filter[2]

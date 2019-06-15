@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+
+    <node pkg="zeabus_filter" type="imu_filter" name="imu">
+    </node>
+
+    <node pkg="zeabus_filter" type="pressure_filter" name="dvl">
+    </node>
+</launch>
