@@ -9,8 +9,8 @@
 # REFERENCE
 #   ref1 : http://wiki.ros.org/ROS/Tutorials/WritingServiceClient%28python%29
 
-import rospy
 import math
+import rospy
 from ..math.quaternion import Quaternion
 from ..math import general as zeabus_math
 from zeabus_utility.msg import AUVState, ControlCommand
@@ -44,17 +44,19 @@ class CommandInterfaces:
     def get_state( self ):
         try:
             self.current_state = self.command_to_fusion()
-            self.current_pose[0] = self.current_state.auv_state.pose.pose.position.x
-            self.current_pose[1] = self.current_state.auv_state.pose.pose.position.y
-            self.current_pose[2] = self.current_state.auv_state.pose.pose.position.z
-            self.current_quaternion.set_quaternion(
-                self.current_state.auv_state.pose.pose.orientation.x
-                , self.current_state.auv_state.pose.pose.orientation.y
-                , self.current_state.auv_state.pose.pose.orientation.z
-                , self.current_state.auv_state.pose.pose.orientation.w
+            self.current_pose[0] = self.current_state.auv_state.data.pose.pose.position.x
+            self.current_pose[1] = self.current_state.auv_state.data.pose.pose.position.y
+            self.current_pose[2] = self.current_state.auv_state.data.pose.pose.position.z
+            self.current_quaternion.set_quaternion( (
+                self.current_state.auv_state.data.pose.pose.orientation.x
+                , self.current_state.auv_state.data.pose.pose.orientation.y
+                , self.current_state.auv_state.data.pose.pose.orientation.z
+                , self.current_state.auv_state.data.pose.pose.orientation.w )
             )
-            ( self.current_pose[5] , self.current_pose[4] , self.current_pose[3] ) = 
-                self.current_quaternion.get_euler()
+
+            ( self.current_pose[5] 
+                , self.current_pose[4] 
+                , self.current_pose[3] ) = self.current_quaternion.get_euler()
         except rospy.ServiceException , e:
             rospy.logfatal( "Service call AUVState Failed : %s" , e )
 
@@ -63,7 +65,7 @@ class CommandInterfaces:
             # you must stamp time before send data
             self.control_command.target = tuple( self.target_pose )
             self.control_command.header.stamp = rospy.get_rostime()
-            self.command_interfaces( self.control_command )
+            resposne = self.command_to_control( self.control_command )
         except rospy.ServiceException , e:
             rospy.logfatal( "Service call control interfaces Failed : %s" , e )
 
@@ -107,7 +109,7 @@ class CommandInterfaces:
         self.control_command.mask = ( True , True , False , False , False , False )
         self.send_command()
 
-    def relative_yaw( self, , yaw , target_yaw = True ):
+    def relative_yaw( self, yaw , target_yaw = True ):
 
         if( target_yaw ):
             self.target_pose[ 5 ] = zeabus_math.bound_radian( self.target_pose[5] + yaw )
@@ -123,13 +125,22 @@ class CommandInterfaces:
         self.control_command.mask = ( False , False , False , False , False ,True )
         self.send_command()
 
-    def relative_z( self , z )
+    def relative_z( self , z ):
         self.get_state()
         self.target_pose[ 2 ] =  self.current_pose[2] + z
         self.control_command.mask = ( False , False , True , False , False , False )
         self.send_command()
 
-    def absolute_z( self , z )
+    def absolute_z( self , z ):
         self.target_pose[ 2 ] = z
         self.control_command.mask = ( False , False , True , False , False , False )
         self.send_command()
+
+    def echo_data( self ):
+        print( "current_pose is {:6.2f} {:6.2f} {:6.2f} {:6.2f} {:6.2f} {:6.2f}".format(
+             self.current_pose[0] , self.current_pose[1] , self.current_pose[2]
+            , self.current_pose[3] , self.current_pose[4] , self.current_pose[5] ) )
+        print( "target_pose is {:6.2f} {:6.2f} {:6.2f} {:6.2f} {:6.2f} {:6.2f}".format(
+             self.target_pose[0] , self.target_pose[1] , self.target_pose[2]
+            , self.target_pose[3] , self.target_pose[4] , self.target_pose[5] ) )
+        print( "Mask data are " , self.control_command.mask)

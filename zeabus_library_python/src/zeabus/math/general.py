@@ -8,6 +8,8 @@
 
 # REFERENCE
 
+import math
+
     # Function for bound range of radian in range -pi to pi
 def bound_radian( problem ):
     while( problem < -1.0*math.pi or problem > math.pi ):
