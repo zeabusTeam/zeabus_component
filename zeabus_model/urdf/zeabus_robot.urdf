@@ -19,6 +19,18 @@
         <visual>
 
             <geometry>
+                <cylinder length="0.15" radius="0.12"/>
+            </geometry>
+
+            <origin rpy="0 1.57075 0" xyz="0.385 0 0"/>
+
+            <material name="red"/>
+
+        </visual>
+
+        <visual>
+
+            <geometry>
                 <cylinder length="0.92" radius="0.105"/>
             </geometry>
 
@@ -29,27 +41,5 @@
         </visual>
 
     </link>
-
-    <link name="base_link_header" >
-
-        <visual>
-
-            <geometry>
-                <cylinder length="0.15" radius="0.105"/>
-            </geometry>
-
-            <origin rpy="0 1.57075 0" xyz="0 0 0"/>
-
-            <material name="red"/>
-
-        </visual>
-
-    </link>
-
-    <joint name="point_header_robot" type="fixed">
-        <parent link="base_link_robot"/>
-        <child link="base_link_header"/>
-        <origin xyz="0.385 0 0" rpy="0 0 0"/>
-    </joint>
 
 </robot>

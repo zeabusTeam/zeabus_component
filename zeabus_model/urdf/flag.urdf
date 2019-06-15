@@ -24,26 +24,16 @@
 
         </visual>
 
-    </link>
-
-    <link name="flage_target_header">
-
         <visual>
 
             <geometry>
                 <box size="0.4 0.1 0.08"/>
             </geometry>
 
-            <origin rpy="0 0 0" xyz="0.2 0 0.04"/>
+            <origin rpy="0 0 0" xyz="0.2 0 0.61"/>
 
         </visual>
 
     </link>
-
-    <joint name="flag_connect" type="fixed">
-        <parent link="flag_target"/>
-        <child link="flage_target_header"/>
-        <origin xyz="-0.05 0 0.65"/>
-    </joint>
 
 </robot>
