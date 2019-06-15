@@ -3,6 +3,9 @@
 // CREATE ON	: 2019, May 25 (UTC+0)
 // MAINTAINER	: K.Supasan
 
+// This version follow number in diagram of software structure
+// VERSION      : 1.2.0 
+
 // MACRO DETAIL
 // _SHOW_DATA_  : You will see all data to help you check calculate
 // _SHOW_RPY_   : This will print RPY of target and current
@@ -15,6 +18,7 @@
 //  This file will use to calculate about error by 10 Hz
 
 // REFERENCE
+//  ref1    : https://www.boost.org/doc/libs/1_67_0/boost/array.hpp
 
 // MACRO SET
 #define _SHOW_DATA_
@@ -74,12 +78,13 @@ int main( int argv , char** argc )
             std::make_shared< ros::NodeHandle >("");
 
     std::shared_ptr< std::mutex > ptr_mutex_data = std::make_shared< std::mutex >();
+    std::shared_ptr< std::mutex > ptr_mutex_master = std::make_shared< std::mutex >();
 
     // Insert optional part param part
     const unsigned int frequency = 10;
-    zeabus_utility::ControlCommand command; // receive command 
+    zeabus_utility::ControlCommand master; // receive master_command
+    zeabus_utility::ControlCommand command; // receive control_command 
     zeabus_utility::ControlCommand error; // send error
-    ros::Time state_stamp = ros::Time::now();
 
     // Second part setup varialbe have to use
     zeabus_utility::AUVState target_state; // collect target state
@@ -98,7 +103,7 @@ int main( int argv , char** argc )
     ros::Rate rate( frequency );
     // this buffer will use to compare with command
 
-    // third part setup service
+    // third part setup service of control command
     zeabus::service::ControlCommand server_control_interfaces;
     server_control_interfaces.setup_ptr_node_handle( ptr_node_handle );
     server_control_interfaces.setup_ptr_mutex_data( ptr_mutex_data );
@@ -116,6 +121,17 @@ int main( int argv , char** argc )
     client_control_command.setup_ptr_node_handle( ptr_node_handle );
     client_control_command.setup_ptr_data( &error ); // error use ConttrolCommand
     client_control_command.setup_client( "/control/fuzzy" );  // set topic where error will send
+
+    // Sixth part setup service of master command (add on version 1.2.0 of control interfaces)
+    zeabus::service::ControlCommand server_master_interfaces;
+    server_master_interfaces.setup_ptr_node_handle( ptr_node_handle );
+    server_master_interfaces.setup_ptr_mutex_data( ptr_mutex_master );
+    server_master_interfaces.setup_ptr_data( &master );
+    server_master_interfaces.setup_server_service( "/control/master" );
+
+    // This is master control will have effect direct of output this node
+    // That make we must to assign start value for manage about that
+    master.mask.fill( true );
 
     // part of tf systemp
     static tf::TransformBroadcaster broadcaster;
@@ -253,6 +269,17 @@ int main( int argv , char** argc )
 #endif // _SHOW_RESET_TARGET_
         }
         
+        // loop part : master direct control command (Add on version 1.2.0)
+        ptr_mutex_master->lock();
+        for( unsigned int run = 0 ; run < 6 ; run++ )
+        {
+            if( master.mask.at( run ) == false )
+            {
+                (error.mask)[run] = false;
+            }
+        }
+        ptr_mutex_master->unlock();
+
         // loop part : send error command
         client_control_command.normal_call();
         interface_publisher.publish(error);
@@ -284,13 +311,20 @@ int main( int argv , char** argc )
                     << diff_quaternion.w() << "\n";
     #endif
         std::cout   << "STATUS OF STATE " << read_bit_value( current_state.status )
-                    << "\nMASK : " 
+                    << "\nMASK           : " 
                     << read_bool( (error.mask)[0] ) << " " 
                     << read_bool( (error.mask)[1] ) << " " 
                     << read_bool( (error.mask)[2] ) << " " 
                     << read_bool( (error.mask)[3] ) << " " 
                     << read_bool( (error.mask)[4] ) << " " 
-                    << read_bool( (error.mask)[5] )<< "\n";        
+                    << read_bool( (error.mask)[5] )<< "\n";
+        std::cout   << "MASK OF MASTER : "        
+                    << read_bool( (master.mask)[0] ) << " " 
+                    << read_bool( (master.mask)[1] ) << " " 
+                    << read_bool( (master.mask)[2] ) << " " 
+                    << read_bool( (master.mask)[3] ) << " " 
+                    << read_bool( (master.mask)[4] ) << " " 
+                    << read_bool( (master.mask)[5] )<< "\n";
 #endif // _SHOW_DATA_
     }
     ros::shutdown();
