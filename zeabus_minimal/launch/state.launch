@@ -6,4 +6,7 @@
 
     <node pkg="zeabus_filter" type="pressure_filter" name="filter_pressure" output="screen">
     </node>
+
+    <node pkg="zeabus_fusion" type="raw_fusion" name="fusion" output="screen">
+    </node>
 </launch>
