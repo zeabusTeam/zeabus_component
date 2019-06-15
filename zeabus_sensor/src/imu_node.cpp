@@ -10,7 +10,7 @@
 //  _DECLARE_UPDATED_   : this macro will declate you can't update data or not
 //  _SUMMARY_           : this macro will include _DECLARE_UPDATED_ and show last result
 //                          now available only euler
-//  _IMU_ENU_SYSTEM_    : if you macro this. This programe will not convert data from NED to ENU
+//  _IMU_ENU_SYSTEM_    : if you macro this. This programe will convert data from NED to ENU
 
 // MACRO SET
 //#define _DECLARE_PROCESS_ 
@@ -241,7 +241,9 @@ int main( int argv , char** argc )
 #ifdef _SUMMARY_
             std::cout   << "NED system : " << temp_RPY[0] << " " << temp_RPY[1] 
                         << " " << temp_RPY[2] << "\n";
+#endif
             temp_quaternion = convert_conventions*temp_quaternion*convert_conventions.inverse();
+#ifdef _SUMMARY_
             std::cout   << "Use quaternion convert : " << convert_conventions.x() << " "
                         << convert_conventions.y() << " " << convert_conventions.z() 
                         << " " << convert_conventions.w() << "\n";
@@ -315,7 +317,7 @@ void helper_status( bool data )
     {
         if( ! data ) // But now are bad data
         {
-            ROS_FATAL( "IMU can't streaming data" );
+            ROS_FATAL_NAMED( "SENSOR IMU NODE" , "IMU can't streaming data" );
             status = false;
         }
     }
@@ -323,7 +325,7 @@ void helper_status( bool data )
     {
         if( data )
         {
-            ROS_INFO( "IMU now are streaming data" );
+            ROS_INFO_NAMED( "SENSOR IMU NODE" , "IMU now are streaming data" );
             status = true;
         }
     }

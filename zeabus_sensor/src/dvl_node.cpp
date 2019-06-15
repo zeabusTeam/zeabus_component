@@ -187,7 +187,7 @@ void helper_status( bool data )
     {
         if( data )
         {
-            ROS_FATAL( "DVL STREAM DATA" );
+            ROS_INFO( "DVL STREAM DATA" );
             status = true;
         }
     }

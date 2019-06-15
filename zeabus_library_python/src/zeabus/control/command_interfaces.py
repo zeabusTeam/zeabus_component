@@ -90,18 +90,21 @@ class CommandInterfaces:
         movement_x = 0
         movement_y = 0
 
+        self.get_state()
+
         if( target_yaw ):
             movement_x = ( (x * math.cos( self.target_pose[5] ) ) 
-                + ( y * math.cos( self.target_pose[5] + math.pi ) ) )
-            movement_y = ( (y * math.sin( self.target_pose[5] ) ) 
-                + ( y * math.sin( self.target_pose[5] + math.pi ) ) )
+                + ( y * math.cos( self.target_pose[5] + ( math.pi / 2 ) ) ) )
+            movement_y = ( (x * math.sin( self.target_pose[5] ) ) 
+                + ( y * math.sin( self.target_pose[5] + ( math.pi / 2 ) ) ) )
         else:
-            self.get_state()
             movement_x = ( (x * math.cos( self.current_pose[5] ) ) 
                 + ( y * math.cos( self.current_pose[5] + math.pi ) ) )
-            movement_y = ( (y * math.sin( self.current_pose[5] ) ) 
+            movement_y = ( (x * math.sin( self.current_pose[5] ) ) 
                 + ( y * math.sin( self.current_pose[5] + math.pi ) ) )
 
+        print( "Adding x distance is {:6.3f}".format( movement_x ) )
+        print( "Adding y distance is {:6.3f}".format( movement_y ) )
         self.target_pose[ 0 ] = self.current_pose[ 0 ] + movement_x
         self.target_pose[ 1 ] = self.current_pose[ 1 ] + movement_y
 
@@ -169,7 +172,7 @@ class CommandInterfaces:
     def check_yaw( self , error_yaw ):
         self.get_state()
         if( abs( zeabus_math.bound_radian( self.target_pose[5] - self.current_pose[5] ) ) 
-                < error_z ):
+                < error_yaw ):
             result = True
         return result 
         
