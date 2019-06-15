@@ -164,7 +164,9 @@ int main( int argv , char** argc )
             else
             {
                 helper_status( false );
+#ifdef _SUMMARY_
                 std::cout << "DVL BAD DATA\n" ;
+#endif
             }
         } // condition BS data
     } // while loop of ros operating system
@@ -185,7 +187,7 @@ void helper_status( bool data )
     {
         if( data )
         {
-            ROS_DEBUG_NAMED( "SENSOR_DVL" , "DVL STREAM DATA");
+            ROS_FATAL( "DVL STREAM DATA" );
             status = true;
         }
     }
@@ -193,7 +195,7 @@ void helper_status( bool data )
     {
         if( ! data )
         {
-            ROS_DEBUG_NAMED( "SENSOR_DVL" , "DVL CAN'T STREAM DATA");
+            ROS_FATAL( "DVL CAN'T STREAM DATA" );
             status = false;
         }
     }

@@ -22,10 +22,11 @@
 // MACRO CONDITION
 #ifdef _SUMMARY_
     #define _DECLARE_UPDATED_
+    #define _SETUP_TEMP_VARIABLE_
 #endif
 
 #ifdef _IMU_ENU_SYSTEM_
-    #define _SUMMARY_
+    #define _SETUP_TEMP_VARIABLE_
 #endif
 
 #include    <vector>
@@ -169,7 +170,7 @@ int main( int argv , char** argc )
     std::cout   << "Now start streaming data\n";
 #endif // _DECLARE_PROCESS_
 
-#ifdef _SUMMARY_
+#ifdef _SETUP_TEMP_VARIABLE_
     tf::Quaternion temp_quaternion;
     double temp_RPY[3];
 #endif
@@ -237,12 +238,14 @@ int main( int argv , char** argc )
             zeabus::ros_interfaces::convert::quaternion_tf(
                     &temporary_message.orientation , &temp_quaternion );
             tf::Matrix3x3( temp_quaternion ).getRPY( temp_RPY[0], temp_RPY[1], temp_RPY[2] );
+#ifdef _SUMMARY_
             std::cout   << "NED system : " << temp_RPY[0] << " " << temp_RPY[1] 
                         << " " << temp_RPY[2] << "\n";
             temp_quaternion = convert_conventions*temp_quaternion*convert_conventions.inverse();
             std::cout   << "Use quaternion convert : " << convert_conventions.x() << " "
                         << convert_conventions.y() << " " << convert_conventions.z() 
                         << " " << convert_conventions.w() << "\n";
+#endif
             zeabus::ros_interfaces::convert::tf_quaternion(
                     &temp_quaternion , &temporary_message.orientation );
 #endif
@@ -312,7 +315,7 @@ void helper_status( bool data )
     {
         if( ! data ) // But now are bad data
         {
-            ROS_DEBUG_NAMED("SENSOR_IMU" , "IMU can't streaming data" );
+            ROS_FATAL( "IMU can't streaming data" );
             status = false;
         }
     }
@@ -320,7 +323,7 @@ void helper_status( bool data )
     {
         if( data )
         {
-            ROS_DEBUG_NAMED("SENSOR_IMU" , "IMU now are streaming data" );
+            ROS_INFO( "IMU now are streaming data" );
             status = true;
         }
     }

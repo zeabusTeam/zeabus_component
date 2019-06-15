@@ -13,6 +13,7 @@ import math
 import rospy
 from ..math.quaternion import Quaternion
 from ..math import general as zeabus_math
+from std_msgs.msg import Header
 from zeabus_utility.msg import AUVState, ControlCommand
 from zeabus_utility.srv import SendControlCommand, GetAUVState
 
@@ -35,6 +36,7 @@ class CommandInterfaces:
         self.control_command = ControlCommand() # Use to collect control command msg
 
         self.control_command.header.frame_id = your_name
+        self.control_command.header.seq = 0
 
         self.current_pose = [0 , 0 , 0 , 0 , 0 , 0]
         self.target_pose = [0 , 0 , 0 , 0 , 0 , 0]
@@ -64,8 +66,11 @@ class CommandInterfaces:
         try:
             # you must stamp time before send data
             self.control_command.target = tuple( self.target_pose )
-            self.control_command.header.stamp = rospy.get_rostime()
-            resposne = self.command_to_control( self.control_command )
+            # self.control_command.header.stamp = rospy.get_rostime()
+            self.control_command.header = Header()
+            self.control_command.header.stamp = rospy.Time.now()
+            self.command_to_control( self.control_command )
+            self.control_command.header.seq += 1
         except rospy.ServiceException , e:
             rospy.logfatal( "Service call control interfaces Failed : %s" , e )
 
@@ -122,6 +127,7 @@ class CommandInterfaces:
 
     def absolute_yaw( self , yaw ):
         self.target_pose[ 5 ] = zeabus_math.bound_radian( yaw )
+
         self.control_command.mask = ( False , False , False , False , False ,True )
         self.send_command()
 
