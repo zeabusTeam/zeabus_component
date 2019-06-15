@@ -3,6 +3,9 @@
 // CREATE ON    : 2019, APRIL 8
 // MAINTAINER   : K.Supasan
 
+#undef _PRINT_FILTER_
+#undef _PRINT_PROCESS_
+
 namespace zeabus
 {
 

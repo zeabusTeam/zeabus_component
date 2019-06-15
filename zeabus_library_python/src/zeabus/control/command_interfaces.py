@@ -13,6 +13,7 @@ import math
 import rospy
 from ..math.quaternion import Quaternion
 from ..math import general as zeabus_math
+from std_msgs.msg import Header
 from zeabus_utility.msg import AUVState, ControlCommand
 from zeabus_utility.srv import SendControlCommand, GetAUVState
 
@@ -35,6 +36,7 @@ class CommandInterfaces:
         self.control_command = ControlCommand() # Use to collect control command msg
 
         self.control_command.header.frame_id = your_name
+        self.control_command.header.seq = 0
 
         self.current_pose = [0 , 0 , 0 , 0 , 0 , 0]
         self.target_pose = [0 , 0 , 0 , 0 , 0 , 0]
@@ -64,8 +66,11 @@ class CommandInterfaces:
         try:
             # you must stamp time before send data
             self.control_command.target = tuple( self.target_pose )
-            self.control_command.header.stamp = rospy.get_rostime()
-            resposne = self.command_to_control( self.control_command )
+            # self.control_command.header.stamp = rospy.get_rostime()
+            self.control_command.header = Header()
+            self.control_command.header.stamp = rospy.Time.now()
+            self.command_to_control( self.control_command )
+            self.control_command.header.seq += 1
         except rospy.ServiceException , e:
             rospy.logfatal( "Service call control interfaces Failed : %s" , e )
 
@@ -85,18 +90,21 @@ class CommandInterfaces:
         movement_x = 0
         movement_y = 0
 
+        self.get_state()
+
         if( target_yaw ):
             movement_x = ( (x * math.cos( self.target_pose[5] ) ) 
-                + ( y * math.cos( self.target_pose[5] + math.pi ) ) )
-            movement_y = ( (y * math.sin( self.target_pose[5] ) ) 
-                + ( y * math.sin( self.target_pose[5] + math.pi ) ) )
+                + ( y * math.cos( self.target_pose[5] + ( math.pi / 2 ) ) ) )
+            movement_y = ( (x * math.sin( self.target_pose[5] ) ) 
+                + ( y * math.sin( self.target_pose[5] + ( math.pi / 2 ) ) ) )
         else:
-            self.get_state()
             movement_x = ( (x * math.cos( self.current_pose[5] ) ) 
                 + ( y * math.cos( self.current_pose[5] + math.pi ) ) )
-            movement_y = ( (y * math.sin( self.current_pose[5] ) ) 
+            movement_y = ( (x * math.sin( self.current_pose[5] ) ) 
                 + ( y * math.sin( self.current_pose[5] + math.pi ) ) )
 
+        print( "Adding x distance is {:6.3f}".format( movement_x ) )
+        print( "Adding y distance is {:6.3f}".format( movement_y ) )
         self.target_pose[ 0 ] = self.current_pose[ 0 ] + movement_x
         self.target_pose[ 1 ] = self.current_pose[ 1 ] + movement_y
 
@@ -122,6 +130,7 @@ class CommandInterfaces:
 
     def absolute_yaw( self , yaw ):
         self.target_pose[ 5 ] = zeabus_math.bound_radian( yaw )
+
         self.control_command.mask = ( False , False , False , False , False ,True )
         self.send_command()
 
@@ -144,3 +153,26 @@ class CommandInterfaces:
              self.target_pose[0] , self.target_pose[1] , self.target_pose[2]
             , self.target_pose[3] , self.target_pose[4] , self.target_pose[5] ) )
         print( "Mask data are " , self.control_command.mask)
+
+    def check_xy( self , error_x , error_y ):
+        result = False
+        self.get_state()
+        if( abs( self.target_pose[0] - self.current_pose[0] ) < error_x and 
+            abs( self.target_pose[1] - self.current_pose[1] ) < error_y ):
+            result = True
+        return result
+    
+    def check_z( self , error_z ):
+        result = False
+        self.get_state()
+        if( abs( self.target_pose[2] - self.current_pose[2] ) < error_z ):
+            result = True
+        return result 
+
+    def check_yaw( self , error_yaw ):
+        self.get_state()
+        if( abs( zeabus_math.bound_radian( self.target_pose[5] - self.current_pose[5] ) ) 
+                < error_yaw ):
+            result = True
+        return result 
+        

@@ -22,7 +22,7 @@
 //#define _DEBUG_FILTER_
 //#define _DEBUG_SPIN_
 #define _COLLECT_LOG_
-#define _SUMMARY_
+//#define _SUMMARY_
 
 // Header of genral part that mean you can change algorithm to fileter but can't change this part
 

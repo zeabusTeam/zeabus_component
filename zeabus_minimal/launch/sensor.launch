@@ -8,13 +8,13 @@
 
     <arg name="full_path_imu" default="/dev/microstrain/3dm_gx5_45_0000__6251.65903"/>
 
-    <node pkg="zeabus_sensor" type="imu_node" name="imu">
+    <node pkg="zeabus_sensor" type="imu_node" name="sensor_imu" output="screen">
 
         <param name="full_path_port" type="string" value="$(arg full_path_imu)"/>
 
     </node>
 
-    <node pkg="zeabus_sensor" type="dvl_node" name="dvl">
+    <node pkg="zeabus_sensor" type="dvl_node" name="sensor_dvl" output="screen">
 
         <param name="full_path_port" type="string" value="$(arg full_path_dvl)"/>
         <param name="max_depth" type="string" value="$(arg max_depth)"/>
