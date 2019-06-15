@@ -4,7 +4,7 @@
     <arg name="full_path_dvl" default="/dev/usb2serial/ftdi_FT2VR5PM_02"/>
     <arg name="max_depth" default="0060"/>
     <arg name="heading" default="09000"/>
-    <arg name="salinty" default="35/">
+    <arg name="salinty" default="35"/>
 
     <arg name="full_path_imu" default="/dev/microstrain/3dm_gx5_45_0000__6251.65903"/>
 

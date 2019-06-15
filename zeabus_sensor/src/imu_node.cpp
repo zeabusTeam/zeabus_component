@@ -34,6 +34,8 @@
 
 #include    <ros/ros.h>
 
+#include    <ros/console.h>
+
 #include    <sensor_msgs/Imu.h>
 
 #include    <zeabus/escape_code.hpp>
@@ -62,14 +64,14 @@ void helper_status( bool data );
 int main( int argv , char** argc )
 {
 
-    zeabus::ros_interfaces::SingleThread imu_node( argv , argc , node_name );
+    zeabus::ros_interfaces::SingleThread imu_node( argv , argc , "imu" );
 
     ros::NodeHandle param_handle("~");
 
     std::string full_path_port;
     param_handle.param< std::string>( "full_path_port"
         , full_path_port
-        , "/dev/microstrain/3dm_gx5_45_0000__6251.65903" , 100 );
+        , "/dev/microstrain/3dm_gx5_45_0000__6251.65903");
 
     zeabus::sensor::IMU::Connector imu( full_path_port , 100 );
 
@@ -95,25 +97,22 @@ int main( int argv , char** argc )
     unsigned int round = 0;
     unsigned int limit_round = 20; // if you want to try n round set limit_round = n + 1
 
-    status_file = imu.open_port();
-    if(  ! status_file )
+    if(  ! imu.open_port() )
     {
-        std::cout << "Failure to open port imu\n";
-    }
-#ifdef _DECLARE_PROCESS_
-    else{
-        std::cout << "Finish open_port process\n";
+        ROS_FATAL_NAMED( "SENSOR_IMU" ,  "Failure to open port %s" , full_path_port.c_str() );
         ros::shutdown();
     }
-#endif // _DECLARE_PROCESS_
 
-	(void)imu.set_option_port( Asio::serial_port_base::flow_control( 
-							Asio::serial_port_base::flow_control::none ) );
-	(void)imu.set_option_port( Asio::serial_port_base::parity( 
-							Asio::serial_port_base::parity::none ) );
-	(void)imu.set_option_port( Asio::serial_port_base::stop_bits( 
-							Asio::serial_port_base::stop_bits::one ) );
-	(void)imu.set_option_port( Asio::serial_port_base::character_size( (unsigned char) 8 ) );
+    if( ptr_node_handle->ok() )
+    {
+	    (void)imu.set_option_port( Asio::serial_port_base::flow_control( 
+		        Asio::serial_port_base::flow_control::none ) );
+	    (void)imu.set_option_port( Asio::serial_port_base::parity( 
+				Asio::serial_port_base::parity::none ) );
+	    (void)imu.set_option_port( Asio::serial_port_base::stop_bits( 
+				Asio::serial_port_base::stop_bits::one ) );
+	    (void)imu.set_option_port( Asio::serial_port_base::character_size( (unsigned char) 8 ) );
+    }
 
 #ifdef _DECLARE_PROCESS_
     std::cout << "Finish setup port of imu\n";
