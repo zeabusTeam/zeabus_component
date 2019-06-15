@@ -40,22 +40,25 @@ namespace serial
         {   
             size_data = boost::asio::read( this->io_port , boost::asio::buffer( *buffer , size )
                     , this->error_code );
-            if( this->error_code == _boost_errc::resource_unavailable_try_again 
-                    || this->error_code == _boost_errc::interrupted )
+            if( this->error_code == _boost_errc::resource_unavailable_try_again )
             {
                 std::cout   << "Port unavailable for reading will try again\n";
             }
             else if( this->error_code == _boost_errc::interrupted )
             {
-                std::cout   << "Port have been interrupted by somthing\n";
+                std::cout   << "Port have been interrupted by something\n";
             }
-            else
+            else if( this->error_code != _boost_errc::success )
             {
                 std::cout   << "Failure to reading error_code is " 
                             << (this->error_code).value() 
-                            << " and have read data is" 
+                            << " and have read data is " 
                             << size_data << "\n";
                 break;
+            }
+            else
+            {
+                ; // condition to exit loop
             }
         }while( this->error_code != _boost_errc::success );
         return size_data;
