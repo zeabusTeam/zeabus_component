@@ -35,9 +35,3 @@ target_link_libraries( imu_filter
     ${zeabus_library_cpp_LIBRARIES} 
     ${catkin_LIBRARIES}
 )
-
-add_executable( dvl_filter src/trimed_dvl.cpp )
-target_link_libraries( dvl_filter
-    ${zeabus_library_cpp_LIBRARIES} 
-    ${catkin_LIBRARIES}
-)
