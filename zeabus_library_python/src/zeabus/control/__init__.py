@@ -16,5 +16,5 @@ What part is about?
     This part have purpose to use for help or support you operate in math operating
 
 What module in this part?
-    1. Quaternion
+    1. command_interfaces
 '''
