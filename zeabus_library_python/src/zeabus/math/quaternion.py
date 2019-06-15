@@ -17,6 +17,7 @@
 
 import math
 import numpy
+from . import general
 from tf import transformations as tf_handle
 
 class Quaternion :
@@ -41,6 +42,9 @@ class Quaternion :
     # function get_euler use to find euler from quaternion 
     def get_euler (self):
         temp = tf_handle.euler_from_quaternion( self.vector , axes='rzyx')
+        result = ( general.bound_radian( temp[0] )
+            , general.bound_radian( temp[1])
+            , general.bound_radian( temp[2]) )
         return temp
 
     def print_quaternion( self , name ):

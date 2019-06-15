@@ -24,20 +24,14 @@ include_directories(
     ${zeabus_utility_INCLUDE_DIRS}
 )
 
-add_executable( pressure src/trimed_pressure.cpp )
-target_link_libraries( pressure
+add_executable( pressure_filter src/trimed_pressure.cpp )
+target_link_libraries( pressure_filter
     ${zeabus_library_cpp_LIBRARIES} 
     ${catkin_LIBRARIES}
 )
 
-add_executable( imu src/trimed_imu.cpp )
-target_link_libraries( imu
-    ${zeabus_library_cpp_LIBRARIES} 
-    ${catkin_LIBRARIES}
-)
-
-add_executable( dvl src/trimed_dvl.cpp )
-target_link_libraries( dvl
+add_executable( imu_filter src/trimed_imu.cpp )
+target_link_libraries( imu_filter
     ${zeabus_library_cpp_LIBRARIES} 
     ${catkin_LIBRARIES}
 )

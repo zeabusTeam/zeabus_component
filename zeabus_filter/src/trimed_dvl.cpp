@@ -14,7 +14,7 @@
 
 // MACRO SET
 #define _COLLECT_LOG_
-#define _SUMMARY_
+//#define _SUMMARY_
 
 #include    <memory>
 

@@ -20,7 +20,7 @@ include_directories(
     ${zeabus_library_cpp_INCLUDE_DIRS}
 )
 
-add_executable( sensor_fusion
+add_executable( raw_fusion
     src/raw_fusion.cpp
 )
-target_link_libraries( sensor_fusion ${catkin_LIBRARIES} ${zeabus_library_cpp_LIBRARIES})
+target_link_libraries( raw_fusion ${catkin_LIBRARIES} ${zeabus_library_cpp_LIBRARIES})

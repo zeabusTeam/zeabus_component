@@ -20,7 +20,6 @@
 #define _SHOW_DATA_
 #define _SHOW_RESET_TARGET_
 #define _SHOW_RPY_
-//#define _CHECK_FIND_ERROR_RPY_
 
 // MACRO CONDITION
 
@@ -180,26 +179,18 @@ int main( int argv , char** argc )
         diff_quaternion = target_quaternion * current_quaternion.inverse();
         tf::Matrix3x3( diff_quaternion ).getRPY( 
                 (error.target)[3] , (error.target)[4] , (error.target)[5] );
-        tf_data.setRotation( diff_quaternion );
-        tf_data.setOrigin( tf::Vector3( (error.target)[0] 
-                , (error.target)[1] 
-                , (error.target)[2] ) );
+        tf_data.setRotation( target_quaternion );
+        tf_data.setOrigin( tf::Vector3( ptr_target_position->x 
+                , ptr_target_position->y 
+                , ptr_target_position->z ) );
         broadcaster.sendTransform( tf::StampedTransform( tf_data 
-                , ros::Time::now() 
-                , "base_link_robot"
+                , current_state.data.header.stamp 
+                , "odom"
                 , "flag_target" ) );
 
-#ifdef _CHECK_FIND_ERROR_RPY_
-        std::cout   << "Before " << error.target[3] << " " << error.target[4] << " "
-                    << error.target[5] << "\n";
-#endif 
         zeabus::radian::bound( &( ( error.target )[3] ) );
         zeabus::radian::bound( &( ( error.target )[4] ) );
         zeabus::radian::bound( &( ( error.target )[5] ) );
-#ifdef _CHECK_FIND_ERROR_RPY_
-        std::cout   << "After " << error.target[3] << " " << error.target[4] << " "
-                    << error.target[5] << "\n";
-#endif
 
         // loop part : forth status of state decision
         //  state you can look by use binay format 3 bit

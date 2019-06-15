@@ -249,9 +249,10 @@ class ThrusterMapper:
                 self.count_print = 0
             self.count_print += 1
 
-        temp = rospy.get_rostime()
-        print( "Time now : {:d}.{:d}".format( temp.secs , temp.nsecs ) )
-        self.client_throttle( self.header , pwm )
+        try:
+            self.client_throttle( self.header , pwm )
+        except rospy.ServiceException , e :
+            rospy.logfatal( "Failure to write pwm response from haredware")
 
     def callback_subscriber( self ,  message ):
 

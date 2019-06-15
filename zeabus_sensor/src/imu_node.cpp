@@ -10,22 +10,23 @@
 //  _DECLARE_UPDATED_   : this macro will declate you can't update data or not
 //  _SUMMARY_           : this macro will include _DECLARE_UPDATED_ and show last result
 //                          now available only euler
-//  _IMU_ENU_SYSTEM_    : if you macro this. This programe will not convert data from NED to ENU
+//  _IMU_ENU_SYSTEM_    : if you macro this. This programe will convert data from NED to ENU
 
 // MACRO SET
 //#define _DECLARE_PROCESS_ 
 //#define _PRINT_DATA_STREAM_
 //#define _DECLARE_UPDATED_
-#define _SUMMARY_
+//#define _SUMMARY_
 #define _IMU_ENU_SYSTEM_
 
 // MACRO CONDITION
 #ifdef _SUMMARY_
     #define _DECLARE_UPDATED_
+    #define _SETUP_TEMP_VARIABLE_
 #endif
 
 #ifdef _IMU_ENU_SYSTEM_
-    #define _SUMMARY_
+    #define _SETUP_TEMP_VARIABLE_
 #endif
 
 #include    <vector>
@@ -33,6 +34,8 @@
 #include    <iostream>
 
 #include    <ros/ros.h>
+
+#include    <ros/console.h>
 
 #include    <sensor_msgs/Imu.h>
 
@@ -57,9 +60,21 @@
 namespace Asio = boost::asio;
 namespace IMUProtocal = zeabus::sensor::IMU::LORD_MICROSTRAIN;
 
+void helper_status( bool data );
+
 int main( int argv , char** argc )
 {
-    zeabus::sensor::IMU::Connector imu("/dev/microstrain/3dm_gx5_45_0000__6251.65903" , 100 );
+
+    zeabus::ros_interfaces::SingleThread imu_node( argv , argc , "imu" );
+
+    ros::NodeHandle param_handle("~");
+
+    std::string full_path_port;
+    param_handle.param< std::string>( "full_path_port"
+        , full_path_port
+        , "/dev/microstrain/3dm_gx5_45_0000__6251.65903");
+
+    zeabus::sensor::IMU::Connector imu( full_path_port , 100 );
 
 #ifdef _IMU_ENU_SYSTEM_
     std::string node_name = "imu_node_ned";
@@ -67,9 +82,6 @@ int main( int argv , char** argc )
 #else
     std::string node_name = "imu_node";
 #endif
-
-
-    zeabus::ros_interfaces::SingleThread imu_node( argv , argc , node_name );
 
     std::shared_ptr< ros::NodeHandle > ptr_node_handle = 
             std::make_shared< ros::NodeHandle >("");
@@ -86,25 +98,22 @@ int main( int argv , char** argc )
     unsigned int round = 0;
     unsigned int limit_round = 20; // if you want to try n round set limit_round = n + 1
 
-    status_file = imu.open_port();
-    if(  ! status_file )
+    if(  ! imu.open_port() )
     {
-        std::cout << "Failure to open port imu\n";
-    }
-#ifdef _DECLARE_PROCESS_
-    else{
-        std::cout << "Finish open_port process\n";
+        ROS_FATAL_NAMED( "SENSOR_IMU" ,  "Failure to open port %s" , full_path_port.c_str() );
         ros::shutdown();
     }
-#endif // _DECLARE_PROCESS_
 
-	(void)imu.set_option_port( Asio::serial_port_base::flow_control( 
-							Asio::serial_port_base::flow_control::none ) );
-	(void)imu.set_option_port( Asio::serial_port_base::parity( 
-							Asio::serial_port_base::parity::none ) );
-	(void)imu.set_option_port( Asio::serial_port_base::stop_bits( 
-							Asio::serial_port_base::stop_bits::one ) );
-	(void)imu.set_option_port( Asio::serial_port_base::character_size( (unsigned char) 8 ) );
+    if( ptr_node_handle->ok() )
+    {
+	    (void)imu.set_option_port( Asio::serial_port_base::flow_control( 
+		        Asio::serial_port_base::flow_control::none ) );
+	    (void)imu.set_option_port( Asio::serial_port_base::parity( 
+				Asio::serial_port_base::parity::none ) );
+	    (void)imu.set_option_port( Asio::serial_port_base::stop_bits( 
+				Asio::serial_port_base::stop_bits::one ) );
+	    (void)imu.set_option_port( Asio::serial_port_base::character_size( (unsigned char) 8 ) );
+    }
 
 #ifdef _DECLARE_PROCESS_
     std::cout << "Finish setup port of imu\n";
@@ -114,8 +123,7 @@ int main( int argv , char** argc )
     while( ptr_node_handle->ok() )
     {
         round++;
-        status_file = imu.set_idle(); // try to set imu to idle state
-        if( ! status_file )
+        if( ! imu.set_idle() ) // try to set imu to idle state
         {
             std::cout   << "round " << round << " : Failure command set idle\n";
         }
@@ -162,7 +170,7 @@ int main( int argv , char** argc )
     std::cout   << "Now start streaming data\n";
 #endif // _DECLARE_PROCESS_
 
-#ifdef _SUMMARY_
+#ifdef _SETUP_TEMP_VARIABLE_
     tf::Quaternion temp_quaternion;
     double temp_RPY[3];
 #endif
@@ -230,16 +238,21 @@ int main( int argv , char** argc )
             zeabus::ros_interfaces::convert::quaternion_tf(
                     &temporary_message.orientation , &temp_quaternion );
             tf::Matrix3x3( temp_quaternion ).getRPY( temp_RPY[0], temp_RPY[1], temp_RPY[2] );
+#ifdef _SUMMARY_
             std::cout   << "NED system : " << temp_RPY[0] << " " << temp_RPY[1] 
                         << " " << temp_RPY[2] << "\n";
+#endif
             temp_quaternion = convert_conventions*temp_quaternion*convert_conventions.inverse();
+#ifdef _SUMMARY_
             std::cout   << "Use quaternion convert : " << convert_conventions.x() << " "
                         << convert_conventions.y() << " " << convert_conventions.z() 
                         << " " << convert_conventions.w() << "\n";
+#endif
             zeabus::ros_interfaces::convert::tf_quaternion(
                     &temp_quaternion , &temporary_message.orientation );
 #endif
 
+            helper_status( true );
             ptr_mutex_data->lock();
             message = temporary_message;
             ptr_mutex_data->unlock();
@@ -263,8 +276,7 @@ int main( int argv , char** argc )
 #ifdef _DECLARE_UPDATED_
         else
         {
-            std::cout   << zeabus::escape_code::bold_red << "<--- IMU ---> BAD DATA\n\n"
-                        << zeabus::escape_code::normal_white;
+            helper_status( false );
         }
 #endif // _DECLARE_UPDATED_
     } // loop while for doing in ros system
@@ -296,4 +308,25 @@ int main( int argv , char** argc )
     std::cout   << "finish join from thread\n";
 
     return 0;
+}
+
+void helper_status( bool data )
+{
+    static bool status = false;
+    if( status ) // If past event is good data
+    {
+        if( ! data ) // But now are bad data
+        {
+            ROS_FATAL_NAMED( "SENSOR IMU NODE" , "IMU can't streaming data" );
+            status = false;
+        }
+    }
+    else
+    {
+        if( data )
+        {
+            ROS_INFO_NAMED( "SENSOR IMU NODE" , "IMU now are streaming data" );
+            status = true;
+        }
+    }
 }

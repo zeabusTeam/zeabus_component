@@ -1,5 +1,25 @@
 <?xml version="1.0"?>
 <launch>
-    <node pkg="zeabus_sensor" type="imu_node" name="imu" />
-    <node pkg="zeabus_sensor" type="dvl_node" name="dvl" />
+
+    <arg name="full_path_dvl" default="/dev/usb2serial/ftdi_FT2VR5PM_02"/>
+    <arg name="max_depth" default="0060"/>
+    <arg name="heading" default="09000"/>
+    <arg name="salinty" default="35"/>
+
+    <arg name="full_path_imu" default="/dev/microstrain/3dm_gx5_45_0000__6251.65903"/>
+
+    <node pkg="zeabus_sensor" type="imu_node" name="sensor_imu" output="screen">
+
+        <param name="full_path_port" type="string" value="$(arg full_path_imu)"/>
+
+    </node>
+
+    <node pkg="zeabus_sensor" type="dvl_node" name="sensor_dvl" output="screen">
+
+        <param name="full_path_port" type="string" value="$(arg full_path_dvl)"/>
+        <param name="max_depth" type="string" value="$(arg max_depth)"/>
+        <param name="heading" type="string" value="$(arg heading)"/>
+        <param name="salinty" type="string" value="$(arg salinty)"/>
+
+    </node>
 </launch>

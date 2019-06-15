@@ -5,7 +5,7 @@
 
 #include    <zeabus/sensor/DVL/connector.hpp>
 
-#define _PRINT_DATA_CONNECTION_
+//#define _PRINT_DATA_CONNECTION_
 
 namespace zeabus
 {
