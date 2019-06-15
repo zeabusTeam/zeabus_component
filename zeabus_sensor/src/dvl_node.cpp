@@ -74,7 +74,7 @@ int main( int argv , char** argc )
 
     if( ! dvl.open_port() )
     {
-        ROS_FATAL_NAMED( "SENSOR_DVL" , "Failure to open port");
+        ROS_FATAL_NAMED( "SENSOR_DVL" , "Failure to open port %s" , full_path_port.c_str() );
         ros::shutdown();
     }
 
