@@ -20,7 +20,7 @@
 // REFERENCE
 
 // MACRO SET
-//#define _SUMMARY_
+#define _SUMMARY_
 //#define _PROCESS_
 #define _DELAY_DVL_
 //#define _BOUND_ZERO_
@@ -264,7 +264,7 @@ int main( int argv , char** argc )
         }
         else
         {
-            status_data &= 0b011; // bit pressure failure
+            status_data &= 0b011U; // bit pressure failure
         }
 
         // Next we will rotation imu data
