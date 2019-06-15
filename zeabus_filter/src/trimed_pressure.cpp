@@ -131,11 +131,13 @@ int main( int argv, char** argc )
             my_file.logging( &time_stamp , &(input_data.data) , &(output_data.data) );
 #endif // _COLLECT_LOG_
         }
+#ifdef _DEBUG_FILTER_
         if( count_over )
         {
             std::cout   << zeabus::escape_code::bold_red 
                         << "Fatal Pressure same data!\n" << zeabus::escape_code::normal_white;
         }
+#endif
     } // for loop for fill buffer first time
 
     // Seven part let start ros loop

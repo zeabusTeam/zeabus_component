@@ -20,11 +20,12 @@
 // REFERENCE
 
 // MACRO SET
-#define _SUMMARY_
+//#define _SUMMARY_
 //#define _PROCESS_
 #define _DELAY_DVL_
 //#define _BOUND_ZERO_
 #define _COLLECT_LOG_
+//#define _RAW_DATA_
 
 // MACRO CONDITION
 #ifdef _RAW_DATA_
@@ -167,7 +168,8 @@ int main( int argv , char** argc )
 
     ros::Rate rate( frequency );
     // Init data first time
-    service_data.data.header.frame_id = "base_link";
+    service_data.data.header.frame_id = "odom";
+    service_data.data.child_frame_id = "base_link_robot";
     service_data.data.twist.twist.linear.x = 0;
     service_data.data.twist.twist.linear.y = 0;
     service_data.data.twist.twist.linear.z = 0;
