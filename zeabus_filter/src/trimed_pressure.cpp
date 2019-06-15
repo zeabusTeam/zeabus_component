@@ -28,6 +28,8 @@
 
 #include    <iostream>
 
+#include    <ros/console.h>
+
 #include    <zeabus/time.hpp>
 
 #include    <zeabus/count.hpp>
@@ -48,6 +50,8 @@
 
 // Part of algorithm
 #include    <zeabus/filter/trimed_mean.hpp>
+
+void helper_status( bool data );
 
 int main( int argv, char** argc )
 {
@@ -188,11 +192,11 @@ int main( int argv, char** argc )
             std::cout   << "Input is  " << input_data.data;
             std::cout   << "\nOutput is " << output_data.data << std::endl;
 #endif
+            helper_status( true );
         }
         if( count_over )
         {
-            std::cout   << zeabus::escape_code::bold_red 
-                        << "Fatal Pressure same data!\n" << zeabus::escape_code::normal_white;
+            helper_status( false );
         }
     }
 
@@ -203,4 +207,25 @@ int main( int argv, char** argc )
 
     return 0;
      
+}
+
+void helper_status( bool data )
+{
+    static bool status = false;
+    if( status ) // case current state is ok
+    {
+        if( ! data )
+        {
+            ROS_FATAL_NAMED( "FILTER_PRESSURE_NODE" , "DVL FILTER stop streaming data");
+            status = data;
+        }
+    }
+    else // case current state isn't ok
+    {
+        if( data )
+        {
+            ROS_INFO_NAMED( "FILTER_PRESSURE_NODE" , "DVL FILTER start streaming data");
+            status = data;
+        }
+    }
 }
