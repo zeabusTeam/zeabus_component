@@ -5,6 +5,7 @@
 # MAINTAINER	: K.Supasan
 
 # README
+#   2019 06 16 follow control interfaces version 2 master command use part of mask only
 
 # REFERENCE
 #   ref1 : http://wiki.ros.org/ROS/Tutorials/WritingServiceClient%28python%29
@@ -28,6 +29,14 @@ class CommandInterfaces:
         rospy.loginfo( "Waiting service of command to control")
         rospy.wait_for_service( "/control/interfaces")
         self.command_to_control = rospy.ServiceProxy( '/control/interfaces', SendControlCommand )
+
+        rospy.loginfo( "Waiting service of master to control")
+        rospy.wait_for_service( "/control/master")
+        self.command_master_control = rospy.ServiceProxy( '/control/master' ,SendControlCommand )
+        self.master_command = ControlCommand() # This use only master command
+        self.master_command.header.frame_id = your_name
+        self.master_command.target = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+        self.master_command.header.seq = 0
 
         self.current_state = AUVState() # Use to collect current state msg
 
@@ -152,7 +161,7 @@ class CommandInterfaces:
         print( "target_pose is {:6.2f} {:6.2f} {:6.2f} {:6.2f} {:6.2f} {:6.2f}".format(
              self.target_pose[0] , self.target_pose[1] , self.target_pose[2]
             , self.target_pose[3] , self.target_pose[4] , self.target_pose[5] ) )
-        print( "Mask data are " , self.control_command.mask)
+        print( "Mask data are " , self.control_command.mask )
 
     def check_xy( self , error_x , error_y ):
         result = False
@@ -175,4 +184,12 @@ class CommandInterfaces:
                 < error_yaw ):
             result = True
         return result 
-        
+
+    def master_call( self , master_mask ):
+        print( "WARNING you are call master_mask " , master_mask )
+        self.master_command.header.stamp = rospy.get_rostime()
+        self.master_command.mask = master_mask
+        try:
+            self.command_master_control( self.master_command ) 
+        except rospy.ServiceException , e:
+            rospy.logfatal( "Service call control master Failed : %s" , e )
