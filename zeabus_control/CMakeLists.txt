@@ -44,3 +44,8 @@ target_link_libraries( control_fuzzy
 add_executable( fuzzy
     src/fuzzy.cpp
 )
+add_dependencies( fuzzy ${catkin_EXPORTED_TARGETS} )
+target_link_libraries( fuzzy 
+    ${zeabus_library_cpp_LIBRARIES}
+    ${catkin_LIBRARIES}
+)
