@@ -51,47 +51,47 @@ namespace x_parameter
     const static std::array< double , 3 > DEFUZZY_RULE = {0.01 , 0.04 , 0.1 };
 
     // fuzzy rule is the main of fuzzyfication for all data
-    const static std::array< std::array < std::array< int , 7 > , 7 > , 7 > FUZZY_RULE =
+    const static std::array< std::array < std::array< short int , 7 > , 7 > , 7 > FUZZY_RULE =
     {
         // CASE fuzzy force = -3
         { //    -3  -2  -1  +0  +1  +2  +3  = CASE error fuzzy
             {   +3, +4, +4, +4, +4, +4, +4  } // CASE diff fuzzy = -3
-            ,{  +1, +2, +3, +4, +4, +4, +4  } // CASE diff fuzzy = -2
-            ,{  -1, +1, +1, +4, +4, +4, +4  } // CASE diff fuzzy = -1
-            ,{  -2, -1, -1, +4, +4, +4, +4  } // CASE diff fuzzy = -0
-            ,{  -4, -4, -4, +4, +4, +4, +4  } // CASE diff fuzzy = +1
-            ,{  -4, -4, -4, +4, +4, +4, +4  } // CASE diff fuzzy = +2
+            ,{  +1, +2, +3, +2, +4, +4, +4  } // CASE diff fuzzy = -2
+            ,{  -1, +0, +0, +1, +4, +4, +4  } // CASE diff fuzzy = -1
+            ,{  -2, -1, -1, +0, +4, +4, +4  } // CASE diff fuzzy = -0
+            ,{  -4, -4, -4, +1, +0, +0, +0  } // CASE diff fuzzy = +1
+            ,{  -4, -4, -4, +4, +2, +1, +0  } // CASE diff fuzzy = +2
             ,{  -4, -4, -4, +4, +4, +4, +4  } // CASE diff fuzzy = +3
         }
         , // CASE fuzzy force = -2
         { //    -3  -2  -1  +0  +1  +2  +3  = CASE error fuzzy
             {   +3, +3, +4, +4, +4, +4, +4  } // CASE diff fuzzy = -3
-            ,{  +0, +1, +3, +4, +4, +4, +4  } // CASE diff fuzzy = -2
-            ,{  -1, +0, +1, +4, +4, +4, +4  } // CASE diff fuzzy = -1
-            ,{  -2, -2, -1, +4, +4, +4, +4  } // CASE diff fuzzy = -0
-            ,{} // CASE diff fuzzy = +1
-            ,{} // CASE diff fuzzy = +2
-            ,{} // CASE diff fuzzy = +3
+            ,{  +0, +1, +3, +2, +4, +4, +4  } // CASE diff fuzzy = -2
+            ,{  -1, +0, +0, +1, +4, +4, +4  } // CASE diff fuzzy = -1
+            ,{  -2, -2, -1, +0, +4, +4, +4  } // CASE diff fuzzy = -0
+            ,{  -3, -3, -3, +1, +0, +0, +0  } // CASE diff fuzzy = +1
+            ,{  -4, -4, -4, +4, +1, +1, +0  } // CASE diff fuzzy = +2
+            ,{  -4, -4, -4, +4, +4, +4, +4  } // CASE diff fuzzy = +3
         }
         , // CASE fuzzy force = -1
         { //    -3  -2  -1  +0  +1  +2  +3  = CASE error fuzzy
-            {} // CASE diff fuzzy = -3
-            ,{} // CASE diff fuzzy = -2
-            ,{} // CASE diff fuzzy = -1
-            ,{} // CASE diff fuzzy = -0
-            ,{} // CASE diff fuzzy = +1
-            ,{} // CASE diff fuzzy = +2
+            {   +3, +3, +4, +4, +4, +4, +4  } // CASE diff fuzzy = -3
+            ,{  +0, +1, +2, +3, +4, +4, +4  } // CASE diff fuzzy = -2
+            ,{  -2, -1, +0, +2, +3, +4, +4  } // CASE diff fuzzy = -1
+            ,{  -3, -2, -1, +0, +3, +4, +4  } // CASE diff fuzzy = -0
+            ,{  -3, -3, -2, +1, +0, +0, +0  } // CASE diff fuzzy = +1
+            ,{  -4, -4, -4, +4, +2,} // CASE diff fuzzy = +2
             ,{} // CASE diff fuzzy = +3
         }
         , // CASE fuzzy force = 0
         { //    -3  -2  -1  +0  +1  +2  +3  = CASE error fuzzy
-            {} // CASE diff fuzzy = -3
-            ,{} // CASE diff fuzzy = -2
-            ,{} // CASE diff fuzzy = -1
-            ,{} // CASE diff fuzzy = -0
-            ,{} // CASE diff fuzzy = +1
-            ,{} // CASE diff fuzzy = +2
-            ,{} // CASE diff fuzzy = +3
+            {   +2, +3, +4, +4, +4, +4, +4  } // CASE diff fuzzy = -3
+            ,{  +1, +2, +3, +3, +4, +4, +4  } // CASE diff fuzzy = -2
+            ,{  -2, +0, +0  +2, +3, +4, +4  } // CASE diff fuzzy = -1
+            ,{  -3, -2, -1, +0, +1, +2, +3  } // CASE diff fuzzy = -0
+            ,{  -3, -3, -2, -1, +0, +0, +2  } // CASE diff fuzzy = +1
+            ,{  -4, -3, -3, -2, -1, -1, -1  } // CASE diff fuzzy = +2
+            ,{  -4, -4, -4, -3, -3, -3, -3  } // CASE diff fuzzy = +3
         }
         , // CASE fuzzy force = +1
         { //    -3  -2  -1  +0  +1  +2  +3  = CASE error fuzzy
@@ -130,4 +130,4 @@ namespace x_parameter
 
 } // namespace zeabus_control
 
-#endif
+#endif // _ZEABUS_CONTROL_FUZZY_X_PARAMETER_HPP__
