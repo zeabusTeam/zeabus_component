@@ -112,7 +112,7 @@ int main( int argv , char** argc )
     zeabus::fuzzy::ControlError< size_buffer_fuzzy > fuzzy_logic[6];
     
     // Pattern is x y z roll pitch yaw
-    double offset_value[6] = { 0 , 0 , -2 , 0 , 0 , 0 };
+    double offset_value[6] = { 0 , 0 , -1.1 , 0 , 0 , 0 };
     // The next 1 type have 3 value
     double relative_value[18] = { 
             0.08 , 0.15 , 0.27   // x 
@@ -145,7 +145,7 @@ int main( int argv , char** argc )
     double force_range[18] = { 
             1.2 , 3 , 6.5 
             , 1.8 , 4 , 8
-            , 2.5 , 3 , 4 
+            , 1.4 , 2.4 , 3.6 
             , 0.1 , 0.3 , 0.7
             , 0.1 , 0.3 , 0.7
             , 0.05 , 0.1 , 0.2 };
