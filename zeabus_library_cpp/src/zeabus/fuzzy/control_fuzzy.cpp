@@ -305,11 +305,14 @@ void print(int type, int output)
     {
         std::cout << "axis : yaw";
     }
-    std::cout << "output force : " << output;
+    // std::cout << std::endl;
+    std::cout << "  ";
+    std::cout << "output force : " << output << std::endl;
 }
 
 int run_system(double crisp,int type)
 {
+    std::cout << "input error : " << crisp << std::endl;
     int current_error;
     int value_of_diff;
     int change_error;
