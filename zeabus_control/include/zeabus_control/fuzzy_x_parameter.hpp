@@ -31,20 +31,99 @@ namespace x_parameter
     // Data is vector type
     const static std::array< double , 3 > ERROR_RULE = { 0.05 , 0.5 , 2 };
 
-    // Diff is range to decision about velocity error will be 0
+    // Diff is range to decision about velocity error will be 0 1 2 3 by use 3 value
     // Data is vertor type
-    const static std::array< double , 3 > DIFF_RULE = { 0.02 , 0.13 , 0.25 };
+    const static std::array< double , 3 > DIFF_RULE = { 0.01 , 0.13 , 0.25 };
 
     // Force is range to decision now you have active force what range
-    // member 4 (indent 0) use to decision that is limit of force we can do
-    //  If over member 4 (indent 0) we will not addition force
+    // member 3 (indent 0) use to decision that is limit of force we can do
+    //  Output will decision to 0 1 2 3 4 by use 4 value
+    //  If over member 3 (indent 0) we will not addition force
     //  Data is vector type
     const static std::array< double , 4 > FORCE_RULE = { 0.1 , 1 , 3 , 6 };
 
     // Defuzzy is value ralative to convert from crisp set to fuzzy data
+    // Data will have 0, 1, 2, 3, 4.
+    // If output is 0 will add 0
+    // If output is 1 2 will add by DEFUZZY_RULE member 0 1
+    // If output is 3 4 will add by DEFUZZY_RULE member 0 1
+    // Data is verctor type
     const static std::array< double , 3 > DEFUZZY_RULE = {0.01 , 0.04 , 0.1 };
 
     // fuzzy rule is the main of fuzzyfication for all data
+    const static std::array< std::array < std::array< int , 7 > , 7 > , 7 > FUZZY_RULE =
+    {
+        // CASE fuzzy force = -3
+        { //    -3  -2  -1  +0  +1  +2  +3  = CASE error fuzzy
+            {   +3, +4, +4, +4, +4, +4, +4  } // CASE diff fuzzy = -3
+            ,{  +1, +2, +3, +4, +4, +4, +4  } // CASE diff fuzzy = -2
+            ,{  -1, +1, +1, +4, +4, +4, +4  } // CASE diff fuzzy = -1
+            ,{  -2, -1, -1, +4, +4, +4, +4  } // CASE diff fuzzy = -0
+            ,{  -4, -4, -4, +4, +4, +4, +4  } // CASE diff fuzzy = +1
+            ,{  -4, -4, -4, +4, +4, +4, +4  } // CASE diff fuzzy = +2
+            ,{  -4, -4, -4, +4, +4, +4, +4  } // CASE diff fuzzy = +3
+        }
+        , // CASE fuzzy force = -2
+        { //    -3  -2  -1  +0  +1  +2  +3  = CASE error fuzzy
+            {   +3, +3, +4, +4, +4, +4, +4  } // CASE diff fuzzy = -3
+            ,{  +0, +1, +3, +4, +4, +4, +4  } // CASE diff fuzzy = -2
+            ,{  -1, +0, +1, +4, +4, +4, +4  } // CASE diff fuzzy = -1
+            ,{  -2, -2, -1, +4, +4, +4, +4  } // CASE diff fuzzy = -0
+            ,{} // CASE diff fuzzy = +1
+            ,{} // CASE diff fuzzy = +2
+            ,{} // CASE diff fuzzy = +3
+        }
+        , // CASE fuzzy force = -1
+        { //    -3  -2  -1  +0  +1  +2  +3  = CASE error fuzzy
+            {} // CASE diff fuzzy = -3
+            ,{} // CASE diff fuzzy = -2
+            ,{} // CASE diff fuzzy = -1
+            ,{} // CASE diff fuzzy = -0
+            ,{} // CASE diff fuzzy = +1
+            ,{} // CASE diff fuzzy = +2
+            ,{} // CASE diff fuzzy = +3
+        }
+        , // CASE fuzzy force = 0
+        { //    -3  -2  -1  +0  +1  +2  +3  = CASE error fuzzy
+            {} // CASE diff fuzzy = -3
+            ,{} // CASE diff fuzzy = -2
+            ,{} // CASE diff fuzzy = -1
+            ,{} // CASE diff fuzzy = -0
+            ,{} // CASE diff fuzzy = +1
+            ,{} // CASE diff fuzzy = +2
+            ,{} // CASE diff fuzzy = +3
+        }
+        , // CASE fuzzy force = +1
+        { //    -3  -2  -1  +0  +1  +2  +3  = CASE error fuzzy
+            {} // CASE diff fuzzy = -3
+            ,{} // CASE diff fuzzy = -2
+            ,{} // CASE diff fuzzy = -1
+            ,{} // CASE diff fuzzy = -0
+            ,{} // CASE diff fuzzy = +1
+            ,{} // CASE diff fuzzy = +2
+            ,{} // CASE diff fuzzy = +3
+        }
+        , // CASE fuzzy force = +2
+        { //    -3  -2  -1  +0  +1  +2  +3  = CASE error fuzzy
+            {} // CASE diff fuzzy = -3
+            ,{} // CASE diff fuzzy = -2
+            ,{} // CASE diff fuzzy = -1
+            ,{} // CASE diff fuzzy = -0
+            ,{} // CASE diff fuzzy = +1
+            ,{} // CASE diff fuzzy = +2
+            ,{} // CASE diff fuzzy = +3
+        }
+        , // CASE fuzzy force = +3
+        { //    -3  -2  -1  +0  +1  +2  +3  = CASE error fuzzy
+            {} // CASE diff fuzzy = -3
+            ,{} // CASE diff fuzzy = -2
+            ,{} // CASE diff fuzzy = -1
+            ,{} // CASE diff fuzzy = -0
+            ,{} // CASE diff fuzzy = +1
+            ,{} // CASE diff fuzzy = +2
+            ,{} // CASE diff fuzzy = +3
+        }
+    }
 }
 
 } // namespace fuzzy
