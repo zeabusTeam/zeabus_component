@@ -185,6 +185,8 @@ class CommandInterfaces:
             result = True
         return result 
 
+## Warning below function will have direct effect of control interface to manage about error
+
     def master_call( self , master_mask ):
         print( "WARNING you are call master_mask " , master_mask )
         self.master_command.header.stamp = rospy.get_rostime()
@@ -193,3 +195,18 @@ class CommandInterfaces:
             self.command_master_control( self.master_command ) 
         except rospy.ServiceException , e:
             rospy.logfatal( "Service call control master Failed : %s" , e )
+
+    # Please send in array that will help you to manage about data collect
+    def deactivate( self , data ):
+        temp_data = []
+        for run_command in ( "x" , "y" , "z" , "roll" , "pitch" , "yaw" ):
+            temp_data.append( not ( run_command in data ) )
+        self.master_call( tuple( temp_data ) )
+
+    # This function will help you reset data in axis you have command to activate
+    def activate( self , data ):
+        temp_data = []
+        for run_command in ( "x" , "y" , "z" , "roll" , "pitch" , "yaw" ):
+            temp_data.append( not ( run_command in data ) )
+        self.master_call( tuple( temp_data ) )
+        
