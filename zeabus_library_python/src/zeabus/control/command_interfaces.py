@@ -205,8 +205,13 @@ class CommandInterfaces:
 
     # This function will help you reset data in axis you have command to activate
     def activate( self , data ):
-        temp_data = []
+        temp_mask = []
+        self.get_state()
         for run_command in ( "x" , "y" , "z" , "roll" , "pitch" , "yaw" ):
             temp_data.append( not ( run_command in data ) )
-        self.master_call( tuple( temp_data ) )
-        
+
+        # control_command will help you to reset all pose that you command to activate
+        self.control_command.mask = tuple( temp_data )
+        self.send_command()
+
+        self.master_call( self.control_command.mask ) 
