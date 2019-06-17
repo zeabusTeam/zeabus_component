@@ -42,11 +42,16 @@ namespace serial
                     , this->error_code );
             if( this->error_code == _boost_errc::resource_unavailable_try_again )
             {
-                std::cout   << "Port unavailable for reading will try again\n";
+                std::cout   << zeabus::escape_code::bold_red
+                            << "Port unavailable for reading will try again\n"
+                            << zeabus::escape_code::normal_white;
             }
             else if( this->error_code == _boost_errc::interrupted )
             {
-                std::cout   << "Port have been interrupted by something\n";
+                std::cout   << zeabus::escape_code::bold_yellow 
+                            << "Port have been interrupted by something\n"
+                            << zeabus::escape_code::normal_white;
+                break;
             }
             else if( this->error_code != _boost_errc::success )
             {
