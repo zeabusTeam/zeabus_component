@@ -196,7 +196,7 @@ namespace fuzzy
     }
 
     void ControlError3Dimension::set_fuzzy_rule(
-        std::array< std::array < std::array < int , 7 > , 7 > , 7 >* ptr_fuzzy_rule )
+        std::array< std::array < std::array < short int , 7 > , 7 > , 7 >* ptr_fuzzy_rule )
     {
         this->ptr_fuzzy_rule = ptr_fuzzy_rule;
     }
