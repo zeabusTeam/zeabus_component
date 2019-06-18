@@ -314,7 +314,7 @@ void print(int type, int output, int crisp, int diff)
 
 int run_system(double crisp,int type)
 {
-    int current_error;
+    int current_error = 0;
     int value_of_diff;
     int change_error;
     int change_diff;
