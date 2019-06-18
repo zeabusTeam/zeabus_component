@@ -143,9 +143,12 @@ class CommandInterfaces:
         self.control_command.mask = ( False , False , False , False , False ,True )
         self.send_command()
 
-    def relative_z( self , z ):
+    def relative_z( self , z , target_z = True ):
         self.get_state()
-        self.target_pose[ 2 ] =  self.current_pose[2] + z
+        if( target_z ):
+            self.target_pose[ 2 ] += z
+        else:
+            self.target_pose[ 2 ] = self.current_pose[2] + z
         self.control_command.mask = ( False , False , True , False , False , False )
         self.send_command()
 
@@ -183,7 +186,21 @@ class CommandInterfaces:
         if( abs( zeabus_math.bound_radian( self.target_pose[5] - self.current_pose[5] ) ) 
                 < error_yaw ):
             result = True
-        return result 
+        return result
+
+    def check_distance( self, distance ):
+        self.get_state()
+        result = False
+        if( abs( 
+                math.sqrt( pow( self.current_pose[0], 2 ) 
+                    + pow( self.current_pose[1], 2 ) 
+                    + pow ( self.current_pose[2] , 2 )  ) 
+                - math.sqrt( pow( self.target_pose[0] , 2 ) 
+                    + pow( self.target_pose[1] , 2 )
+                    + pow( self.target_pose[2] , 2) ) ) 
+            < distance ):
+            result = True
+        return result
 
 ## Warning below function will have direct effect of control interface to manage about error
 
