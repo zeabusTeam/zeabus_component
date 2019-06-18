@@ -91,15 +91,15 @@ int change_to_fuzzy(int value)
 int crisp_to_error_xyz(double crisp)
 {
     int error = 0;
-    if(crisp < -50)
+    if(crisp < -10)
     {
         error = -3;
     }
-    else if(crisp < -25 && crisp >= -50)
+    else if(crisp < -5 && crisp >= -10)
     {
         error = -2;
     }
-    else if(crisp < 0 && crisp >= -25)
+    else if(crisp < 0 && crisp >= -5)
     {
         error = -1;
     }
@@ -107,15 +107,15 @@ int crisp_to_error_xyz(double crisp)
     {
         error = 0;
     }
-    else if(crisp > 0 && crisp <= 25)
+    else if(crisp > 0 && crisp <= 5)
     {
         error = 1;
     }
-    else if(crisp > 25 && crisp <= 50)
+    else if(crisp > 5 && crisp <= 10)
     {
         error = 2;
     }
-    else if(crisp > 50)
+    else if(crisp > 10)
     {
         error = 3;
     }
@@ -276,7 +276,7 @@ int crisp_to_output_rpy(int fuzzy_value)
     return num;
 }
 
-void print(int type, int output)
+void print(int type, int output, int crisp, int diff)
 {
     // std::string x,y,z,r,p,y;
     // std::string axis[6] = {x,y,z,r,p,yaw};
@@ -306,14 +306,15 @@ void print(int type, int output)
         std::cout << "axis : yaw";
     }
     // std::cout << std::endl;
-    std::cout << "  ";
+    std::cout << std::endl;
+    std::cout << "input error : " << crisp << std::endl;
+    std::cout << "diff error : " << diff << std::endl;
     std::cout << "output force : " << output << std::endl;
 }
 
 int run_system(double crisp,int type)
 {
-    std::cout << "input error : " << crisp << std::endl;
-    int current_error;
+    int current_error = 0;
     int value_of_diff;
     int change_error;
     int change_diff;
@@ -327,9 +328,12 @@ int run_system(double crisp,int type)
     {
         current_error = crisp_to_error_rpy(crisp);
     }
+    std::cout << "previous error : " << previous_error[type] << std::endl;
+    std::cout << "current error : " << current_error << std::endl;
     check_error(current_error, previous_error[type]);
     previous_error[type] = current_error;
     value_of_diff = diff(value1, value2);
+    // std::cout << value1 << " " << value2 << std::endl;
     change_error = change_to_fuzzy(current_error);
     change_diff = change_to_fuzzy(value_of_diff);
     output_fuzzy = fuzzy_rule(change_diff, change_error, previous_output[type]);
@@ -350,6 +354,6 @@ int run_system(double crisp,int type)
     {
         output = crisp_to_output_rpy(output_fuzzy);
     }
-    print(type, output);
+    print(type, output, crisp, value_of_diff);
     return output;
 }
