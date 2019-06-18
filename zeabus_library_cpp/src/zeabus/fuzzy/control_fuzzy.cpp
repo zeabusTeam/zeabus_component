@@ -91,15 +91,15 @@ int change_to_fuzzy(int value)
 int crisp_to_error_xyz(double crisp)
 {
     int error = 0;
-    if(crisp < -50)
+    if(crisp < -10)
     {
         error = -3;
     }
-    else if(crisp < -25 && crisp >= -50)
+    else if(crisp < -5 && crisp >= -10)
     {
         error = -2;
     }
-    else if(crisp < 0 && crisp >= -25)
+    else if(crisp < 0 && crisp >= -5)
     {
         error = -1;
     }
@@ -107,15 +107,15 @@ int crisp_to_error_xyz(double crisp)
     {
         error = 0;
     }
-    else if(crisp > 0 && crisp <= 25)
+    else if(crisp > 0 && crisp <= 5)
     {
         error = 1;
     }
-    else if(crisp > 25 && crisp <= 50)
+    else if(crisp > 5 && crisp <= 10)
     {
         error = 2;
     }
-    else if(crisp > 50)
+    else if(crisp > 10)
     {
         error = 3;
     }
