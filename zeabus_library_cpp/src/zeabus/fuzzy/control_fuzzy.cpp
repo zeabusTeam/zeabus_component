@@ -328,8 +328,8 @@ int run_system(double crisp,int type)
     {
         current_error = crisp_to_error_rpy(crisp);
     }
-    std::cout << "current error : " << current_error << std::endl;
     std::cout << "previous error : " << previous_error[type] << std::endl;
+    std::cout << "current error : " << current_error << std::endl;
     check_error(current_error, previous_error[type]);
     previous_error[type] = current_error;
     value_of_diff = diff(value1, value2);
