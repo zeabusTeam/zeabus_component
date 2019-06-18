@@ -177,9 +177,9 @@ int main( int argv , char** argc )
         ptr_mutex_data->unlock();
         for( unsigned int run = start_run ; run <6 ; run++ )
         {
-            if( (temp.mask)[run] && ( run != 3 ) && ( run != 4 ))
+            if( (temp.mask)[run] && ( run == 2 ))
             {
-                (force.target)[ run ] = run_system(help_error[run], run);
+                (force.target)[ run ] = run_system((temp.target)[run], run);
                 (force.mask)[run] = true;
                 help_mask[ run ] = true;
                 help_error[ run ] = (temp.target)[ run ];
@@ -231,7 +231,7 @@ int main( int argv , char** argc )
 
 #ifdef _SUMMARY_
         count_loop++;
-        if( count_loop == size_buffer_fuzzy )
+        if(true )
         {
             std::cout   << "Input\t\tMask\tOutput\t\t\tMask\n";
             for( unsigned int run = start_run ; run < 6 ; run++ )

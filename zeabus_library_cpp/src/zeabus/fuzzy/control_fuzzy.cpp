@@ -4,22 +4,23 @@
 int fuzzy_rule(int diff, int error,int output)
 {
     int fuzzy = array_fuzzy[error][diff][output];
+    std::cout << "fuzzy" << " " << fuzzy << std::endl;
     return fuzzy;
 }
 
-void check_error(int current, int previous)  // can use return value is array now not done yet
+int check_error(int current, int previous)  // can use return value is array now not done yet
 {
     if(current >= 0 && previous >= 0)
     {
         if(current > previous)
         {
-            value1 = current;
-            value2 = previous;
+            value[0] = current;
+            value[1] = previous;
         }
         else
         {
-            value1 = current;
-            value2 = previous;
+            value[0] = current;
+            value[1] = previous;
         }
     }
     else if(current < 0 && previous >= 0)
@@ -40,27 +41,29 @@ void check_error(int current, int previous)  // can use return value is array no
         {
             if(current > previous)
             {
-                value1 = current;
-                value2 = previous;
+                value[0] = current;
+                value[1] = previous;
             }
             else
             {
-                value1 = current;
-                value2 = previous;
+                value[0] = current;
+                value[1] = previous;
             }
         }
     }
+    return value[2];
 }
-int diff(int value1, int value2)
+
+int diff(int value[2])
 {
     int error;
-    error = value1 - value2;
+    error = value[0] - value[1];
     return error;
 }
 
 int change_to_fuzzy(int value)
 {
-    int num;
+    int num=0;
     if(value == -3)
     {
         num = 0;
@@ -91,15 +94,15 @@ int change_to_fuzzy(int value)
 int crisp_to_error_xyz(double crisp)
 {
     int error = 0;
-    if(crisp < -10)
+    if(crisp < -5)
     {
         error = -3;
     }
-    else if(crisp < -5 && crisp >= -10)
+    else if(crisp < -2 && crisp >= -5)
     {
         error = -2;
     }
-    else if(crisp < 0 && crisp >= -5)
+    else if(crisp < 0 && crisp >= -2)
     {
         error = -1;
     }
@@ -107,15 +110,15 @@ int crisp_to_error_xyz(double crisp)
     {
         error = 0;
     }
-    else if(crisp > 0 && crisp <= 5)
+    else if(crisp > 0 && crisp <= 2)
     {
         error = 1;
     }
-    else if(crisp > 5 && crisp <= 10)
+    else if(crisp > 2 && crisp <= 5)
     {
         error = 2;
     }
-    else if(crisp > 10)
+    else if(crisp > 5)
     {
         error = 3;
     }
@@ -158,7 +161,7 @@ int crisp_to_error_rpy(double crisp)
 
 int crisp_to_output_x(int fuzzy_value)
 {
-    int num;
+    int num=0;
     if(fuzzy_value == -3)
     {
         num = -6;
@@ -188,7 +191,7 @@ int crisp_to_output_x(int fuzzy_value)
 
 int crisp_to_output_y(int fuzzy_value)
 {
-    int num;
+    int num=0;
     if(fuzzy_value == -3)
     {
         num = -8;
@@ -218,7 +221,7 @@ int crisp_to_output_y(int fuzzy_value)
 
 int crisp_to_output_z(int fuzzy_value)
 {
-    int num;
+    int num=0;
     if(fuzzy_value == -3)
     {
         num = -5;
@@ -248,7 +251,7 @@ int crisp_to_output_z(int fuzzy_value)
 
 int crisp_to_output_rpy(int fuzzy_value)
 {
-    int num;
+    int num=0;
     if(fuzzy_value == -3)
     {
         num = -2;
@@ -313,7 +316,7 @@ void print(int type, int output, int crisp, int diff)
 }
 
 int run_system(double crisp,int type)
-{
+{   
     int current_error = 0;
     int value_of_diff;
     int change_error;
@@ -330,7 +333,7 @@ int run_system(double crisp,int type)
     }
     std::cout << "previous error : " << previous_error[type] << std::endl;
     std::cout << "current error : " << current_error << std::endl;
-    check_error(current_error, previous_error[type]);
+    value[2] = check_error(current_error, previous_error[type]);
     previous_error[type] = current_error;
     value_of_diff = diff(value1, value2);
     // std::cout << value1 << " " << value2 << std::endl;
