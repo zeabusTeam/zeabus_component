@@ -128,6 +128,8 @@ class CommandInterfaces:
 
     def relative_yaw( self, yaw , target_yaw = True ):
 
+        print( "Active relative yaw is {:6.3f}".format( yaw ) ) 
+
         if( target_yaw ):
             self.target_pose[ 5 ] = zeabus_math.bound_radian( self.target_pose[5] + yaw )
         else:
@@ -182,6 +184,7 @@ class CommandInterfaces:
         return result 
 
     def check_yaw( self , error_yaw ):
+        result = False
         self.get_state()
         if( abs( zeabus_math.bound_radian( self.target_pose[5] - self.current_pose[5] ) ) 
                 < error_yaw ):
