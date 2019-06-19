@@ -3,8 +3,8 @@
 
 int fuzzy_rule(int diff, int error,int output)
 {
-    int fuzzy = array_fuzzy[error][diff][output];
-    std::cout << "fuzzy" << " " << fuzzy << std::endl;
+    int fuzzy = array_fuzzy[output][diff][error];
+    std::cout << "fuzzy : " << fuzzy << std::endl;
     return fuzzy;
 }
 
@@ -279,7 +279,7 @@ int crisp_to_output_rpy(int fuzzy_value)
     return num;
 }
 
-void print(int type, int output, int crisp, int diff)
+void print(int type, int output, double crisp, int diff)
 {
     // std::string x,y,z,r,p,y;
     // std::string axis[6] = {x,y,z,r,p,yaw};
@@ -313,6 +313,7 @@ void print(int type, int output, int crisp, int diff)
     std::cout << "input error : " << crisp << std::endl;
     std::cout << "diff error : " << diff << std::endl;
     std::cout << "output force : " << output << std::endl;
+    std::cout << std::endl;
 }
 
 int run_system(double crisp,int type)
@@ -322,6 +323,7 @@ int run_system(double crisp,int type)
     int change_error;
     int change_diff;
     int output_fuzzy;
+    std::cout << "crisp : " << crisp << std::endl;
     int output;
     if(type == 0 || type == 1 || type == 2)
     {
@@ -335,11 +337,16 @@ int run_system(double crisp,int type)
     std::cout << "current error : " << current_error << std::endl;
     value[2] = check_error(current_error, previous_error[type]);
     previous_error[type] = current_error;
-    value_of_diff = diff(value1, value2);
-    // std::cout << value1 << " " << value2 << std::endl;
+    value_of_diff = diff(value);
+    std::cout << value[0] << " " << value[1] << std::endl;
+    std::cout << "diff : " << value_of_diff << std::endl;
     change_error = change_to_fuzzy(current_error);
+    std::cout << "change_error : " << change_error << std::endl;
     change_diff = change_to_fuzzy(value_of_diff);
+    std::cout << "change_diff : " << change_diff << std::endl;
     output_fuzzy = fuzzy_rule(change_diff, change_error, previous_output[type]);
+    output_fuzzy = change_to_fuzzy(output_fuzzy);
+    std::cout << "output fuzzy : " << output_fuzzy << std::endl;
     previous_output[type] = output_fuzzy;
     if(type == 0)
     {
