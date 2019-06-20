@@ -316,8 +316,8 @@ void print(int type, int output, double crisp, int diff)
     std::cout << std::endl;
 }
 
-int run_system(double crisp,int type)
-{   
+double run_system(double crisp,int type)
+{  
     int current_error = 0;
     int value_of_diff;
     int change_error;
@@ -348,9 +348,18 @@ int run_system(double crisp,int type)
     output_fuzzy = change_to_fuzzy(output_fuzzy);
     std::cout << "output fuzzy : " << output_fuzzy << std::endl;
     previous_output[type] = output_fuzzy;
+    if(crisp < 0.5 && crisp > 0 && type != 2)
+    {
+        output = 1;
+    }
+    else if(crisp < 0.5 && crisp > 0 && type == 2)
+    {
+        output = -1;
+    }
     if(type == 0)
     {
         output = crisp_to_output_x(output_fuzzy);
+        
     }
     else if(type == 1)
     {
@@ -365,5 +374,5 @@ int run_system(double crisp,int type)
         output = crisp_to_output_rpy(output_fuzzy);
     }
     print(type, output, crisp, value_of_diff);
-    return output;
+    return output*(-1);
 }
