@@ -11,6 +11,7 @@
 //  _SUMMARY_           : this macro will include _DECLARE_UPDATED_ and show last result
 //                          now available only euler
 //  _IMU_ENU_SYSTEM_    : if you macro this. This programe will convert data from NED to ENU
+//  _SPECIAL_SYSTEM_    : if you macro this. This program will convert data by specific rotation
 
 // MACRO SET
 //#define _DECLARE_PROCESS_ 
@@ -18,6 +19,7 @@
 //#define _DECLARE_UPDATED_
 //#define _SUMMARY_
 #define _IMU_ENU_SYSTEM_
+#define _SPECIAL_CASE_SYSTEM_
 
 // MACRO CONDITION
 #ifdef _SUMMARY_
@@ -77,10 +79,11 @@ int main( int argv , char** argc )
     zeabus::sensor::IMU::Connector imu( full_path_port , 100 );
 
 #ifdef _IMU_ENU_SYSTEM_
-    std::string node_name = "imu_node_ned";
+#ifndef _SPECIAL_SYSTEM_
     const static tf::Quaternion convert_conventions( 0.7071 , 0.7071 , 0 , 0 );
 #else
-    std::string node_name = "imu_node";
+    const static tf::Quaternion convert_conventions( 0 , 1 , 0 , 0 );    
+#endif
 #endif
 
     std::shared_ptr< ros::NodeHandle > ptr_node_handle = 
@@ -237,8 +240,8 @@ int main( int argv , char** argc )
 #ifdef _IMU_ENU_SYSTEM_
             zeabus::ros_interfaces::convert::quaternion_tf(
                     &temporary_message.orientation , &temp_quaternion );
-            tf::Matrix3x3( temp_quaternion ).getRPY( temp_RPY[0], temp_RPY[1], temp_RPY[2] );
 #ifdef _SUMMARY_
+            tf::Matrix3x3( temp_quaternion ).getRPY( temp_RPY[0], temp_RPY[1], temp_RPY[2] );
             std::cout   << "NED system : " << temp_RPY[0] << " " << temp_RPY[1] 
                         << " " << temp_RPY[2] << "\n";
 #endif
