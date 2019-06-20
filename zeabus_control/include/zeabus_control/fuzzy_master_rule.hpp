@@ -1,12 +1,12 @@
-// FILE			: fuzzy_x_parameter.hpp
+// FILE			: fuzzy_master_rule.hpp
 // AUTHOR		: K.Supasan
-// CREATE ON	: 2019, June 13 (UTC+0)
+// CREATE ON	: 2019, June 19 (UTC+0)
 // MAINTAINER	: K.Supasan
 
 // MACRO DETAIL
 
 // README
-//  This parameter for fuzzy_3_dimension of control package in linear x
+//  This parameter for fuzzy_3_dimension of control package for set master rule
 
 // REFERENCE
 
@@ -16,45 +16,13 @@
 
 #include    <array>
 
-#ifndef _ZEABUS_CONTROL_FUZZY_X_PARAMETER_HPP__
-#define _ZEABUS_CONTROL_FUZZY_X_PARAMETER_HPP__
-
 namespace zeabus_control
 {
 
 namespace fuzzy
 {
 
-namespace x_parameter
-{
-    // Error is range of error to decision 0 1 2 3 by use 3 value. 
-    // Data is vector type
-    const static std::array< double , 3 > ERROR_RULE = { 0.05 , 0.5 , 2 };
-
-    // Diff is range to decision about velocity error will be 0 1 2 3 by use 3 value
-    // Data is vertor type
-    const static std::array< double , 3 > DIFF_RULE = { 0.01 , 0.13 , 0.25 };
-
-    // Force is range to decision now you have active force what range
-    // member 3 (indent 0) use to decision that is limit of force we can do
-    //  Output will decision to 0 1 2 3 4 by use 4 value
-    //  If over member 3 (indent 0) we will not addition force
-    //  Data is vector type
-    const static std::array< double , 4 > FORCE_RULE = { 0.1 , 1 , 3 , 6 };
-
-    // Defuzzy is value ralative to convert from crisp set to fuzzy data
-    // Data will have 0, 1, 2, 3, 4.
-    // If output is 0 will add 0
-    // If output is 1 2 will add by DEFUZZY_RULE member 0 1
-    // If output is 3 4 will add by DEFUZZY_RULE member 0 1
-    // Data is verctor type
-    const static std::array< double , 3 > DEFUZZY_RULE = {0.01 , 0.04 , 0.1 };
-
-    // Offset is value to do and don't have affect with robot in real time always
-    const static double OFFSET = 0.0;
-
-    // fuzzy rule is the main of fuzzyfication for all data
-    const static std::array< std::array < std::array< short int , 7 > , 7 > , 7 > FUZZY_RULE =
+    const static std::array< std::array< std::array < short int , 7 > 7 > 7 > MASTER_RULE = 
     {
         // CASE fuzzy force = -3
         { //    -3  -2  -1  +0  +1  +2  +3  = CASE error fuzzy
@@ -127,10 +95,8 @@ namespace x_parameter
             ,{  +0, +0, +0, +0, +0, +0, +0  } // CASE diff fuzzy = +3
         }
     }
-}
+    
 
 } // namespace fuzzy
 
 } // namespace zeabus_control
-
-#endif // _ZEABUS_CONTROL_FUZZY_X_PARAMETER_HPP__
