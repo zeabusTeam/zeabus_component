@@ -44,6 +44,6 @@ int crisp_to_output_z(int fuzzy_value);
 
 int crisp_to_output_rpy(int fuzzy_value);
 
-int run_system(double crisp ,int type);   // this function will run all function in system fuzzy
+double run_system(double crisp ,int type);   // this function will run all function in system fuzzy
 
 void print(int type, int output, double crisp, int diff);
