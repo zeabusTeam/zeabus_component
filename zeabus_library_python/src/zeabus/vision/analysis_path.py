@@ -29,6 +29,7 @@ class AnalysisPath:
         self.x_point = ( 0 , 0 , 0 ) # use to collect point x
         self.y_point = ( 0 , 0 , 0 ) # use to collect point y
         self.rotation = ( 0 , 0 ) # use to collect angle will linear point x and y from y axis
+        self.area = (0 , 0)
 
         # Part for filter data of path
 
@@ -57,17 +58,20 @@ class AnalysisPath:
                     self.x_point[2] - self.y_point[1]
                     , self.y_point[2] - self.y_point[1] ) )
 
+            self.area = ( temp_data.data.area[0] , temp_data.data.area[1] )
+
             self.num_point = temp_data.data.n_point
 
         return result
 
     def echo_data( self ):
-        print( "Point is ({:4.2f},{:4.2f}) : ({:4.2f},{:4.2f}) : ({:4.2f}, {:4.2f}) : ".format(
+        print( "Point is ({:6.2f},{:6.2f}) : ({:6.2f},{:6.2f}) : ({:6.2f}, {:6.2f}) : ".format(
             self.x_point[0] , self.y_point[0]
             , self.x_point[1] , self.y_point[1] 
             , self.x_point[2] , self.y_point[2] ) )
         print( "Numpoint is {:4d}".format( self.num_point ) )
         print( "Rotation value {:6.3f} , {6.3f}".format( self.rotation[0] , self.rotation[1] ) )
+        print( "Area is {:6.2f} : {:6.2f}".format( self.area[0] , self.area[1] ) )
 
 
 if __name__=="__main__":
