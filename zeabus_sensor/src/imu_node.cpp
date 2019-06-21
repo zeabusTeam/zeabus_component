@@ -17,9 +17,9 @@
 //#define _DECLARE_PROCESS_ 
 //#define _PRINT_DATA_STREAM_
 //#define _DECLARE_UPDATED_
-//#define _SUMMARY_
+#define _SUMMARY_
 #define _IMU_ENU_SYSTEM_
-#define _SPECIAL_CASE_SYSTEM_
+//#define _SPECIAL_SYSTEM_
 
 // MACRO CONDITION
 #ifdef _SUMMARY_
@@ -79,11 +79,14 @@ int main( int argv , char** argc )
     zeabus::sensor::IMU::Connector imu( full_path_port , 100 );
 
 #ifdef _IMU_ENU_SYSTEM_
+
 #ifndef _SPECIAL_SYSTEM_
     const static tf::Quaternion convert_conventions( 0.7071 , 0.7071 , 0 , 0 );
 #else
-    const static tf::Quaternion convert_conventions( 0 , 1 , 0 , 0 );    
+    const static tf::Quaternion rotation_conventions( 0 , 0 , -0.7071 , 0.7071 );    
+    const static tf::Quaternion convert_conventions( 0 , 0 , 0 , 1 );
 #endif
+
 #endif
 
     std::shared_ptr< ros::NodeHandle > ptr_node_handle = 
@@ -242,18 +245,29 @@ int main( int argv , char** argc )
                     &temporary_message.orientation , &temp_quaternion );
 #ifdef _SUMMARY_
             tf::Matrix3x3( temp_quaternion ).getRPY( temp_RPY[0], temp_RPY[1], temp_RPY[2] );
-            std::cout   << "NED system : " << temp_RPY[0] << " " << temp_RPY[1] 
+            std::cout   << "ORIGINAL system : " << temp_RPY[0] << " " << temp_RPY[1] 
                         << " " << temp_RPY[2] << "\n";
 #endif
+
             temp_quaternion = convert_conventions*temp_quaternion*convert_conventions.inverse();
+#ifdef _SPECIAL_SYSTEM_
+            temp_quaternion = rotation_conventions*temp_quaternion;
+#endif // _SPECIAL_SYSTEM_
+
+
 #ifdef _SUMMARY_
             std::cout   << "Use quaternion convert : " << convert_conventions.x() << " "
                         << convert_conventions.y() << " " << convert_conventions.z() 
                         << " " << convert_conventions.w() << "\n";
+#ifdef _SPECIAL_SYSTEM_
+            std::cout   << "Use quaternion rotation : " << rotation_conventions.x() << " "
+                        << rotation_conventions.y() << " " << rotation_conventions.z()
+                        << " " << rotation_conventions.w() << "\n";
+#endif // _SPECIAL_SYSTEM_
 #endif
             zeabus::ros_interfaces::convert::tf_quaternion(
                     &temp_quaternion , &temporary_message.orientation );
-#endif
+#endif //_IMU_ENU_SYSTEM_
 
             helper_status( true );
             ptr_mutex_data->lock();
