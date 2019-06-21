@@ -13,6 +13,7 @@ from __future__ import print_function
 from zeabus_utility.srv import VisionSrvPath
 
 import math
+import rospy
 # math.atan2( y , x ) will use find radian for y/x
 
 class AnalysisPath:
