@@ -128,6 +128,8 @@ class CommandInterfaces:
 
     def relative_yaw( self, yaw , target_yaw = True ):
 
+        print( "Active relative yaw is {:6.3f}".format( yaw ) ) 
+
         if( target_yaw ):
             self.target_pose[ 5 ] = zeabus_math.bound_radian( self.target_pose[5] + yaw )
         else:
@@ -143,9 +145,12 @@ class CommandInterfaces:
         self.control_command.mask = ( False , False , False , False , False ,True )
         self.send_command()
 
-    def relative_z( self , z ):
+    def relative_z( self , z , target_z = True ):
         self.get_state()
-        self.target_pose[ 2 ] =  self.current_pose[2] + z
+        if( target_z ):
+            self.target_pose[ 2 ] += z
+        else:
+            self.target_pose[ 2 ] = self.current_pose[2] + z
         self.control_command.mask = ( False , False , True , False , False , False )
         self.send_command()
 
@@ -179,11 +184,28 @@ class CommandInterfaces:
         return result 
 
     def check_yaw( self , error_yaw ):
+        result = False
         self.get_state()
         if( abs( zeabus_math.bound_radian( self.target_pose[5] - self.current_pose[5] ) ) 
                 < error_yaw ):
             result = True
-        return result 
+        return result
+
+    def check_distance( self, distance ):
+        self.get_state()
+        result = False
+        if( abs( 
+                math.sqrt( pow( self.current_pose[0], 2 ) 
+                    + pow( self.current_pose[1], 2 ) 
+                    + pow ( self.current_pose[2] , 2 )  ) 
+                - math.sqrt( pow( self.target_pose[0] , 2 ) 
+                    + pow( self.target_pose[1] , 2 )
+                    + pow( self.target_pose[2] , 2) ) ) 
+            < distance ):
+            result = True
+        return result
+
+## Warning below function will have direct effect of control interface to manage about error
 
     def master_call( self , master_mask ):
         print( "WARNING you are call master_mask " , master_mask )
@@ -193,3 +215,23 @@ class CommandInterfaces:
             self.command_master_control( self.master_command ) 
         except rospy.ServiceException , e:
             rospy.logfatal( "Service call control master Failed : %s" , e )
+
+    # Please send in array that will help you to manage about data collect
+    def deactivate( self , data ):
+        temp_data = []
+        for run_command in ( "x" , "y" , "z" , "roll" , "pitch" , "yaw" ):
+            temp_data.append( not ( run_command in data ) )
+        self.master_call( tuple( temp_data ) )
+
+    # This function will help you reset data in axis you have command to activate
+    def activate( self , data ):
+        temp_mask = []
+        self.get_state()
+        for run_command in ( "x" , "y" , "z" , "roll" , "pitch" , "yaw" ):
+            temp_data.append( not ( run_command in data ) )
+
+        # control_command will help you to reset all pose that you command to activate
+        self.control_command.mask = tuple( temp_data )
+        self.send_command()
+
+        self.master_call( self.control_command.mask ) 

@@ -1,27 +1,5 @@
-// FILE			: control_fuzzy.cpp
-// AUTHOR		: K.Supasan
-// CREATE ON	: 2019, May 27 (UTC+0)
-// MAINTAINER	: K.Supasan
+#include <zeabus/fuzzy/control_fuzzy.hpp>
 
-// MACRO DETAIL
-// _SUMMARY_    : If you macro this, code will show you about input and output for connection
-//              between interface and command thruster of control
-// _SHOW_ROTATION_
-//              : Will show you about rotation from output in world frame to robot frame
-// --> WARNING MACRO OF FUZZY LIB
-// _SHOW_DATA_  : This is macro will show you see about process of fuzzy logic and your data
-// _SHOW_OUTPUT_CONDITION_
-//              : This macro specific about output_condtion of fuzzy logic
-// _SHOW_RULE_TABLE_
-//              : This macro will alway show data of multiple index data
-
-// README
-//  Main code and process of this program is library of normal fuzzy control. Please read
-//  zeabus_library_cpp/include/zeabus/fuzzy/control_error.hpp
-
-// REFERENCE
-
-// MACRO SET
 #define _SUMMARY_
 //#define _SHOW_DATA_
 //#define _SHOW_ROTATION_
@@ -112,7 +90,7 @@ int main( int argv , char** argc )
     zeabus::fuzzy::ControlError< size_buffer_fuzzy > fuzzy_logic[6];
     
     // Pattern is x y z roll pitch yaw
-    double offset_value[6] = { 0 , 0 , -1.1 , 0 , 0 , 0 };
+    double offset_value[6] = { 0 , 0 , -2 , 0 , 0 , 0 };
     // The next 1 type have 3 value
     double relative_value[18] = { 
             0.08 , 0.15 , 0.27   // x 
@@ -145,7 +123,7 @@ int main( int argv , char** argc )
     double force_range[18] = { 
             1.2 , 3 , 6.5 
             , 1.8 , 4 , 8
-            , 1.4 , 2.4 , 3.6 
+            , 3 , 4 , 5 
             , 0.1 , 0.3 , 0.7
             , 0.1 , 0.3 , 0.7
             , 0.05 , 0.1 , 0.2 };
@@ -201,14 +179,14 @@ int main( int argv , char** argc )
         {
             if( (temp.mask)[run] && ( run != 3 ) && ( run != 4 ))
             {
-                (force.target)[ run ] = fuzzy_logic[ run ].push( (temp.target)[run] );
+                (force.target)[ run ] = run_system(help_error[run], run);
                 (force.mask)[run] = true;
                 help_mask[ run ] = true;
                 help_error[ run ] = (temp.target)[ run ];
             }
             else if( help_mask[ run ] )
             {
-                (force.target)[ run ] = fuzzy_logic[ run ].push( help_error[run] );
+                (force.target)[ run ] = run_system(help_error[run], run);
                 (force.mask)[run] = true;
                 help_mask[ run ] = false;
             }
