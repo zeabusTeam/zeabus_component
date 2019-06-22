@@ -1,4 +1,4 @@
-// FILE			: fuzzy_master_rule.hpp
+// FILE			: master_rule.hpp
 // AUTHOR		: K.Supasan
 // CREATE ON	: 2019, June 19 (UTC+0)
 // MAINTAINER	: K.Supasan

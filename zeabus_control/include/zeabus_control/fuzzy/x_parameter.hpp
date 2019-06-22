@@ -1,4 +1,4 @@
-// FILE			: fuzzy_x_parameter.hpp
+// FILE			: x_parameter.hpp
 // AUTHOR		: K.Supasan
 // CREATE ON	: 2019, June 13 (UTC+0)
 // MAINTAINER	: K.Supasan
