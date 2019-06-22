@@ -58,9 +58,9 @@ namespace fuzzy
         //  -3  -2  -1  +0  +1  +2  +3  = CASE error fuzzy
             +1, +2, +3, +4, +4, +4, +4, // CASE diff fuzzy = -3
             +0, +1, +3, +3, +3, +3, +4, // CASE diff fuzzy = -2
-            -2, +0, +0, +2, +2, +3, +3, // CASE diff fuzzy = -1
+            -2, +0, +0, +2, +1, +3, +3, // CASE diff fuzzy = -1
             -3, -2, -1, +0, +1, +2, +3, // CASE diff fuzzy = -0
-            -3, -3, -2, -2, +0, +0, +2, // CASE diff fuzzy = +1
+            -3, -3, --, -2, +0, +0, +2, // CASE diff fuzzy = +1
             -4, -3, -3, -3, -1, -1, +0, // CASE diff fuzzy = +2
             -4, -4, -4, -4, -2, -2, -1, // CASE diff fuzzy = +3
         
