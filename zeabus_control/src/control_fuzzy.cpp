@@ -115,8 +115,8 @@ int main( int argv , char** argc )
     double offset_value[6] = { 0 , 0 , -1.1 , 0 , 0 , 0 };
     // The next 1 type have 3 value
     double relative_value[18] = { 
-            0.08 , 0.15 , 0.27   // x 
-            , 0.1 , 0.2 , 0.35 // y
+            0.08 , 0.18 , 0.2   // x 
+            , 0.08 , 0.18 , 0.2 // y
             , 0.04 , 0.1 , 0.2 // z
             , 0.01 , 0.05 , 0.1 // roll
             , 0.01 , 0.05 , 0.1 // pitch
@@ -143,8 +143,8 @@ int main( int argv , char** argc )
 
     // this force is have affect about output condition very much
     double force_range[18] = { 
-            1.2 , 3 , 6.5 
-            , 1.8 , 4 , 8
+            1.5 , 2.5 , 5 
+            , 1.5 , 2.5 , 5
             , 1.4 , 2.4 , 3.6 
             , 0.1 , 0.3 , 0.7
             , 0.1 , 0.3 , 0.7
