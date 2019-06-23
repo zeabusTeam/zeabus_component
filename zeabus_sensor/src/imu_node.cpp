@@ -17,7 +17,7 @@
 //#define _DECLARE_PROCESS_ 
 //#define _PRINT_DATA_STREAM_
 //#define _DECLARE_UPDATED_
-#define _SUMMARY_
+//#define _SUMMARY_
 #define _IMU_ENU_SYSTEM_
 //#define _SPECIAL_SYSTEM_
 

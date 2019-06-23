@@ -11,6 +11,9 @@
 //  ref1 : http://wiki.ros.org/rosconsole
 
 // MACRO SET
+#define _PROCESS_
+#define _PRINT_RULE_
+//#define _PRINT_TABLE_
 
 // MACRO CONDITION
 
@@ -78,12 +81,24 @@ namespace fuzzy
             (this->message_pub).error.fuzzy_data = 0;
         }
         // Next I will fuzzification of force in previous turn
+#ifdef _PROCESS_
+        std::cout   << "Before push force\n";
+#endif        
         this->push_force();
         // Now We already have three input data next I will use fuzzy rule to get fuzzy output
+#ifdef _PROCESS_
+        std::cout   << "Before fuzzy rule\n";
+#endif        
         this->fuzzy_rule();
         // Now We have fuzzy output we must to defuzzification that data
+#ifdef _PROCESS_
+        std::cout   << "Before defuzzy rule\n";
+#endif        
         this->defuzzification();
         // Next last step we must to get result and publish data
+#ifdef _PROCESS_
+        std::cout   << "Before last rule\n";
+#endif        
         return this->last_result();
     } // function push_error  
 
@@ -93,6 +108,12 @@ namespace fuzzy
     {
         (this->message_pub).diff.crisp_data = (this->message_pub).diff.crisp_data - error;
         double temp_data = fabs( (this->message_pub).diff.crisp_data );
+#ifdef _PROCESS_
+        std::cout   << "temp_data is " << temp_data << std::endl;
+        std::cout   << "Data 0 " << this->ptr_diff_rule->at(0) << std::endl;
+        std::cout   << "Data 1 " << this->ptr_diff_rule->at(1) << std::endl;
+        std::cout   << "Data 2 " << this->ptr_diff_rule->at(2) << std::endl;
+#endif
         if( temp_data > this->ptr_diff_rule->at( 2 ) )
         {
             (this->message_pub).diff.fuzzy_data = copysign( 3 
@@ -119,6 +140,13 @@ namespace fuzzy
     {
         (this->message_pub).force.crisp_data += (this->message_pub).output.crisp_data;
         double temp_data = fabs( (this->message_pub).force.crisp_data );
+#ifdef _PROCESS_
+        std::cout   << "temp_data is " << temp_data << std::endl;
+        std::cout   << "Data 0 " << this->ptr_force_rule->at(0) << std::endl;
+        std::cout   << "Data 1 " << this->ptr_force_rule->at(1) << std::endl;
+        std::cout   << "Data 2 " << this->ptr_force_rule->at(2) << std::endl;
+        std::cout   << "Data 3 " << this->ptr_force_rule->at(3) << std::endl;
+#endif
         if( temp_data > this->ptr_force_rule->at( 2 ) )
         {
             (this->message_pub).force.fuzzy_data = copysign( 3 
@@ -143,11 +171,13 @@ namespace fuzzy
     void ControlError3Dimension::fuzzy_rule()
     {
         // We get data fuzzy from our rule
+        std::cout   << "Get rule" << "\n";
         (this->message_pub).output.fuzzy_data = 
             (this->ptr_fuzzy_rule->at( 
                 (this->message_pub).force.fuzzy_data + 3 )).at(
                     (this->message_pub).diff.fuzzy_data + 3 ).at(
                         (this->message_pub).error.fuzzy_data + 3 );
+        std::cout   << "finish rule" << "\n";
     }
 
     void ControlError3Dimension::defuzzification()
@@ -198,38 +228,82 @@ namespace fuzzy
     }
 
     void ControlError3Dimension::set_fuzzy_rule(
-        const std::array< std::array < std::array < short int , 7 > , 7 > , 7 >* ptr_fuzzy_rule )
+        std::array< std::array < std::array < int , 7 > , 7 > , 7 >* ptr_fuzzy_rule )
     {
         this->ptr_fuzzy_rule = ptr_fuzzy_rule;
+#ifdef _PRINT_TABLE_
+        std::cout   << "FUZZY_RULE : \n";
+        for( unsigned int run_z = 0 ; run_z < 7 ; run_z++ )
+        {
+            std::cout   << "================= Z : " << run_z << "=========================\n"; 
+            for( unsigned int run_y = 0 ; run_y < 7 ; run_y++ )
+            {
+                for( unsigned int run_x = 0 ; run_x < 7 ; run_x++ )
+                {
+                    std::cout   << " " << (*(this->ptr_fuzzy_rule))[ run_z ][run_y][run_x];
+                }
+                std::cout   << "\n";
+            }
+        }
+#endif
     }
 
-    void ControlError3Dimension::set_offset( const double offset )
+    void ControlError3Dimension::set_offset( double offset )
     {
         this->offset = offset;
     }
 
-    void ControlError3Dimension::set_fuzzification_error( 
-        const std::array< double, 3>* ptr_error_rule )
+    void ControlError3Dimension::set_fuzzification_error( std::array< double, 3>* ptr_error_rule )
     {
         this->ptr_error_rule = ptr_error_rule;
+#ifdef _PRINT_RULE_
+        std::cout   << "ERROR_RULE :";
+        for( unsigned int run = 0 ; run <  3 ; run++ )
+        {
+            std::cout   << " " << this->ptr_error_rule->at(run) ; 
+        }
+        std::cout   << "\n";
+#endif
     }
 
-    void ControlError3Dimension::set_fuzzification_diff( 
-        const std::array< double, 3>* ptr_diff_rule )
+    void ControlError3Dimension::set_fuzzification_diff( std::array< double, 3>* ptr_diff_rule )
     {
         this->ptr_diff_rule = ptr_diff_rule;
+#ifdef _PRINT_RULE_
+        std::cout   << "DIFF_RULE :";
+        for( unsigned int run = 0 ; run <  3 ; run++ )
+        {
+            std::cout   << " " << this->ptr_diff_rule->at(run) ; 
+        }
+        std::cout   << "\n";
+#endif
     }
 
     void ControlError3Dimension::set_fuzzification_force( 
-        const std::array< double, 4 >* ptr_force_rule )
+        std::array< double, 4 >* ptr_force_rule )
     {
         this->ptr_force_rule = ptr_force_rule;
+#ifdef _PRINT_RULE_
+        std::cout   << "FORCE_RULE :";
+        for( unsigned int run = 0 ; run <  4 ; run++ )
+        {
+            std::cout   << " " << this->ptr_force_rule->at(run) ; 
+        }
+        std::cout   << "\n";
+#endif
     }
 
-    void ControlError3Dimension::set_defuzzification_rule( 
-        const std::array< double, 3 >* ptr_defuzzy_rule )
+    void ControlError3Dimension::set_defuzzification_rule( std::array< double, 3 >* ptr_defuzzy_rule )
     {
         this->ptr_defuzzy_rule = ptr_defuzzy_rule;
+#ifdef _PRINT_RULE_
+        std::cout   << "DEFUZZY_RULE :";
+        for( unsigned int run = 0 ; run <  3 ; run++ )
+        {
+            std::cout   << " " << this->ptr_defuzzy_rule->at(run) ; 
+        }
+        std::cout   << "\n";
+#endif
     }
 
 } // namespace fuzzy
