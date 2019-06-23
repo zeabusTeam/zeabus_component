@@ -25,8 +25,6 @@
 
 #include    <array>
 
-#include    <memory>
-
 #include    <iostream>
 
 #include    <ros/console.h>
@@ -53,9 +51,7 @@ namespace fuzzy
 
         public:
             // first argument std::string topic_name will use to make topic publish data
-            ControlError3Dimension( 
-                std::shared_ptr<ros::NodeHandle> ptr_node_handle 
-                , std::string topic_name 
+            ControlError3Dimension( ros::NodeHandle* ptr_node_handle , std::string topic_name 
                 , std::string frame_name );
             
             // this use set offset value will plus in last result of relative value output
@@ -68,11 +64,11 @@ namespace fuzzy
             void set_fuzzification_diff( const std::array< double , 3 >* ptr_diff_rule );
 
             // this use set rule for fuzzification part of force output use to decision
-            void set_fuzzification_force( const std::array< double , 4 >* ptr_force_rule );
+            void set_fuzzification_force( const std::array< double , 3 >* ptr_force_rule );
 
             // this use set fuzzy rule for 3Dimension
             void set_fuzzy_rule( 
-                const std::array< std::array < std::array < short int, 7> , 7> , 7>* 
+                std::array< std::array < const std::array < short int, 7> , 7> , 7>* 
                     ptr_fuzzy_rule );
 
             // this use defuzzification rule
@@ -87,16 +83,12 @@ namespace fuzzy
         protected:
 
             // Below 4 variable will collect ptr of about fuzzification and fuzzy rule
-            // rule for fuzzification error range
-            const std::array< double , 3 >* ptr_error_rule; 
-            // rule for fuzzification diff range
-            const std::array< double , 3 >* ptr_diff_rule; 
+            std::array< double , 3 >* ptr_error_rule; // rule for fuzzification error range
+            std::array< double , 3 >* ptr_diff_rule; // rule for fuzzification diff range
             // force rule will have to 4 part because we want to get value for bound force
-            // rule for fuzzification force range
-            const std::array< double , 4 >* ptr_force_rule; 
-            // rule for defuzzification relative 
-            const std::array< double , 3 >* ptr_defuzzy_rule; 
-            const std::array< std::array < std::array < short int , 7 > , 7 > , 7 >* ptr_fuzzy_rule;
+            std::array< double , 4 >* ptr_force_rule; // rule for fuzzification force range
+            std::array< double , 3 >* ptr_defuzzy_rule; // rule for defuzzification relative 
+            std::array< std::array < std::array < short int , 7 > , 7 > , 7 >* ptr_fuzzy_rule;
 
             // Use to publish data
             // This message_pub will use to calculate all data in fuzzy too

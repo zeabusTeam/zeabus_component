@@ -13,7 +13,7 @@
 
 // MACRO CONDITION
 
-#include    <zeabus_control/fuzzy/mastrer_rule.hpp>
+#include    <zeabus_control/fuzzy/master_rule.hpp>
 #include    <zeabus_control/fuzzy/x_parameter.hpp>
 #include    <zeabus_control/fuzzy/y_parameter.hpp>
 #include    <zeabus_control/fuzzy/z_parameter.hpp>

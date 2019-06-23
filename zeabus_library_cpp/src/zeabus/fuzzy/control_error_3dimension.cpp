@@ -22,8 +22,10 @@ namespace zeabus
 namespace fuzzy
 {
 
-    ControlError3Dimension::ControlError3Dimension( ros::NodeHandle* ptr_node_handle 
-            , std::string topic_name , std::string frame_name )
+    ControlError3Dimension::ControlError3Dimension( 
+        std::shared_ptr<ros::NodeHandle> ptr_node_handle 
+        , std::string topic_name 
+        , std::string frame_name )
     {
         // Advertise of publish topic for record data easy to look and analysis
         this->fuzzy_pub = ptr_node_handle->advertise< zeabus_utility::ControlFuzzy >(
@@ -196,9 +198,38 @@ namespace fuzzy
     }
 
     void ControlError3Dimension::set_fuzzy_rule(
-        std::array< std::array < std::array < short int , 7 > , 7 > , 7 >* ptr_fuzzy_rule )
+        const std::array< std::array < std::array < short int , 7 > , 7 > , 7 >* ptr_fuzzy_rule )
     {
         this->ptr_fuzzy_rule = ptr_fuzzy_rule;
+    }
+
+    void ControlError3Dimension::set_offset( const double offset )
+    {
+        this->offset = offset;
+    }
+
+    void ControlError3Dimension::set_fuzzification_error( 
+        const std::array< double, 3>* ptr_error_rule )
+    {
+        this->ptr_error_rule = ptr_error_rule;
+    }
+
+    void ControlError3Dimension::set_fuzzification_diff( 
+        const std::array< double, 3>* ptr_diff_rule )
+    {
+        this->ptr_diff_rule = ptr_diff_rule;
+    }
+
+    void ControlError3Dimension::set_fuzzification_force( 
+        const std::array< double, 4 >* ptr_force_rule )
+    {
+        this->ptr_force_rule = ptr_force_rule;
+    }
+
+    void ControlError3Dimension::set_defuzzification_rule( 
+        const std::array< double, 3 >* ptr_defuzzy_rule )
+    {
+        this->ptr_defuzzy_rule = ptr_defuzzy_rule;
     }
 
 } // namespace fuzzy
