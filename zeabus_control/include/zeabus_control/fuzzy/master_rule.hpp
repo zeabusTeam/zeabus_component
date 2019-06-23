@@ -25,7 +25,7 @@ namespace zeabus_control
 namespace fuzzy
 {
 
-    std::array< std::array< std::array < int , 7 >, 7 >, 7 > MASTER_RULE = 
+    const std::array< std::array< std::array < int , 7 >, 7 >, 7 > MASTER_RULE = 
     {
         // CASE fuzzy force = -3
         //  -3  -2  -1  +0  +1  +2  +3  = CASE error fuzzy

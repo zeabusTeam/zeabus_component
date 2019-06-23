@@ -27,18 +27,18 @@ namespace z_parameter
 
     // Error is range of error to decision 0 1 2 3 by use 3 value. 
     // Data is vector type
-    std::array< double , 3 > ERROR_RULE = { 0.07 , 1 , 3 };
+    const std::array< double , 3 > ERROR_RULE = { 0.07 , 1 , 3 };
     
     // Diff is range to decision about velocity error will be 0 1 2 3 by use 3 value
     // Data is vertor type
-    std::array< double , 3 > DIFF_RULE = { 0.04 , 0.10 , 0.20 };
+    const std::array< double , 3 > DIFF_RULE = { 0.04 , 0.10 , 0.20 };
     
     // Force is range to decision now you have active force what range
     // member 3 (indent 0) use to decision that is limit of force we can do
     //  Output will decision to 0 1 2 3 4 by use 4 value
     //  If over member 3 (indent 0) we will not addition force
     //  Data is vector type
-    std::array< double , 4 > FORCE_RULE = { 0.2 , 1.0 , 2 , 3 };
+    const std::array< double , 4 > FORCE_RULE = { 0.2 , 1.0 , 2 , 3 };
     
     // About condition to convert crisp_set to fuzzy_set we will use this condition
     //  if( abs( intput ) < rule[0] ) output = 0
@@ -52,10 +52,10 @@ namespace z_parameter
     // If output is 1 2 will add by DEFUZZY_RULE member 0 1
     // If output is 3 4 will add by DEFUZZY_RULE member 2
     // Data is verctor type
-    std::array< double , 3 > DEFUZZY_RULE = {0.01 , 0.05 , 0.3 };
+    const std::array< double , 3 > DEFUZZY_RULE = {0.01 , 0.05 , 0.3 };
     
     // Offset is value to do and don't have affect with robot in real time always
-    double OFFSET = -1.1;
+    const double OFFSET = -1.1;
     
 } // namespace z_parameter
 

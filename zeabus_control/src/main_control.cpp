@@ -113,9 +113,9 @@ int main( int argv , char** argc )
     zeabus::fuzzy::ControlError3Dimension fuzzy_roll( ptr_node_handle, "/control/roll", "odom" );
     zeabus::fuzzy::ControlError3Dimension fuzzy_pitch( ptr_node_handle, "/control/pitch","odom");
     zeabus::fuzzy::ControlError3Dimension fuzzy_yaw( ptr_node_handle, "/control/yaw" , "odom");
-    zeabus::fuzzy::ControlError3Dimension all_fuzzy[6] = {
-        fuzzy_x , fuzzy_y , fuzzy_z , fuzzy_roll , fuzzy_pitch , fuzzy_yaw };
-/*
+    zeabus::fuzzy::ControlError3Dimension* all_fuzzy[6] = {
+        &fuzzy_x , &fuzzy_y , &fuzzy_z , &fuzzy_roll , &fuzzy_pitch , &fuzzy_yaw };
+
     // set x axis
     fuzzy_x.set_offset( zeabus_control::fuzzy::x_parameter::OFFSET );
     fuzzy_x.set_fuzzification_error( &zeabus_control::fuzzy::x_parameter::ERROR_RULE );
@@ -131,7 +131,7 @@ int main( int argv , char** argc )
     fuzzy_y.set_fuzzification_force( &zeabus_control::fuzzy::y_parameter::FORCE_RULE );
     fuzzy_y.set_fuzzy_rule( &zeabus_control::fuzzy::MASTER_RULE );
     fuzzy_y.set_defuzzification_rule( &zeabus_control::fuzzy::y_parameter::DEFUZZY_RULE );
-*/
+
     // set z axis
     fuzzy_z.set_offset( zeabus_control::fuzzy::z_parameter::OFFSET );
     fuzzy_z.set_fuzzification_error( &zeabus_control::fuzzy::z_parameter::ERROR_RULE );
@@ -139,7 +139,7 @@ int main( int argv , char** argc )
     fuzzy_z.set_fuzzification_force( &zeabus_control::fuzzy::z_parameter::FORCE_RULE );
     fuzzy_z.set_fuzzy_rule( &zeabus_control::fuzzy::MASTER_RULE );
     fuzzy_z.set_defuzzification_rule( &zeabus_control::fuzzy::z_parameter::DEFUZZY_RULE );
-/*
+
     // set roll axis
     fuzzy_roll.set_offset( zeabus_control::fuzzy::roll_parameter::OFFSET );
     fuzzy_roll.set_fuzzification_error( &zeabus_control::fuzzy::roll_parameter::ERROR_RULE );
@@ -155,7 +155,7 @@ int main( int argv , char** argc )
     fuzzy_pitch.set_fuzzification_force( &zeabus_control::fuzzy::pitch_parameter::FORCE_RULE );
     fuzzy_pitch.set_fuzzy_rule( &zeabus_control::fuzzy::MASTER_RULE );
     fuzzy_pitch.set_defuzzification_rule( &zeabus_control::fuzzy::pitch_parameter::DEFUZZY_RULE);
-*/
+
     // set yaw axis
     fuzzy_yaw.set_offset( zeabus_control::fuzzy::yaw_parameter::OFFSET );
     fuzzy_yaw.set_fuzzification_error( &zeabus_control::fuzzy::yaw_parameter::ERROR_RULE );
@@ -178,25 +178,22 @@ int main( int argv , char** argc )
 
         for( unsigned int run = 0 ; run < 6 ; run++ )
         {
-            std::cout   << run << "\n";
             if( (temp.mask)[run] && (run != 3 ) && ( run != 4 ) && ( run > 1 ) )
             {
-                std::cout   << "Before push error\n";
-                (force.target)[ run ] = all_fuzzy[ run ].push_error( (temp.target)[run] );
-                std::cout   << "After push error\n";
+                (force.target)[ run ] = all_fuzzy[ run ]->push_error( (temp.target)[run] );
                 (force.mask)[run] = true;
                 help_mask[run] = true;
                 help_error[run] = (temp.target)[run];
             }
             else if( help_mask[run] )
             {
-                (force.target)[ run ] = all_fuzzy[ run ].push_error( help_error[ run ] );
+                (force.target)[ run ] = all_fuzzy[ run ]->push_error( help_error[ run ] );
                 (force.mask)[ run ] = true;
                 help_mask[ run ] = false;
             }
             else
             {
-                all_fuzzy[ run ].clear_system();
+                all_fuzzy[ run ]->clear_system();
             }
         }
 
