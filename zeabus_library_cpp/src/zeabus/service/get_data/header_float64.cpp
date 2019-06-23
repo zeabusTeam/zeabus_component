@@ -34,8 +34,8 @@ namespace get_data
                 , &zeabus::service::get_data::HeaderFloat64::callback , this );
     }
 
-    bool HeaderFloat64::callback( zeabus_utility::DepthCommand::Request& request
-            , zeabus_utility::DepthCommand::Response& response )
+    bool HeaderFloat64::callback( zeabus_utility::ServiceDepth::Request& request
+            , zeabus_utility::ServiceDepth::Response& response )
     {
         this->ptr_mutex_data->lock();
         response.header = this->ptr_data->header;

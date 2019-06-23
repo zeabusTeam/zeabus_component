@@ -13,7 +13,7 @@
 
 #include    <zeabus/service/get_data/base_class.hpp>
 
-#include    <zeabus_utility/DepthCommand.h>
+#include    <zeabus_utility/ServiceDepth.h>
 
 #include    <zeabus_utility/HeaderFloat64.h>
 
@@ -38,8 +38,8 @@ namespace get_data
         protected:
             void ensure_setup_service( std::string service_topic );
 
-            bool callback( zeabus_utility::DepthCommand::Request& request 
-                    , zeabus_utility::DepthCommand::Response& response );
+            bool callback( zeabus_utility::ServiceDepth::Request& request 
+                    , zeabus_utility::ServiceDepth::Response& response );
 
     }; // class HeaderFloat64
 
