@@ -12,6 +12,8 @@ from __future__ import print_function
 
 from zeabus_utility.srv import VisionSrvPath
 
+from std_msgs.msg import String
+
 import math
 import rospy
 # math.atan2( y , x ) will use find radian for y/x
@@ -38,7 +40,7 @@ class AnalysisPath:
         result = False
 
         try:
-            temp_data = self.call_vision_data( "task" , "request" )
+            temp_data = self.call_vision_data(String('path') , String('request' ))
             result = True
         except rospy.ServiceException , e :
             rospy.logfatal( "Sevice call vision part Failed : %s" , e )
