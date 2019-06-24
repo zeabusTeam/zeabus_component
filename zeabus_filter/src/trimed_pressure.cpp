@@ -19,7 +19,7 @@
 //  ref2    : http://docs.ros.org/melodic/api/roscpp/html/classros_1_1NodeHandle.html#a81d08224944993c4cd38589e68417e12
 
 // MACRO SET
-//#define _DEBUG_FILTER_
+#define _DEBUG_FILTER_
 //#define _DEBUG_SPIN_
 #define _COLLECT_LOG_
 //#define _SUMMARY_

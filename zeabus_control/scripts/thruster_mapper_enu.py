@@ -233,10 +233,7 @@ class ThrusterMapper:
         cmd = []
         for run in range(0, 8):
             temp = int(self.lookup_handle.find_pwm(torque[run]) )
-            if( 1480 < temp and temp < 1520 ):
-                cmd.append( int( 1500 ) )
-            else:
-                cmd.append( int( temp ) )
+            cmd.append( int( temp ) )
 
         self.header.stamp = rospy.get_rostime()
         pwm = tuple(cmd)
