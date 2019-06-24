@@ -54,11 +54,11 @@ class AnalysisPath:
                 , temp_data.data.point_3[1] )
             self.rotation = ( 
                 math.atan2(
-                    self.x_point[1] - self.x_point[0]
-                    , self.y_point[1] - self.y_point[0] )
+                    self.y_point[1] - self.y_point[0]
+                    , self.x_point[1] - self.x_point[0] )
                 , math.atan2(
-                    self.x_point[2] - self.y_point[1]
-                    , self.y_point[2] - self.y_point[1] ) )
+                    self.y_point[2] - self.y_point[1]
+                    , self.x_point[2] - self.x_point[1] ) )
 
             self.area = ( temp_data.data.area[0] , temp_data.data.area[1] )
 
@@ -67,13 +67,16 @@ class AnalysisPath:
         return result
 
     def echo_data( self ):
-        print( "Point is ({:6.2f},{:6.2f}) : ({:6.2f},{:6.2f}) : ({:6.2f}, {:6.2f}) : ".format(
-            self.x_point[0] , self.y_point[0]
-            , self.x_point[1] , self.y_point[1] 
-            , self.x_point[2] , self.y_point[2] ) )
         print( "Numpoint is {:4d}".format( self.num_point ) )
-        print( "Rotation value {:6.3f} , {6.3f}".format( self.rotation[0] , self.rotation[1] ) )
-        print( "Area is {:6.2f} : {:6.2f}".format( self.area[0] , self.area[1] ) )
+        if( self.num_point != 0 ):
+            print("Point is ({:6.2f},{:6.2f}) : ({:6.2f},{:6.2f}) : ({:6.2f},{:6.2f}) : ".format(
+                self.x_point[0] , self.y_point[0]
+                , self.x_point[1] , self.y_point[1] 
+                , self.x_point[2] , self.y_point[2] ) )
+            print( "Rotation value {:6.3f} , {:6.3f}".format( self.rotation[0] 
+                , self.rotation[1] ) )
+            print( "Area is {:6.2f} : {:6.2f}".format( self.area[0] 
+                , self.area[1] ) )
 
 
 if __name__=="__main__":
