@@ -12,6 +12,8 @@ from __future__ import print_function
 
 from zeabus_utility.srv import VisionSrvPath
 
+from std_msgs.msg import String
+
 import math
 import rospy
 # math.atan2( y , x ) will use find radian for y/x
@@ -38,7 +40,7 @@ class AnalysisPath:
         result = False
 
         try:
-            temp_data = self.call_vision_data( "task" , "request" )
+            temp_data = self.call_vision_data(String('path') , String('request' ))
             result = True
         except rospy.ServiceException , e :
             rospy.logfatal( "Sevice call vision part Failed : %s" , e )
@@ -52,11 +54,11 @@ class AnalysisPath:
                 , temp_data.data.point_3[1] )
             self.rotation = ( 
                 math.atan2(
-                    self.x_point[1] - self.x_point[0]
-                    , self.y_point[1] - self.y_point[0] )
+                    self.y_point[1] - self.y_point[0]
+                    , self.x_point[1] - self.x_point[0] )
                 , math.atan2(
-                    self.x_point[2] - self.y_point[1]
-                    , self.y_point[2] - self.y_point[1] ) )
+                    self.y_point[2] - self.y_point[1]
+                    , self.x_point[2] - self.x_point[1] ) )
 
             self.area = ( temp_data.data.area[0] , temp_data.data.area[1] )
 
@@ -65,13 +67,16 @@ class AnalysisPath:
         return result
 
     def echo_data( self ):
-        print( "Point is ({:6.2f},{:6.2f}) : ({:6.2f},{:6.2f}) : ({:6.2f}, {:6.2f}) : ".format(
-            self.x_point[0] , self.y_point[0]
-            , self.x_point[1] , self.y_point[1] 
-            , self.x_point[2] , self.y_point[2] ) )
         print( "Numpoint is {:4d}".format( self.num_point ) )
-        print( "Rotation value {:6.3f} , {6.3f}".format( self.rotation[0] , self.rotation[1] ) )
-        print( "Area is {:6.2f} : {:6.2f}".format( self.area[0] , self.area[1] ) )
+        if( self.num_point != 0 ):
+            print("Point is ({:6.2f},{:6.2f}) : ({:6.2f},{:6.2f}) : ({:6.2f},{:6.2f}) : ".format(
+                self.x_point[0] , self.y_point[0]
+                , self.x_point[1] , self.y_point[1] 
+                , self.x_point[2] , self.y_point[2] ) )
+            print( "Rotation value {:6.3f} , {:6.3f}".format( self.rotation[0] 
+                , self.rotation[1] ) )
+            print( "Area is {:6.2f} : {:6.2f}".format( self.area[0] 
+                , self.area[1] ) )
 
 
 if __name__=="__main__":

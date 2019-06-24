@@ -72,8 +72,7 @@ namespace fuzzy
 
             // this use set fuzzy rule for 3Dimension
             void set_fuzzy_rule( 
-                const std::array< std::array < std::array < short int, 7> , 7> , 7>* 
-                    ptr_fuzzy_rule );
+                 const std::array< std::array < std::array < int, 7> , 7> , 7>* ptr_fuzzy_rule );
 
             // this use defuzzification rule
             void set_defuzzification_rule( const std::array< double , 3 >* ptr_defuzzy_rule );
@@ -96,7 +95,7 @@ namespace fuzzy
             const std::array< double , 4 >* ptr_force_rule; 
             // rule for defuzzification relative 
             const std::array< double , 3 >* ptr_defuzzy_rule; 
-            const std::array< std::array < std::array < short int , 7 > , 7 > , 7 >* ptr_fuzzy_rule;
+            const std::array< std::array < std::array < int , 7 > , 7 > , 7 >* ptr_fuzzy_rule;
 
             // Use to publish data
             // This message_pub will use to calculate all data in fuzzy too

@@ -95,7 +95,7 @@ class CommandInterfaces:
         self.send_command()
 
     # argument 3 yaw will mean you want to rotation will target yaw if that is true
-    def relative_xy( self , x , y , target_yaw = True ):
+    def relative_xy( self , x , y , target_yaw = True , target_xy = True ):
         movement_x = 0
         movement_y = 0
 
@@ -186,8 +186,9 @@ class CommandInterfaces:
     def check_yaw( self , error_yaw ):
         result = False
         self.get_state()
-        if( abs( zeabus_math.bound_radian( self.target_pose[5] - self.current_pose[5] ) ) 
-                < error_yaw ):
+        temp = abs( zeabus_math.bound_radian( self.target_pose[5] - self.current_pose[5] ) ) 
+        print( "error_yaw : temp {:5.2f} : {:5.2f}".format( error_yaw , temp ) )
+        if( temp < error_yaw ):
             result = True
         return result
 
@@ -225,10 +226,10 @@ class CommandInterfaces:
 
     # This function will help you reset data in axis you have command to activate
     def activate( self , data ):
-        temp_mask = []
+        temp_data = []
         self.get_state()
         for run_command in ( "x" , "y" , "z" , "roll" , "pitch" , "yaw" ):
-            temp_data.append( not ( run_command in data ) )
+            temp_data.append( ( run_command in data ) )
 
         # control_command will help you to reset all pose that you command to activate
         self.control_command.mask = tuple( temp_data )

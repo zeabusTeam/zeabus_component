@@ -174,7 +174,7 @@ namespace fuzzy
         } 
         else
         {
-            if( fabs( (this->message_pub).output.crisp_data) > this->ptr_force_rule->at( 3 ) )
+            if( fabs( (this->message_pub).force.crisp_data) > this->ptr_force_rule->at( 3 ) )
             {
                 ROS_ERROR( "%s It over force I can't add force more" , (this->my_name).c_str() );
                 (this->message_pub).output.crisp_data = 0;
@@ -198,7 +198,7 @@ namespace fuzzy
     }
 
     void ControlError3Dimension::set_fuzzy_rule(
-        const std::array< std::array < std::array < short int , 7 > , 7 > , 7 >* ptr_fuzzy_rule )
+        const std::array< std::array < std::array < int , 7 > , 7 > , 7 >* ptr_fuzzy_rule )
     {
         this->ptr_fuzzy_rule = ptr_fuzzy_rule;
     }
