@@ -169,7 +169,7 @@ int main( int argv , char** argc )
     ros::Rate rate( frequency );
     // Init data first time
     service_data.data.header.frame_id = "odom";
-    service_data.data.child_frame_id = "base_link_robot";
+    service_data.data.child_frame_id = "base_link";
     service_data.data.twist.twist.linear.x = 0;
     service_data.data.twist.twist.linear.y = 0;
     service_data.data.twist.twist.linear.z = 0;
