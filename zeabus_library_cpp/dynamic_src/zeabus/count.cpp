@@ -32,7 +32,7 @@ namespace count
             count_time = 0;
             collect_data = data;
 #ifdef _PROCESS_
-                std::cout   << "Reset data count is " << count_time << std::endl;
+            std::cout   << "Reset data count is " << count_time << std::endl;
 #endif
         }
         else
