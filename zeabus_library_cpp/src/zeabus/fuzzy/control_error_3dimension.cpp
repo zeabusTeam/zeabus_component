@@ -61,17 +61,17 @@ namespace fuzzy
         if( temp_data > this->ptr_error_rule->at(2) )
         {
             (this->message_pub).error.fuzzy_data = copysign( 3 
-                    , (this->message_pub).diff.crisp_data );
+                    , (this->message_pub).error.crisp_data );
         }
         else if( temp_data > this->ptr_error_rule->at(1) )
         {
             (this->message_pub).error.fuzzy_data = copysign( 2 
-                    , (this->message_pub).diff.crisp_data );
+                    , (this->message_pub).error.crisp_data );
         }
         else if( temp_data > this->ptr_error_rule->at(0) )
         {
             (this->message_pub).error.fuzzy_data = copysign( 1 
-                    , (this->message_pub).diff.crisp_data );
+                    , (this->message_pub).error.crisp_data );
         }
         else
         {
@@ -91,7 +91,7 @@ namespace fuzzy
     // This will fuzzification of e(t-1) - e(t) < diff value >
     void ControlError3Dimension::push_diff( double error )
     {
-        (this->message_pub).diff.crisp_data = (this->message_pub).diff.crisp_data - error;
+        (this->message_pub).diff.crisp_data = (this->message_pub).error.crisp_data - error;
         double temp_data = fabs( (this->message_pub).diff.crisp_data );
         if( temp_data > this->ptr_diff_rule->at( 2 ) )
         {
