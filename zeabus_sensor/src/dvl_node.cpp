@@ -11,7 +11,6 @@
 //  ref03   : http://wiki.ros.org/roscpp_tutorials/Tutorials/Parameters
 
 // MACRO SET
-//#define _SUMMARY_
 
 // MACRO CONDITION
 
@@ -142,10 +141,6 @@ int main( int argv , char** argc )
         // get type of data
         if( type_line == "BS" )
         {
-#ifdef _SUMMARY_
-            zeabus::escape_code::clear_screen();
-            std::cout   << "Raw data is " << raw_data << "\n";
-#endif // _SUMMARY_
             std_msgs::String temp;
             temp.data = raw_data;
             dvl_raw_publish.publish( temp );
@@ -154,11 +149,6 @@ int main( int argv , char** argc )
             if( ok_data == 'A' ) // if data BS is ok
             {
                 helper_status( true );
-#ifdef _SUMMARY_
-                std::cout   << "DVL GOOD DATA\n";
-                std::cout   << "data is " << temp_velocity[0] << " " << temp_velocity[1]
-                            << " " << temp_velocity[2] << "\n";
-#endif // _SUMMARY_
                 temp_message.vector.x = temp_velocity[0];
                 temp_message.vector.y = temp_velocity[1];
                 temp_message.vector.z = temp_velocity[2];
@@ -171,9 +161,6 @@ int main( int argv , char** argc )
             else
             {
                 helper_status( false );
-#ifdef _SUMMARY_
-                std::cout << "DVL BAD DATA\n" ;
-#endif
             }
         } // condition BS data
     } // while loop of ros operating system
