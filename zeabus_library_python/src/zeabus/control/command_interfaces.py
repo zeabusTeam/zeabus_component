@@ -39,7 +39,7 @@ class CommandInterfaces:
         self.master_command.target = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
         self.master_command.header.seq = 0
 
-        self.pub = rospy.Publisher( "/mission/" + yourname , String, queue_size = 10 )
+        self.pub = rospy.Publisher( "/mission/" + your_name , String, queue_size = 10 )
 
         self.current_state = AUVState() # Use to collect current state msg
 
@@ -56,7 +56,8 @@ class CommandInterfaces:
         self.tuple_true = (True, True, True, True, True, True)
 
     def publish_data( self, message ):
-        self.pub.publish( String( String( message ) ) )
+        print( "=====>" + message )
+        self.pub.publish(  String( message )  )
 
     def get_state( self ):
         try:
@@ -177,9 +178,12 @@ class CommandInterfaces:
     def check_xy( self , error_x , error_y ):
         result = False
         self.get_state()
-        if( abs( self.target_pose[0] - self.current_pose[0] ) < error_x and 
-            abs( self.target_pose[1] - self.current_pose[1] ) < error_y ):
+        temp_x = abs( self.target_pose[0] - self.current_pose[0] ) 
+        temp_y = abs( self.target_pose[1] - self.current_pose[1] ) 
+        if( temp_x < error_x and temp_y < error_y ):
             result = True
+        print( "Check xy temp ({:6.2f} , {:6.2f}) : error ok ( {:6.2f} , {:6.2f})".format(
+            temp_x , temp_y , error_x , error_y ) )
         if( rospy.is_shutdown() ):
             result = True
         return result
