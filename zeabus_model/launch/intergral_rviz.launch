@@ -4,8 +4,8 @@
 
     <arg name="rviz_config" default="$(find zeabus_model)/rviz/zeabus_simple.rviz"/>
 
-    <include file="$(find zeabus_model)/launch/robot_model.launch"/>
-    <include file="$(find zeabus_model)/launch/flag_model.launch"/>
+    <include file="$(find zeabus_model)/launch/robot_model.launch.xml"/>
+    <include file="$(find zeabus_model)/launch/flag_model.launch.xml"/>
 
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_config)" required="true"/>
 
