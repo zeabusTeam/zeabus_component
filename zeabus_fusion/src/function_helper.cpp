@@ -43,7 +43,7 @@ void dvl_status( bool data )
     {
         if( data )
         {
-            ROS_WARN( "SENSOR FUSION DVL doesn't have new data");
+            ROS_WARN( "SENSOR FUSION DVL have new data");
             status = true; 
         } // new data is true
     } // original status is false
@@ -64,7 +64,7 @@ void imu_status( bool data )
     {
         if( data )
         {
-            ROS_WARN( "SENSOR FUSION IMU doesn't have new data");
+            ROS_WARN( "SENSOR FUSION IMU have new data");
             status = true; 
         } // new data is true
     } // original status is false
@@ -85,7 +85,7 @@ void pressure_status( bool data )
     {
         if( data )
         {
-            ROS_WARN( "SENSOR FUSION PRESSURE doesn't have new data");
+            ROS_WARN( "SENSOR FUSION PRESSURE have new data");
             status = true; 
         } // new data is true
     } // original status is false
