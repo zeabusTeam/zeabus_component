@@ -5,7 +5,7 @@
     <arg name="node_name" value="robot"/>
     <arg name="model_file" value="$(find zeabus_model)/urdf/zeabus_robot.urdf"/>
 
-    <include file="$(find zeabus_model)/launch/draw_model.launch">
+    <include file="$(find zeabus_model)/launch/draw_model.launch.xml">
 
         <arg name="node_name" value="$(arg node_name)"/>
         <arg name="model_file" value="$(arg model_file)"/>

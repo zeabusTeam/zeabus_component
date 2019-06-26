@@ -2,8 +2,8 @@
 
 <launch>
 
-    <arg name="node_name" value="flag"/>
-    <arg name="model_file" value="$(find zeabus_model)/urdf/flag.urdf"/>
+    <arg name="node_name" value="path"/>
+    <arg name="model_file" value="$(find zeabus_model)/urdf/path.urdf"/>
 
     <include file="$(find zeabus_model)/launch/draw_model.launch.xml">
 
