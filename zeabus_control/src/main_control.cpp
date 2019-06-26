@@ -75,7 +75,7 @@ int main( int argv , char** argc )
     std::shared_ptr< std::mutex > ptr_mutex_data = std::make_shared< std::mutex >();
 
     // Insert optional part param part
-    const static unsigned int frequency = 10;
+    const static unsigned int frequency = 5;
     const static unsigned int start_run = 0;
     zeabus_utility::ControlCommand error; // received error
     zeabus_utility::ControlCommand force; // send_force
@@ -178,7 +178,7 @@ int main( int argv , char** argc )
 
         for( unsigned int run = 0 ; run < 6 ; run++ )
         {
-            if( (temp.mask)[run] && (run != 3 ) && ( run != 4 ) && ( run > 1 ) )
+            if( (temp.mask)[run] && ( ! ( (run == 3 ) || ( run == 4 ) ) ) )
             {
                 (force.target)[ run ] = all_fuzzy[ run ]->push_error( (temp.target)[run] );
                 (force.mask)[run] = true;
