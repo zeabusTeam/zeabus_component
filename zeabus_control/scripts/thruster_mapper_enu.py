@@ -51,7 +51,7 @@ import constant
 from lookup_pwm_force import lookup_pwm_force
 from zeabus_utility.srv import SendThrottle,  SendControlCommand, GetAUVState
 from zeabus_utility.srv import SendControlCommandResponse
-from zeabus_utility.msg import ControlCommand
+from zeabus_utility.msg import ControlCommand, Int16Array
 from std_msgs.msg import Header
 
 class ThrusterMapper:
@@ -68,6 +68,7 @@ class ThrusterMapper:
         #   Have to declare variable in critcal before setup variable in ros system   
         self.control_message = ControlCommand()
         self.mission_message = ControlCommand()
+        self.thruster_message = Int16Array()
         # Two line above will have critical section for read and write that make us have to
         #   use lock to protec about critical senstion
         self.control_lock = thread.allocate_lock()
@@ -81,6 +82,10 @@ class ThrusterMapper:
         # Setup about variable in ROS System to use for connect with other node
         self.client_throttle = rospy.ServiceProxy(
             '/hardware/thruster_throttle', SendThrottle)
+
+        self.pub_throttle = rospy.Publisher( "/control/thruster_throttle"
+            , Int16Array 
+            , queue_size = 1)
 
         self.client_state = rospy.ServiceProxy(
             '/fusion/auv_state', GetAUVState)
@@ -248,6 +253,9 @@ class ThrusterMapper:
 
         try:
             self.client_throttle( self.header , pwm )
+            self.thruster_message.header = self.header
+            self.thruster_message.data = pwm
+            self.pub_throttle.publish( self.thruster_message )
         except rospy.ServiceException , e :
             rospy.logfatal( "Failure to write pwm response from haredware")
 
