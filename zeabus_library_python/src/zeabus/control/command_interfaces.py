@@ -6,6 +6,7 @@
 
 # README
 #   2019 06 16 follow control interfaces version 2 master command use part of mask only
+#   2019 06 26 I add check about status of node for you
 
 # REFERENCE
 #   ref1 : http://wiki.ros.org/ROS/Tutorials/WritingServiceClient%28python%29
@@ -14,7 +15,7 @@ import math
 import rospy
 from ..math.quaternion import Quaternion
 from ..math import general as zeabus_math
-from std_msgs.msg import Header
+from std_msgs.msg import Header, String
 from zeabus_utility.msg import AUVState, ControlCommand
 from zeabus_utility.srv import SendControlCommand, GetAUVState
 
@@ -38,6 +39,8 @@ class CommandInterfaces:
         self.master_command.target = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
         self.master_command.header.seq = 0
 
+        self.pub = rospy.Publisher( "/mission/" + yourname , String, queue_size = 10 )
+
         self.current_state = AUVState() # Use to collect current state msg
 
         self.current_quaternion = Quaternion()
@@ -51,6 +54,9 @@ class CommandInterfaces:
         self.target_pose = [0 , 0 , 0 , 0 , 0 , 0]
 
         self.tuple_true = (True, True, True, True, True, True)
+
+    def publish_data( self, message ):
+        self.pub.publish( String( String( message ) ) )
 
     def get_state( self ):
         try:
@@ -174,12 +180,16 @@ class CommandInterfaces:
         if( abs( self.target_pose[0] - self.current_pose[0] ) < error_x and 
             abs( self.target_pose[1] - self.current_pose[1] ) < error_y ):
             result = True
+        if( rospy.is_shutdown() ):
+            result = True
         return result
     
     def check_z( self , error_z ):
         result = False
         self.get_state()
         if( abs( self.target_pose[2] - self.current_pose[2] ) < error_z ):
+            result = True
+        if( rospy.is_shutdown() ):
             result = True
         return result 
 
@@ -189,6 +199,8 @@ class CommandInterfaces:
         temp = abs( zeabus_math.bound_radian( self.target_pose[5] - self.current_pose[5] ) ) 
         print( "error_yaw : temp {:5.2f} : {:5.2f}".format( error_yaw , temp ) )
         if( temp < error_yaw ):
+            result = True
+        if( rospy.is_shutdown() ):
             result = True
         return result
 
