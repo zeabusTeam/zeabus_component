@@ -73,9 +73,9 @@ int main( int argv, char** argc )
     std::shared_ptr< std::mutex > ptr_mutex_data = std::make_shared< std::mutex >();
 
     // Insert optional part param part  
-    const static unsigned int buffer_size = 6; // size of buffer to use collect data
-    const static unsigned int trimed_size = 2; // size of buffer will trimed
-    const static unsigned int frequency = 20; // frequency of client to request data for sensor
+    const static unsigned int buffer_size = 10; // size of buffer to use collect data
+    const static unsigned int trimed_size = 3; // size of buffer will trimed
+    const static unsigned int frequency = 100; // frequency of client to request data for sensor
     const static unsigned int limit_same_time = 5; // limit to warning when receive 5 time
 
     // Second part of Filter this part mix about data variable
