@@ -122,14 +122,13 @@ int main( int argv , char** argc )
     static std::string imu_topic = "/filter/imu";
     static std::string pressure_topic = "/filter/pressure";
     static double temp_RPY[3] = { 0 , 0 , 0 };
-    static tf::Quaternion offset_quaternion;;
-    offset_quaternion.setRPY( temp_RPY[0] , temp_RPY[1] , temp_RPY[2] );
 
     // Second part of variable to use in this pid
     static zeabus_utility::HeaderFloat64 pressure_data;
     static sensor_msgs::Imu imu_data;
     static geometry_msgs::Vector3Stamped dvl_data;
     static ros::Time dvl_stamp = ros::Time::now();
+    static bool help_dvl = false;
     static ros::Time imu_stamp = ros::Time::now();
     static ros::Time pressure_stamp = ros::Time::now();
     static unsigned char status_data = 0b000U;
@@ -236,6 +235,14 @@ int main( int argv , char** argc )
             temp_data.data.twist.twist.linear.x = 1.0*dvl_data.vector.x;
             temp_data.data.twist.twist.linear.y = 1.0*dvl_data.vector.y;
             temp_data.data.twist.twist.linear.z = 1.0*dvl_data.vector.z;
+            help_dvl = true;
+        }
+        else if( help_dvl )
+        {
+            temp_data.data.twist.twist.linear.x = 1.0*dvl_data.vector.x;
+            temp_data.data.twist.twist.linear.y = 1.0*dvl_data.vector.y;
+            temp_data.data.twist.twist.linear.z = 1.0*dvl_data.vector.z;
+            help_dvl = false;
         }
         else
         {
@@ -273,7 +280,6 @@ int main( int argv , char** argc )
         {
             zeabus::ros_interfaces::convert::quaternion_tf( &(imu_data.orientation) 
                     , &temp_quaternion );
-            temp_quaternion = offset_quaternion * temp_quaternion ;
             tf_data.setRotation( temp_quaternion );
 #ifdef _SUMMARY_
             tf::Matrix3x3( temp_quaternion ).getRPY( temp_RPY[0], temp_RPY[1], temp_RPY[2] );
