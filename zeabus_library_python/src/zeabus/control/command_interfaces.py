@@ -11,6 +11,7 @@
 # REFERENCE
 #   ref1 : http://wiki.ros.org/ROS/Tutorials/WritingServiceClient%28python%29
 
+import tf
 import math
 import rospy
 from ..math.quaternion import Quaternion
@@ -44,6 +45,7 @@ class CommandInterfaces:
         self.current_state = AUVState() # Use to collect current state msg
 
         self.current_quaternion = Quaternion()
+        self.target_quaternion = Quaternion()
 
         self.control_command = ControlCommand() # Use to collect control command msg
 
@@ -54,6 +56,18 @@ class CommandInterfaces:
         self.target_pose = [0 , 0 , 0 , 0 , 0 , 0]
 
         self.tuple_true = (True, True, True, True, True, True)
+
+        self.tf_listener = tf.TransformListener()
+
+    def update_target( self ):
+        temp = self.tf_listener.lookupTransform( "odom" , "flag_target" , rospy.Time(0) )
+        self.target_pose[0] = temp[0][0]
+        self.target_pose[1] = temp[0][1]
+        self.target_pose[2] = temp[0][2]
+        self.target_quaternion.set_quaternion( temp[1] )
+        ( self.target_pose[3]
+            , self.target_pose[4]
+            , self.target_pose[5] ) = self.target_quaternion.get_euler()
 
     def set_name( self, your_name ):
         self.master_command.header.frame_id = your_name
@@ -256,3 +270,13 @@ class CommandInterfaces:
         self.send_command()
 
         self.master_call( self.control_command.mask ) 
+
+if( __name__=="__main__"):
+    rospy.init_node( "test_lib" )
+    
+    control = CommandInterfaces( "testing" )
+    while( not rospy.is_shutdown() ):
+        rospy.sleep( 0.5 )
+        control.update_target()
+        print( repr( control.target_pose ) )
+        print( "=========================================================")
