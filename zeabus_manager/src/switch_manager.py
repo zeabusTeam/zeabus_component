@@ -16,7 +16,8 @@ from zeabus_utility.msg import MessagePlannerSwitch
 from zeabus_utility.srv import SendBool
 from std_msgs.msg import Header
 
-_SWITCH_MANAGER_PRINT_RECEIVED_ = True
+_SWITCH_MANAGER_PRINT_RECEIVED_ = False
+_SWITCH_MANAGER_SHOW_COUNT_ = True
 
 class SwitchManager:
 
@@ -35,7 +36,7 @@ class SwitchManager:
         self.control.deactivate( ("x" , "y" , "z" , "roll" , "pitch" , "yaw") )
 
         # We have to setup client doing task
-        self.client_strategy( '/mission/strategy' , SendBool() )
+        self.client_strategy = rospy.ServiceProxy( '/mission/strategy' , SendBool() )
 
         # First time we must to deactive all freedom of control
         self.count_switch = 0
@@ -46,7 +47,7 @@ class SwitchManager:
 
     def listen_switch( self, message ):
         if( _SWITCH_MANAGER_PRINT_RECEIVED_ ):
-            self.control.publish_data( "listen_switch is " + repr( msg ) )
+            self.control.publish_data( "listen_switch is " + repr( message ) )
 
         if( message.planner_switch_state ):
             self.count_switch += 1
@@ -60,12 +61,21 @@ class SwitchManager:
         else:
             None
 
+        if( _SWITCH_MANAGER_SHOW_COUNT_ ):
+            self.control.publish_data( "Count switch is " 
+                + str( self.count_switch) 
+                + " and status of control is "
+                + str( self.control_status ) )
+
         if( self.control_status ): # Now control already open or normal activate
             if( self.count_switch == 0 ):
                 self.control.publish_data( "manage now switch tell me time to shutdown" )
                 self.control.deactivate( ("x" , "y" , "z" , "roll" , "pitch" , "yaw" ) )
                 self.header.stamp = rospy.get_rostime()
                 self.client_strategy( self.header , False )
+                self.control_status = False
+            else:
+                None
         else: # Now control already status close
             if( self.count_switch == self.limit_process ):
                 self.control.publish_data( "manage now switch tell me to open all" )
@@ -73,3 +83,11 @@ class SwitchManager:
                 self.control.activate( ("x", "y" , "z" , "roll" , "pitch" , "yaw" ) )
                 self.header.stamp = rospy.get_rostime()
                 self.client_strategy( self.header , True )
+                self.control_status = True
+            else:
+                None
+
+if __name__=="__main__":
+    rospy.init_node( "manager_switch")
+
+    manager = SwitchManager()
