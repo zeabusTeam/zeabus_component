@@ -35,11 +35,11 @@ class CommandInterfaces:
         rospy.wait_for_service( "/control/master")
         self.command_master_control = rospy.ServiceProxy( '/control/master' ,SendControlCommand )
         self.master_command = ControlCommand() # This use only master command
-        self.master_command.header.frame_id = your_name
         self.master_command.target = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
         self.master_command.header.seq = 0
+        self.set_name( your_name )
 
-        self.pub_message = rospy.Publisher( "/mission/" + your_name , String, queue_size = 10 )
+        self.pub_message = rospy.Publisher( "/mission/command", String, queue_size = 10 )
 
         self.current_state = AUVState() # Use to collect current state msg
 
@@ -55,9 +55,13 @@ class CommandInterfaces:
 
         self.tuple_true = (True, True, True, True, True, True)
 
+    def set_name( self, your_name ):
+        self.master_command.header.frame_id = your_name
+        self.my_name = your_name
+
     def publish_data( self, message ):
         print( "=====>" + message )
-        self.pub_message.publish(  String( message )  )
+        self.pub_message.publish(  String( self.my_name + message )  )
 
     def get_state( self ):
         try:
