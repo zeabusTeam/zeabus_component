@@ -207,7 +207,7 @@ int main( int argv , char** argc )
         broadcaster.sendTransform( tf::StampedTransform( tf_data 
                 , current_state.data.header.stamp 
                 , "odom"
-                , "flag_target" ) );
+                , "base_link_target" ) );
 
         // loop part : forth status of state decision
         //  state you can look by use binay format 3 bit
