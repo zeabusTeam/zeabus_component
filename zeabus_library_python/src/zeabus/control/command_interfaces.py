@@ -39,7 +39,7 @@ class CommandInterfaces:
         self.master_command.target = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
         self.master_command.header.seq = 0
 
-        self.pub = rospy.Publisher( "/mission/" + your_name , String, queue_size = 10 )
+        self.pub_message = rospy.Publisher( "/mission/" + your_name , String, queue_size = 10 )
 
         self.current_state = AUVState() # Use to collect current state msg
 
@@ -57,7 +57,7 @@ class CommandInterfaces:
 
     def publish_data( self, message ):
         print( "=====>" + message )
-        self.pub.publish(  String( message )  )
+        self.pub_message.publish(  String( message )  )
 
     def get_state( self ):
         try:
