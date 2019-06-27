@@ -60,7 +60,7 @@ class CommandInterfaces:
         self.tf_listener = tf.TransformListener()
 
     def update_target( self ):
-        temp = self.tf_listener.lookupTransform( "odom" , "flag_target" , rospy.Time(0) )
+        temp = self.tf_listener.lookupTransform( "odom" , "base_link_target" , rospy.Time(0) )
         self.target_pose[0] = temp[0][0]
         self.target_pose[1] = temp[0][1]
         self.target_pose[2] = temp[0][2]
