@@ -10,6 +10,8 @@ catkin_package()
 
 catkin_python_setup()
 
-catkin_install_python( PROGRAMS bin/zeabus_lib_python.py
+catkin_install_python( PROGRAMS 
+    bin/zeabus_lib_python.py
+    bin/zeabus_test_command.py
     DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
