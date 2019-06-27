@@ -2,7 +2,7 @@
 
 <launch>
 
-    <arg name="rviz_config" default="$(find zeabus_model)/rviz/zeabus_simple.rviz"/>
+    <arg name="rviz_config" default="$(find zeabus_model)/rviz/open_all.rviz"/>
 
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_config)" required="true"/>
 
