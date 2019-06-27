@@ -22,7 +22,7 @@ from zeabus_utility.srv import VisionSrvPath
 
 class AnalysisPath:
 
-    def __init__( self , child_frame_id = "" ):
+    def __init__( self , child_frame_id = "base_path" ):
 
         rospy.loginfo( "Waiting service of /vision/path" )
         rospy.wait_for_service( "/vision/path" )
@@ -34,6 +34,8 @@ class AnalysisPath:
         self.y_point = ( 0 , 0 , 0 ) # use to collect point y
         self.rotation = ( 0 , 0 ) # use to collect angle will linear point x and y from y axis
         self.area = (0 , 0)
+
+        self.broadcaster = Broadcaster( "bottom_camera_optical_frame" , child_frame_id )
 
         # Part for filter data of path
 
@@ -65,6 +67,18 @@ class AnalysisPath:
             self.area = ( temp_data.data.area[0] , temp_data.data.area[1] )
 
             self.num_point = temp_data.data.n_point
+
+            # Now we can't estimate z but  I think we can estimate xy
+            # I gave ratio y is 100 : 0.2 and x is 100 : 0.35
+            if( self.num_point == 2 ):
+                temp_y = 0.2 * self.y_point[0] / 100
+                temp_x = 0.35 * self.x_point[0] / 100
+                self.broadcaster.euler( ( temp_x , temp_y , -2 ) , 0 , 0 , self.rotation[0] )
+            elif( self.num_point == 3 ):
+                temp_y = ( 0.2 * self.y_point[0] / 100 ) + (-0.4 * math.sin( self.rotation[0] )
+                temp_x = 0.35 * self.x_point[0] / 100 + (-0.4 * math.cos( self.rotation[0] )
+                self.broadcaster.euler( ( temp_x , temp_y , -2 ) , 0 , 0 , self.rotation[0] )
+                
 
         return result
 
