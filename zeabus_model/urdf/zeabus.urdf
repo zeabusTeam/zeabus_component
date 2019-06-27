@@ -16,6 +16,8 @@
         <color rgba="${255/255} ${0/255} ${0/255} 0.81"/>
     </material>
 
+    <!-- base link use to centor in normal real world -->
+    <!-- link use instead robot stl use to look easy to watch -->
     <link name="base_link"/>
 
     <link name="link">
@@ -40,7 +42,7 @@
 
     <joint name="base_link_bottom_camera" type="fixed">
         <origin xyz="0.26 0 0" rpy="0 ${PI / 2 } 0"/>
-        <parent link="link"/>
+        <parent link="base_link"/>
         <child link="bottom_camera"/>
     </joint>
 
@@ -48,6 +50,22 @@
         <origin xyz="0 0 0" rpy="${-1.0 * PI / 2} 0 ${-1.0 * PI / 2}"/>
         <parent link="bottom_camera"/>
         <child link="bottom_camera_optical_frame"/>
+    </joint>
+
+    <!-- About sensor part front_camera -->
+    <link name="front_camera"/>
+    <link name="front_camera_optical_frame"/>
+
+    <joint name="base_link_front_camera" type="fixed">
+        <origin xyz="0.43 0 0" rpy="0 0 0"/>
+        <parent link="base_link"/>
+        <child link="front_camera"/>
+    </joint>
+
+    <joint name="front_camera_to_optical_frame" type="fixed">
+        <origin xyz="0 0 0" rpy="${-1.0 * PI / 2} 0 ${-1.0 * PI / 2}"/>
+        <parent link="front_camera"/>
+        <child link="front_camera_optical_frame"/>
     </joint>
 
 </robot>
