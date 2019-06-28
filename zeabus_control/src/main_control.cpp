@@ -193,6 +193,7 @@ int main( int argv , char** argc )
             }
             else
             {
+                (force.mask)[ run ] = false;
                 all_fuzzy[ run ]->clear_system();
             }
         }
