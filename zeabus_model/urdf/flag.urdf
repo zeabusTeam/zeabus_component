@@ -10,7 +10,7 @@
         <color rgba="${171/255} ${80/255} ${231/255} 1"/>
     </material>
 
-    <link name="flag_target">
+    <link name="base_link_target">
 
         <visual>
             
