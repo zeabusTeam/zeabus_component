@@ -2,7 +2,7 @@
 """
 FILE			: thruster_mapper_enu.py
 AUTHOR		    : K.Supasan
-CREATE ON	    : 2019, May 26 (UTC+0)
+CREATE ON	    : 2019, JUN 28 (UTC+0)
 MAINTAINER	    : K.Supasan
 ORIGINAL FILE   : K.Supakit 2018/11/14
 
@@ -165,80 +165,31 @@ class ThrusterMapper:
 
         rate = rospy.Rate( 30 )
 
+        self.data = -1000
+        count = 0
+
+
         if( constant.THRUSTER_MAPPER_RESULT ):
             self.count_print = constant.THRUSTER_MAPPER_COUNT
-        while( not rospy.is_shutdown() ):
+        while( ( not rospy.is_shutdown() ) and self.data < 1000 ):
             rate.sleep()
             self.client_loop()
+            count += 1
+            if( count == 20 ):
+                self.data += 50
+                count = 0
 
         rospy.signal_shutdown( "End of program of thruster_mapper_enu.py")
 
     def client_loop( self ):
 
-        # Zero process we call prepare process because we have to check time out of data 
-        current_time = rospy.get_rostime()
-        mission_data = ControlCommand()
-        control_data = ControlCommand()
-
-        # Below condition use to decision about command from mission
-        temp_time = ( current_time - self.mission_stamp ).to_sec()
-
-        self.mission_lock.acquire( ) # start crtical section of mission data
-        if( temp_time > constant.THRUSTER_MAPPER_TIME_OUT ):
-            mission_data.mask = constant.FALSE_MASK 
-        else:
-            mission_data = self.mission_message
-        self.mission_lock.release() # end critical section of mission data
-
-        # Below condition use to decision about command from control
-        temp_time = ( current_time - self.control_stamp ).to_sec()
-
-        self.control_lock.acquire( ) #start critical section of control data
-        if( temp_time > constant.THRUSTER_MAPPER_TIME_OUT ):
-            control_data.mask = constant.FALSE_MASK
-        else:
-            control_data = self.control_message 
-        self.control_lock.release() # end critical section of control data
-
-        # First process is about get value from command of mission and control
-        #   We will make piority in order mission, control and 0 data
-        temp_force = []
-        for run in range( 0 , 6 ):
-            if( mission_data.mask[ run ] ):
-                temp_force.append( mission_data.target[ run ] )
-                if( constant.THRUSTER_MAPPER_CHOOSE_PROCESS ):
-                    print("id {:2d} choose mission data is {:6.2f}".format( 
-                        run
-                        , mission_data.target[run] ) )
-            elif( control_data.mask[ run ] ):
-                temp_force.append( control_data.target[ run ] )
-                if( constant.THRUSTER_MAPPER_CHOOSE_PROCESS ):
-                    print( "id {:2d} choose control data is {:6.2f}".format( 
-                        run
-                        , control_data.target[run] ) )
-            else:
-                temp_force.append( 0 ) 
-                if( constant.THRUSTER_MAPPER_CHOOSE_PROCESS ):
-                    print("id {:2d} choose zero data is 0".format( run ) )
-
-        force = numpy.array( [
-            (temp_force)[0]     * 1
-            , (temp_force)[1]   * 1
-            , (temp_force)[2]   * 1
-            , (temp_force)[3]   * 1
-            , (temp_force)[4]   * 1
-            , (temp_force)[5]   * 1])
-
-        # PRINT CONDITION
-        if(constant.THRUSTER_MAPPER_CALCULATE_PROCESS):
-            print("Force result robot frame : ".format( force ) )
-
-        torque = numpy.matmul(self.direction_inverse.T, force.T)
-
         cmd = []
-        for run in range(0, 8):
-            temp = int(self.lookup_handle.find_pwm(torque[run]) )
-            cmd.append( int( temp ) )
+
+        for run in range(0, 4):
+            cmd.append( int( self.data ) )
+
+        for run in range(4, 8):
+            cmd.append( int( 0 ) )
 
         self.header.stamp = rospy.get_rostime()
         pwm = tuple(cmd)
