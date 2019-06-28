@@ -75,7 +75,7 @@ namespace fuzzy
                  const std::array< std::array < std::array < int, 7> , 7> , 7>* ptr_fuzzy_rule );
 
             // this use defuzzification rule
-            void set_defuzzification_rule( const std::array< double , 3 >* ptr_defuzzy_rule );
+            void set_defuzzification_rule( const std::array< double , 5 >* ptr_defuzzy_rule );
 
             // use to reset system of control
             void clear_system();
@@ -94,7 +94,7 @@ namespace fuzzy
             // rule for fuzzification force range
             const std::array< double , 4 >* ptr_force_rule; 
             // rule for defuzzification relative 
-            const std::array< double , 3 >* ptr_defuzzy_rule; 
+            const std::array< double , 5 >* ptr_defuzzy_rule; 
             const std::array< std::array < std::array < int , 7 > , 7 > , 7 >* ptr_fuzzy_rule;
 
             // Use to publish data

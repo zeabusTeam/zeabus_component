@@ -227,7 +227,7 @@ namespace fuzzy
     }
 
     void ControlError3Dimension::set_defuzzification_rule( 
-        const std::array< double, 3 >* ptr_defuzzy_rule )
+        const std::array< double, 5 >* ptr_defuzzy_rule )
     {
         this->ptr_defuzzy_rule = ptr_defuzzy_rule;
     }
