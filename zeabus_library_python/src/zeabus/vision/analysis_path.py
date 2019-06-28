@@ -74,10 +74,12 @@ class AnalysisPath:
             # Now we can't estimate z but  I think we can estimate xy
             # I gave ratio y is 100 : 0.2 and x is 100 : 0.35
             if( self.num_point == 2 ):
+                print("=======================broadcaster point 2")
                 temp_y = 0.2 * self.y_point[0] / 100
                 temp_x = 0.35 * self.x_point[0] / 100
                 self.broadcaster.euler( ( temp_x , temp_y , -2 ) , 0 , 0 , self.rotation[0] )
             elif( self.num_point == 3 ):
+                print("=======================broadcaster point 3")
                 temp_y = ( 0.2 * self.y_point[0] / 100 ) + (-0.4 * math.sin( self.rotation[0] ))
                 temp_x = ( 0.35 * self.x_point[0] / 100 ) + (-0.4 * math.cos( self.rotation[0] ))
                 self.broadcaster.euler( ( temp_x , temp_y , -2 ) , 0 , 0 , self.rotation[0] )

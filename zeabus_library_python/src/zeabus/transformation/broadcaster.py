@@ -25,7 +25,7 @@ class Broadcaster:
 
     # you will give us a linear translation and quaternion rotation
     def quaternion( self , linear , quaternion ):
-        self.broadcaster( linear 
+        self.broadcaster.sendTransform( linear 
             , quaternion 
             , rospy.Time() 
             , self.child_frame 

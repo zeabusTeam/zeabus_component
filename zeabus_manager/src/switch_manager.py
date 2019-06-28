@@ -17,7 +17,7 @@ from zeabus_utility.srv import SendBool
 from std_msgs.msg import Header
 
 _SWITCH_MANAGER_PRINT_RECEIVED_ = False
-_SWITCH_MANAGER_SHOW_COUNT_ = True
+_SWITCH_MANAGER_SHOW_COUNT_ = False
 
 class SwitchManager:
 
@@ -69,21 +69,21 @@ class SwitchManager:
 
         if( self.control_status ): # Now control already open or normal activate
             if( self.count_switch == 0 ):
+                self.control_status = False
                 self.control.publish_data( "manage now switch tell me time to shutdown" )
                 self.control.deactivate( ("x" , "y" , "z" , "roll" , "pitch" , "yaw" ) )
                 self.header.stamp = rospy.get_rostime()
                 self.client_strategy( self.header , False )
-                self.control_status = False
             else:
                 None
         else: # Now control already status close
             if( self.count_switch == self.limit_process ):
+                self.control_status = True
                 self.control.publish_data( "manage now switch tell me to open all" )
                 self.control.reset_state()
                 self.control.activate( ("x", "y" , "z" , "roll" , "pitch" , "yaw" ) )
                 self.header.stamp = rospy.get_rostime()
                 self.client_strategy( self.header , True )
-                self.control_status = True
             else:
                 None
 
