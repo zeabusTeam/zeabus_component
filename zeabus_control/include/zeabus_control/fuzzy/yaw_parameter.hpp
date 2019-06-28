@@ -37,7 +37,7 @@ namespace yaw_parameter
     //  Output will decision to 0 1 2 3 4 by use 4 value
     //  If over member 3 (indent 0) we will not addition force
     //  Data is vector type
-    const std::array< double , 4 > FORCE_RULE = { 0.02 , 0.1 , 2 };
+    const std::array< double , 4 > FORCE_RULE = { 0.02 , 0.1 , 1, 2 };
     
     // About condition to convert crisp_set to fuzzy_set we will use this condition
     //  if( abs( intput ) < rule[0] ) output = 0
@@ -51,7 +51,7 @@ namespace yaw_parameter
     // If output is 1 2 will add by DEFUZZY_RULE member 0 1
     // If output is 3 4 will add by DEFUZZY_RULE member 2
     // Data is verctor type
-    const std::array< double , 3 > DEFUZZY_RULE = {0.01 , 0.04 , 0.08 };
+    const std::array< double , 5 > DEFUZZY_RULE = {0.01 , 0.02 , 0.04, 0.16, 0.64 };
     
     // Offset is value to do and don't have affect with robot in real time always
     const double OFFSET = 0.0;
