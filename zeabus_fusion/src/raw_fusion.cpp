@@ -128,8 +128,9 @@ int main( int argv , char** argc )
     static sensor_msgs::Imu imu_data;
     static geometry_msgs::Vector3Stamped dvl_data;
     static ros::Time dvl_stamp = ros::Time::now();
-    static bool help_dvl = false;
     static ros::Time imu_stamp = ros::Time::now();
+    static bool help_imu = false;
+    static bool help_dvl = false;
     static ros::Time pressure_stamp = ros::Time::now();
     static unsigned char status_data = 0b000U;
     static zeabus_utility::AUVState service_data; // this use in server we will lock this
@@ -256,6 +257,11 @@ int main( int argv , char** argc )
             imu_status( true );
             imu_stamp = imu_data.header.stamp;
             temp_data.data.twist.twist.angular = imu_data.angular_velocity; 
+            help_imu = true;
+        }
+        else if( help_imu )
+        {
+            help_imu = false;
         }
         else
         {

@@ -75,7 +75,7 @@ class CommandInterfaces:
 
     def publish_data( self, message ):
         print( "=====>" + message )
-        self.pub_message.publish(  String( self.my_name + message )  )
+        self.pub_message.publish(  String( self.my_name + " " + message )  )
 
     def get_state( self ):
         try:
