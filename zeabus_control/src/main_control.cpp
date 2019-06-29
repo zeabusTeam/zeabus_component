@@ -24,6 +24,7 @@
 //#define _SHOW_ROTATION_
 //#define _SHOW_OUTPUT_CONDITION_
 //#define _SHOW_RULE_TABLE_
+#define _ACTIVE_ROLL_PITCH_
 
 // MACRO CONDITION
 
@@ -168,6 +169,14 @@ int main( int argv , char** argc )
     tf::Quaternion temp_quaternion;
     tf::Quaternion state_quaternion;
     std::cout   << "Start loop\n";
+
+    // For roll and pitch we have to use low frequency to manage that rotation
+#ifdef _ACTIVE_ROLL_PITCH_
+    unsigned int count_roll = 1;
+    unsigned int count_pitch = 1;
+    unsigned int special_frequency = 1;
+#endif
+
     while( ptr_node_handle->ok() )
     {
         rate.sleep();
@@ -178,7 +187,40 @@ int main( int argv , char** argc )
 
         for( unsigned int run = 0 ; run < 6 ; run++ )
         {
+#ifdef _ACTIVE_ROLL_PITCH_
+            if( run == 3  )
+            {
+                if( count_roll == special_frequency ) 
+                {
+                    count_roll = 1;
+                }
+                else
+                {
+                    count_roll++;
+                    continue;
+                }
+            }
+            else if( run == 4 )
+            {
+                if( count_pitch == special_frequency ) 
+                {
+                    count_pitch = 1;
+                }
+                else
+                {
+                    count_pitch++;
+                    continue;
+                }
+            }
+            else
+            {
+                ;
+            }
+            // Below function usally check mask
+            if( (temp.mask)[run] )
+#else
             if( (temp.mask)[run] && ( ! ( (run == 3 ) || ( run == 4 ) ) ) )
+#endif
             {
                 (force.target)[ run ] = all_fuzzy[ run ]->push_error( (temp.target)[run] );
                 (force.mask)[run] = true;

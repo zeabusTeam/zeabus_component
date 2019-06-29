@@ -26,11 +26,11 @@ namespace roll_parameter
 {
     // Error is range of error to decision 0 1 2 3 by use 3 value. 
     // Data is vector type
-    const std::array< double , 3 > ERROR_RULE = { 0.2 , 1 , 2 };
+    const std::array< double , 3 > ERROR_RULE = { 0.1 , 1 , 2 };
     
     // Diff is range to decision about velocity error will be 0 1 2 3 by use 3 value
     // Data is vertor type
-    const std::array< double , 3 > DIFF_RULE = { 0.05 , 0.30 , 0.50 };
+    const std::array< double , 3 > DIFF_RULE = { 0.05 , 0.20 , 0.40 };
     
     // Force is range to decision now you have active force what range
     // member 3 (indent 0) use to decision that is limit of force we can do
@@ -51,7 +51,7 @@ namespace roll_parameter
     // If output is 1 2 will add by DEFUZZY_RULE member 0 1
     // If output is 3 4 will add by DEFUZZY_RULE member 2
     // Data is verctor type
-    const std::array< double , 5 > DEFUZZY_RULE = {0.02 , 0.04 , 0.08, 0.16, 0.32 };
+    const std::array< double , 5 > DEFUZZY_RULE = {0.01 , 0.02 , 0.04, 0.06, 0.1 };
     
     // Offset is value to do and don't have affect with robot in real time always
     const double OFFSET = 0.0;
