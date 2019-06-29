@@ -71,7 +71,7 @@ class CommandInterfaces:
         else:
             rospy.sleep( 0.05 )
 
-        time = self.tf_listener.getLatestCommonTime("/base_link_target","/odom")
+        time = self.tf_listener.getLatestCommonTime("/odom","/base_link_target")
         temp = self.tf_listener.lookupTransform( "/odom" , "/base_link_target" , time )
         self.target_pose[0] = temp[0][0]
         self.target_pose[1] = temp[0][1]
