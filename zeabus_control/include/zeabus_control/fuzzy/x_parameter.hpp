@@ -60,7 +60,7 @@ namespace x_parameter
     const double OFFSET = 0.0;
     
     // fuzzy rule is the main of fuzzyfication for all data
-    std::array< std::array < std::array< short int , 7 > , 7 > , 7 > FUZZY_RULE =
+    const std::array< std::array < std::array< int , 7 > , 7 > , 7 > FUZZY_RULE =
         {
         // CASE fuzzy force = -3
         //  -3  -2  -1  +0  +1  +2  +3  = CASE error fuzzy

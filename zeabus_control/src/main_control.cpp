@@ -121,16 +121,16 @@ int main( int argv , char** argc )
     fuzzy_x.set_fuzzification_error( &zeabus_control::fuzzy::x_parameter::ERROR_RULE );
     fuzzy_x.set_fuzzification_diff( &zeabus_control::fuzzy::x_parameter::DIFF_RULE );
     fuzzy_x.set_fuzzification_force( &zeabus_control::fuzzy::x_parameter::FORCE_RULE );
-    fuzzy_x.set_fuzzy_rule( &zeabus_control::fuzzy::MASTER_RULE );
+    fuzzy_x.set_fuzzy_rule( &zeabus_control::fuzzy::x_parameter::FUZZY_RULE );
     fuzzy_x.set_defuzzification_rule( &zeabus_control::fuzzy::x_parameter::DEFUZZY_RULE );
 
     // set y axis
-    fuzzy_y.set_offset( zeabus_control::fuzzy::y_parameter::OFFSET );
-    fuzzy_y.set_fuzzification_error( &zeabus_control::fuzzy::y_parameter::ERROR_RULE );
-    fuzzy_y.set_fuzzification_diff( &zeabus_control::fuzzy::y_parameter::DIFF_RULE );
-    fuzzy_y.set_fuzzification_force( &zeabus_control::fuzzy::y_parameter::FORCE_RULE );
-    fuzzy_y.set_fuzzy_rule( &zeabus_control::fuzzy::MASTER_RULE );
-    fuzzy_y.set_defuzzification_rule( &zeabus_control::fuzzy::y_parameter::DEFUZZY_RULE );
+    fuzzy_y.set_offset( zeabus_control::fuzzy::x_parameter::OFFSET );
+    fuzzy_y.set_fuzzification_error( &zeabus_control::fuzzy::x_parameter::ERROR_RULE );
+    fuzzy_y.set_fuzzification_diff( &zeabus_control::fuzzy::x_parameter::DIFF_RULE );
+    fuzzy_y.set_fuzzification_force( &zeabus_control::fuzzy::x_parameter::FORCE_RULE );
+    fuzzy_y.set_fuzzy_rule( &zeabus_control::fuzzy::x_parameter::FUZZY_RULE );
+    fuzzy_y.set_defuzzification_rule( &zeabus_control::fuzzy::x_parameter::DEFUZZY_RULE );
 
     // set z axis
     fuzzy_z.set_offset( zeabus_control::fuzzy::z_parameter::OFFSET );
