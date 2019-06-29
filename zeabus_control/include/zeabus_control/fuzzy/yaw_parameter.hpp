@@ -26,11 +26,11 @@ namespace yaw_parameter
 {
     // Error is range of error to decision 0 1 2 3 by use 3 value. 
     // Data is vector type
-    const std::array< double , 3 > ERROR_RULE = { 0.05 , 0.5 , 0.6 };
+    const std::array< double , 3 > ERROR_RULE = { 0.1 , 0.5 , 0.6 };
     
     // Diff is range to decision about velocity error will be 0 1 2 3 by use 3 value
     // Data is vertor type
-    const std::array< double , 3 > DIFF_RULE = { 0.008 , 0.05 , 0.12 };
+    const std::array< double , 3 > DIFF_RULE = { 0.005 , 0.018 , 0.05 };
     
     // Force is range to decision now you have active force what range
     // member 3 (indent 0) use to decision that is limit of force we can do
