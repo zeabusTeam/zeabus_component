@@ -3,6 +3,14 @@
 // CREATE DATE  : 2019, MARCH, 25
 // MAINTAINER   : K.Supasan
 
+#include    <thread> // import sleep_for
+
+#include    <chrono> // import std::chrono::seconds
+
+#include    <iostream> // We want to use std::cin
+
+#include    <zeabus/convert/bytes.hpp>
+
 #include    <zeabus/sensor/IMU/packet.hpp>
 
 #include    <zeabus/serial/synchronous_port.hpp>
@@ -13,6 +21,9 @@
 //      _PRINT_DATA_CONNECTION_ for print packet command
 //      _CHECK_MEMORY_ for print detail memory about packet <vector in c++ language>
 //      _ERROR_TYPE_ for data information if return false why we return that
+
+// Reference
+//  ref01   : https://en.cppreference.com/w/cpp/container/vector
 
 #ifndef _ZEABUS_SENSOR_IMU_INTERFACE_HPP__
 #define _ZEABUS_SENSOR_IMU_INTERFACE_HPP__
@@ -51,7 +62,7 @@ namespace IMU
 
             // This command to set new value from capture gyro bias
             // Can study on page 69 for setup data and page 70 for capture 
-            bool auto_set_gyro_bias();
+            bool auto_set_gyro_bias( bool check_value = false);
 
         protected:
             // we split to 2 variable because our individual member is unsigned char

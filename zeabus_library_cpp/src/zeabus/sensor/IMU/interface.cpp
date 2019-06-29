@@ -139,10 +139,12 @@ namespace IMU
         return result;
     }
 
-    bool Interface::auto_set_gyro_bias()
+    bool Interface::auto_set_gyro_bias( bool check_value )
     {
         bool result = false;
         unsigned int num_check;
+        unsigned int count = 0;
+        unsigned int limit_round = 5;
         this->init_header();
         variadic::push_data( &(this->data), LORD_MICROSTRAIN::COMMAND::SENSOR::DESCRIPTOR , 0x04
                 , 0x04 , LORD_MICROSTRAIN::COMMAND::SENSOR::CAPTURE_GYRO_BIAS, 0x0b , 0xb8 );
@@ -151,12 +153,194 @@ namespace IMU
         if( num_check != ( this->data).size() )
         {
             std::cout   << "IMU Failure to write command capture gyro bias\n";
+            count = limit_round + 1;
             ; // will return false for can write == want write
         }
         else
         {
-
+            std::cout   << "Finish write sleep for waiting capture gyro bias\n";
+            std::this_thread::sleep_for( std::chronop::sceonds( 30 ) );
+            std::coui   << "Finish sleep for waiting data\n";
         }
+        while( count <= limit_round )
+        {
+            count++;
+            if( this->read_reply( LORD_MICROSTRAIN::COMMAND::SENSOR::DESCRIPTOR ) )
+            {
+                if( this->check_sum() )
+                {
+                    result = ( ( *(this->data).end() - 8 ) == 0x00 );
+                }
+            }
+        }
+        // Next process will use only case you have success capture gyro bias
+        if( result )
+        {
+            std::vector< unsigned char > temp_vector;
+            for( unsigned int run = 10 ; run < 21 ; run ++ )
+            {
+                temp_vector.push_back( this->data->at(run) );
+            }
+            float* first_gyro_bias;
+            float* second_gyro_bias;
+            float* third_gyro_bias;
+            char save_value = 'y';
+            zeabus::convert::bytes::vector_to_float( &temp_vector , first_gyro_bias , 0 ); 
+            zeabus::convert::bytes::vector_to_float( &temp_vector , second_gyro_bias , 4 ); 
+            zeabus::convert::bytes::vector_to_float( &temp_vector , third_gyro_bias , 8 ); 
+            std::cout   << "Vector of capture bias value is :\n\t"
+                        << *first_gyro_bias << "\n\t"
+                        << *second_gyro_bias << "\n\t"
+                        << *third_gyro_bias << "\n";
+            if( check_value )
+            {
+                std::cout   << "Please enter char y to save start value : "
+                std::cin    >> save_value;  
+            } //  normal situation we have want you to save data
+            if( save_value != 'y' )
+            {
+                std::cout   << "You don't want save value out of function\n";
+            }
+            else
+            {
+                result = false;
+                // init_header for create vector save value 
+                this->init_header();
+                variadic::push_data( &(this->data) 
+                    , LORD_MICROSTRAIN::COMMAND::SENSOR::DESCRIPTOR , 0x0f , 0x0f 
+                    , LORD_MICROSTRAIN::COMMAND::SENSOR::GYRO_BIAS, 0x01 );
+                for( unsigned int run = 0 ; run < 12 ; run++ )
+                {
+                    (this->data).push_back( temp_vector[ run ] );
+                }
+                this->add_check_sum();
+                num_check = this->write_data( &( this->data) , (this->data).size() );
+                if( num_check != this->data)
+                {
+                    std::cout   << "Failure to write get current value gyro bias\n";
+                }
+                else
+                {
+                    if( this->read_reply( LORD_MICROSTRAIN::COMMAND::SENSOR::DESCRIPTOR ) )
+                    {
+                        if( this->check_sum() )
+                        {
+                            result = ( *( (this->data).end() - 3 ) == 0x00 );
+                        }
+                    }
+                }
+            }
+            if( result == false )
+            {
+                std::cout   << "Failure to read data back\n";
+            }
+            else if( save_value == 'y' )
+            {
+                this->init_header();
+                variadic::push_back( &( this->data )
+                    , LORD_MICROSTRAIN::COMMAND::SENSOR::DESCRIPTOR , 0x03 , 0x03 
+                    , LORD_MICROSTRAIN::COMMAND::SENSOR::GYRO_BIAS , 0x02 );
+                this->add_check_sum()
+                num_check = this->write_data( &(this->data) , (this->data).size() );
+
+                if( num_check != this->data)
+                {
+                    std::cout   << "Failure to write new capture gyro bias\n";
+                }
+                else
+                {
+                    if( this->read_reply( LORD_MICROSTRAIN::COMMAND::SENSOR::DESCRIPTOR ) )
+                    {
+                        if( this->check_sum() )
+                        {
+                            result = ( *( (this->data).end() - 3 ) == 0x00 );
+                        }
+                    }
+                }
+
+                if( this->read_reply( LORD_MICROSTRAIN::COMMAND::SENSOR::DESCRIPTOR ) )
+                {
+                    if( this->check_sum() )
+                    {
+                        result = ( ( *(this->data).end() - 8 ) == 0x00 );
+                        if( result )
+                        {
+                            std::vector< unsigned char > temp_current_vector;
+                            for( unsigned int run = 10 ; run < 21 ; run ++ )
+                            {
+                                temp_current_vector.push_back( this->data->at(run) );
+                            }
+                            float* first_current;
+                            float* second_current;
+                            float* third_current;
+                            zeabus::convert::bytes::vector_to_float( &temp_current_vector 
+                                , first_current , 0 ); 
+                            zeabus::convert::bytes::vector_to_float( &temp_current_vector 
+                                , second_current , 4 ); 
+                            zeabus::convert::bytes::vector_to_float( &temp_current_vector 
+                                , third_current , 8 ); 
+                            std::cout   << "Vector of current bias value is :\n\t"
+                                        << *first_current << "\n\t"
+                                        << *second_current << "\n\t"
+                                        << *third_current << "\n";
+                            std::cout   << "Vector of capture bias value is :\n\t"
+                                        << *first_gyro_bias << "\n\t"
+                                        << *second_gyro_bias << "\n\t"
+                                        << *third_gyro_bias << "\n";
+                        }
+                        else
+                        {
+                            std::cout   << "Failure to read back current setting\n";
+                        }
+                    }
+                }
+            } // condition want to cheack value
+            else
+            {
+                ;
+            }
+        } // condition to about read back current setting from new gyro bias value
+        if( result )
+        {
+            char save_value = 'y';
+            if( check_value )
+            {
+                std::cout   << "Please, enter y is you want to save startup : ";
+                std::cin    >> save_value;
+            }
+            if( save_value != 'y' ) 
+            {
+                std::cout   << "You did't want save to start up value\n";
+            }
+            else
+            {
+                this->init_header();
+                variadic::push_back( &( this->data )
+                    , LORD_MICROSTRAIN::COMMAND::SENSOR::DESCRIPTOR , 0x03 , 0x03 
+                    , LORD_MICROSTRAIN::COMMAND::SENSOR::GYRO_BIAS , 0x03 );
+                this->add_check_sum()
+                if( num_check != ( this->data).size() )
+                {
+                    result = false;
+                    ; // will return false for can write != want write
+                }
+                else
+                {
+                    if( this->read_reply( LORD_MICROSTRAIN::COMMAND::SENSOR::DESCRIPTOR ) )
+                    {
+                        if( this->check_sum() )
+                        {
+                            result = ( *( (this->data).end() - 3 ) == 0x00 );
+                            if( result )
+                            {
+                                std::cout   << "Success save startup setting\n";
+                            }
+                        }
+                    }
+                }
+            }
+        } // condition about save to startup setting
+        return result;
     }
 
 
