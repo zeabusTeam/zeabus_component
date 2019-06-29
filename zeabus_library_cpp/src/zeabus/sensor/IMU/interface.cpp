@@ -1,8 +1,8 @@
-// FILE         : connector.cpp
+// FILE         : interface.cpp
 // AUTHOR       : Supasan Komonlit
 // CREATE DATE  : 2019, MARCH 25
 
-#include    <zeabus/sensor/IMU/connector.hpp>
+#include    <zeabus/sensor/IMU/interface.hpp>
 
 // All code have reference from data-sheet of 3dm-gx5-45_data-commmunication_protocol.pdf
 
@@ -15,13 +15,13 @@ namespace sensor
 namespace IMU
 {
 
-    Connector::Connector( std::string port_name , unsigned int size ) : 
+    Interface::Interface( std::string port_name , unsigned int size ) : 
             SynchronousPort( port_name ) , Packet( size )
     {
         (this->reader_buffer).reserve( (unsigned int) 100 );
     }
 
-    bool Connector::set_idle()
+    bool Interface::set_idle()
     {
         bool result = false;
         unsigned int num_check;
@@ -48,7 +48,7 @@ namespace IMU
         return result;
     }
 
-    bool Connector::ping()
+    bool Interface::ping()
     {
         bool result = false;
         unsigned int num_check;
@@ -75,13 +75,13 @@ namespace IMU
         return result;
     }
 
-    void Connector::set_IMU_rate( int rate )
+    void Interface::set_IMU_rate( int rate )
     {
         this->front_rate = (unsigned char ) ( ( (rate) & 0xff00 ) >> 8 );
         this->back_rate = (unsigned char) ( rate & 0xff );
     }
 
-    bool Connector::set_IMU_message_format( unsigned char first_type , unsigned char second_type
+    bool Interface::set_IMU_message_format( unsigned char first_type , unsigned char second_type
             , unsigned char third_type ) // This function page 51
     {
         bool result = false;
@@ -112,7 +112,7 @@ namespace IMU
         return result;
     }
 
-    bool Connector::enable_IMU_data_stream()
+    bool Interface::enable_IMU_data_stream()
     {
         bool result = false;
         unsigned int num_check;
@@ -139,7 +139,28 @@ namespace IMU
         return result;
     }
 
-    bool Connector::resume()
+    bool Interface::auto_set_gyro_bias()
+    {
+        bool result = false;
+        unsigned int num_check;
+        this->init_header();
+        variadic::push_data( &(this->data), LORD_MICROSTRAIN::COMMAND::SENSOR::DESCRIPTOR , 0x04
+                , 0x04 , LORD_MICROSTRAIN::COMMAND::SENSOR::CAPTURE_GYRO_BIAS, 0x0b , 0xb8 );
+        this->add_check_sum();
+        num_check = this->write_data( &( this->data ) , (this->data).size() );
+        if( num_check != ( this->data).size() )
+        {
+            std::cout   << "IMU Failure to write command capture gyro bias\n";
+            ; // will return false for can write == want write
+        }
+        else
+        {
+
+        }
+    }
+
+
+    bool Interface::resume()
     {
         bool result = false;
         unsigned int num_check;
@@ -165,13 +186,13 @@ namespace IMU
         return result;
     }
 
-    void Connector::init_header()
+    void Interface::init_header()
     {
         this->clear_member();
         variadic::push_data( &(this->data) , 0x75 , 0x65 );
     }
 
-    bool Connector::read_reply( unsigned char descriptor_byte ,unsigned int max_round )
+    bool Interface::read_reply( unsigned char descriptor_byte ,unsigned int max_round )
     {
         bool result = true;
         for( unsigned int round = 0 ; ( round < max_round ) && result ; round++ )
@@ -223,7 +244,7 @@ namespace IMU
         return result;
     }
 
-    bool Connector::read_stream()
+    bool Interface::read_stream()
     {
         bool result = this->read_reply( 0x80 );
         if( result )
@@ -231,7 +252,7 @@ namespace IMU
             result = this->check_sum();
         }
         return result; 
-    } 
+    }
 
 }
 
