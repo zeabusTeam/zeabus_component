@@ -27,7 +27,7 @@ class Broadcaster:
     def quaternion( self , linear , quaternion ):
         self.broadcaster.sendTransform( linear 
             , quaternion 
-            , rospy.Time() 
+            , rospy.get_rostime() 
             , self.child_frame 
             , self.parent_frame )
 
