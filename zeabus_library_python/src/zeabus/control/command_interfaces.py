@@ -20,6 +20,9 @@ from std_msgs.msg import Header, String
 from zeabus_utility.msg import AUVState, ControlCommand
 from zeabus_utility.srv import SendControlCommand, GetAUVState
 
+_COMMAND_INTERFACES_PROCESS_CHECK_ = False
+_COMMAND_INTERFACES_COMMAND_ = True
+
 class CommandInterfaces:
 
     def __init__( self , your_name ):
@@ -59,15 +62,24 @@ class CommandInterfaces:
 
         self.tf_listener = tf.TransformListener()
 
+        self.ever_sleep = False
+
     def update_target( self ):
-        temp = self.tf_listener.lookupTransform( "odom" , "base_link_target" , rospy.Time(0) )
+        if( self.ever_sleep == False ):
+            rospy.sleep( 0.1 )
+            self.ever_sleep = True
+        else:
+            rospy.sleep( 0.05 )
+
+        time = self.tf_listener.getLatestCommonTime("/base_link_target","/odom")
+        temp = self.tf_listener.lookupTransform( "/odom" , "/base_link_target" , time )
         self.target_pose[0] = temp[0][0]
         self.target_pose[1] = temp[0][1]
         self.target_pose[2] = temp[0][2]
-        self.target_quaternion.set_quaternion( temp[1] )
-        ( self.target_pose[3]
+        self.target_quaternion.set_quaternion( ( temp[1][0], temp[1][1], temp[1][2], temp[1][3]))
+        ( self.target_pose[5]
             , self.target_pose[4]
-            , self.target_pose[5] ) = self.target_quaternion.get_euler()
+            , self.target_pose[3] ) = self.target_quaternion.get_euler()
 
     def set_name( self, your_name ):
         self.master_command.header.frame_id = your_name
@@ -109,6 +121,9 @@ class CommandInterfaces:
             rospy.logfatal( "Service call control interfaces Failed : %s" , e )
 
     def reset_state( self , roll = None, pitch = None):
+
+        self.ever_sleep = False
+
         self.get_state()
         self.control_command.target = tuple( self.current_pose )
         self.target_pose[:] = self.current_pose[:] # make sure will not copy pointer
@@ -121,11 +136,12 @@ class CommandInterfaces:
 
     # argument 3 yaw will mean you want to rotation will target yaw if that is true
     def relative_xy( self , x , y , target_yaw = True , target_xy = True ):
+        self.ever_sleep = False
+
         movement_x = 0
         movement_y = 0
 
         self.get_state()
-
         if( target_yaw ):
             movement_x = ( (x * math.cos( self.target_pose[5] ) ) 
                 + ( y * math.cos( self.target_pose[5] + ( math.pi / 2 ) ) ) )
@@ -146,12 +162,16 @@ class CommandInterfaces:
         self.send_command()
 
     def absolute_xy( self , x , y ):
+        self.ever_sleep = False
+
         self.target_pose[ 0 ] = x
         self.target_pose[ 1 ] = y
         self.control_command.mask = ( True , True , False , False , False , False )
         self.send_command()
 
     def relative_yaw( self, yaw , target_yaw = True ):
+
+        self.ever_sleep = False
 
         print( "Active relative yaw is {:6.3f}".format( yaw ) ) 
 
@@ -165,12 +185,22 @@ class CommandInterfaces:
         self.send_command()
 
     def absolute_yaw( self , yaw ):
+
+        self.ever_sleep = False
+
+        print( "Active relative yaw is {:6.3f}".format( yaw ) ) 
+
         self.target_pose[ 5 ] = zeabus_math.bound_radian( yaw )
 
         self.control_command.mask = ( False , False , False , False , False ,True )
         self.send_command()
 
     def relative_z( self , z , target_z = True ):
+
+        self.ever_sleep = False
+
+        print( "Active relative z is {:6.3f}".format( z ) ) 
+
         self.get_state()
         if( target_z ):
             self.target_pose[ 2 ] += z
@@ -180,7 +210,14 @@ class CommandInterfaces:
         self.send_command()
 
     def absolute_z( self , z ):
+
+        self.ever_sleep = False
+
+        print( "Active absolute_z z is {:6.3f}".format( z ) ) 
+
         self.target_pose[ 2 ] = z
+        if( _COMMAND_INTERFACES_COMMAND_ ):
+            print( "Command absolute z is ${:6.2f}".format( z ) )
         self.control_command.mask = ( False , False , True , False , False , False )
         self.send_command()
 
@@ -195,6 +232,7 @@ class CommandInterfaces:
 
     def check_xy( self , error_x , error_y ):
         result = False
+        self.update_target()
         self.get_state()
         temp_x = abs( self.target_pose[0] - self.current_pose[0] ) 
         temp_y = abs( self.target_pose[1] - self.current_pose[1] ) 
@@ -208,8 +246,11 @@ class CommandInterfaces:
     
     def check_z( self , error_z ):
         result = False
+        self.update_target()
         self.get_state()
-        if( abs( self.target_pose[2] - self.current_pose[2] ) < error_z ):
+        temp_z = abs( self.target_pose[2] - self.current_pose[2] )
+        print( "error_z : temp {:5.2f} : {:5.2f}".format( temp_z , error_z ) )
+        if( temp_z < error_z ):
             result = True
         if( rospy.is_shutdown() ):
             result = True
@@ -217,10 +258,22 @@ class CommandInterfaces:
 
     def check_yaw( self , error_yaw ):
         result = False
+        self.update_target()
         self.get_state()
-        temp = abs( zeabus_math.bound_radian( self.target_pose[5] - self.current_pose[5] ) ) 
-        print( "error_yaw : temp {:5.2f} : {:5.2f}".format( error_yaw , temp ) )
-        if( temp < error_yaw ):
+        temp_0 = abs( zeabus_math.bound_radian( self.target_pose[5] - self.current_pose[5] ) ) 
+        temp_1 = abs( zeabus_math.bound_radian( self.current_pose[5] - self.target_pose[5] ) )
+        temp_yaw = 0
+        if( temp_0 < temp_1 ):
+            temp_yaw = temp_0
+        else:
+            temp_yaw = temp_1
+        if( _COMMAND_INTERFACES_PROCESS_CHECK_ == True ):
+            print( "current and target : {:5.2f} and {:5.2f}".format( 
+                self.current_pose[5] , self.target_pose[5] ) )
+            print( "Check error_yaw choose between {:5.2f} and {:5.2f}".format( 
+                temp_0 , temp_1 ) )
+        print( "error_yaw : temp {:5.2f} : {:5.2f}".format( temp_yaw , error_yaw ) )
+        if( temp_yaw < error_yaw ):
             result = True
         if( rospy.is_shutdown() ):
             result = True
