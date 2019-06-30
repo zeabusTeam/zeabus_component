@@ -18,6 +18,9 @@
 
     <!-- base link use to centor in normal real world -->
     <!-- link use instead robot stl use to look easy to watch -->
+
+    <!-- Warning paramter RPY for rotation input is order roll pitch yaw -->
+    <!-- but in real transformation will use about play rotation order is yaw pitch roll-->
     <link name="base_link"/>
 
     <link name="link">
@@ -47,7 +50,7 @@
     </joint>
 
     <joint name="bottom_camera_to_optical_frame" type="fixed">
-        <origin xyz="0 0 0" rpy="0 ${-1.0 * PI / 2} ${-1.0 * PI / 2}"/>
+        <origin xyz="0 0 0" rpy="${PI / 2} 0 ${ PI / -2}"/>
         <parent link="bottom_camera"/>
         <child link="bottom_camera_optical"/>
     </joint>
@@ -63,7 +66,7 @@
     </joint>
 
     <joint name="front_camera_to_optical_frame" type="fixed">
-        <origin xyz="0 0 0" rpy="0 ${PI / 2} ${-1.0 * PI / 2}"/>
+        <origin xyz="0 0 0" rpy="${PI / 2} 0 ${ PI / -2}"/>
         <parent link="front_camera"/>
         <child link="front_camera_optical"/>
     </joint>
