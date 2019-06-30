@@ -35,7 +35,7 @@ class AnalysisPath:
         self.rotation = ( 0 , 0 ) # use to collect angle will linear point x and y from y axis
         self.area = (0 , 0)
 
-        self.broadcaster = Broadcaster( "bottom_camera_optical_frame" , child_frame_id )
+        self.broadcaster = Broadcaster( "bottom_camera_optical" , child_frame_id )
 
         # Part for filter data of path
 
