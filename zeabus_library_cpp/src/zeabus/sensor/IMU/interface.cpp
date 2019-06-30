@@ -141,10 +141,11 @@ namespace IMU
 
     bool Interface::auto_set_gyro_bias( bool check_value )
     {
+        std::cout   << "Start to capture gyro bias\n";
         bool result = false;
         unsigned int num_check;
         unsigned int count = 0;
-        unsigned int limit_round = 5;
+        unsigned int limit_round = 50;
         this->init_header();
         variadic::push_data( &(this->data), LORD_MICROSTRAIN::COMMAND::SENSOR::DESCRIPTOR , 0x04
                 , 0x04 , LORD_MICROSTRAIN::COMMAND::SENSOR::CAPTURE_GYRO_BIAS, 0x0b , 0xb8 );
@@ -158,43 +159,60 @@ namespace IMU
         }
         else
         {
-            std::cout   << "Finish write sleep for waiting capture gyro bias\n";
-            std::this_thread::sleep_for( std::chronop::sceonds( 30 ) );
-            std::coui   << "Finish sleep for waiting data\n";
+            std::cout   << "Success to write_data";
         }
-        while( count <= limit_round )
+    
+        std::vector< unsigned char > temp_vector;
+        while( ( count <= limit_round ) && (! result) )
         {
             count++;
-            if( this->read_reply( LORD_MICROSTRAIN::COMMAND::SENSOR::DESCRIPTOR ) )
+            if( this->read_reply( LORD_MICROSTRAIN::COMMAND::SENSOR::DESCRIPTOR , 5) )
             {
+                if( (  (this->data)[6] ) != 0x39 )
+                {
+                    std::cout   << "Wrong command" << "\n"; 
+                    continue;
+                }
+                else
+                {
+                    std::cout   << "Correct command\n";
+                }
                 if( this->check_sum() )
                 {
-                    result = ( ( *(this->data).end() - 8 ) == 0x00 );
+                    this->print_data( " data is " );
+                    result = ( *( (this->data).end() - 17 ) == 0x00 );
+                    std::cout   << "data on temp is"; 
+                    for( unsigned int run = 10 ; run < 22 ; run++ )
+                    {
+                        temp_vector.push_back( (this->data).at(run) );
+                        printf( " %x" , temp_vector[ run - 10 ] );
+                    }
+                    std::cout   << "\n";
                 }
             }
+            std::cout   << "Round " << count << "\n";
+            printf( "data point to check is %x\n" , *( (this->data).end() - 17 ) );
         }
+        std::cout   << "Finish process get data\n";
         // Next process will use only case you have success capture gyro bias
         if( result )
         {
-            std::vector< unsigned char > temp_vector;
-            for( unsigned int run = 10 ; run < 21 ; run ++ )
-            {
-                temp_vector.push_back( this->data->at(run) );
-            }
-            float* first_gyro_bias;
-            float* second_gyro_bias;
-            float* third_gyro_bias;
+            float first_gyro_bias;
+            float second_gyro_bias;
+            float third_gyro_bias;
             char save_value = 'y';
-            zeabus::convert::bytes::vector_to_float( &temp_vector , first_gyro_bias , 0 ); 
-            zeabus::convert::bytes::vector_to_float( &temp_vector , second_gyro_bias , 4 ); 
-            zeabus::convert::bytes::vector_to_float( &temp_vector , third_gyro_bias , 8 ); 
+            zeabus::convert::bytes::vector_to_float( &temp_vector , &first_gyro_bias , 0 );
+            std::cout   << "Convert first data\n";  
+            zeabus::convert::bytes::vector_to_float( &temp_vector , &second_gyro_bias , 4 ); 
+            std::cout   << "Convert Second data\n";  
+            zeabus::convert::bytes::vector_to_float( &temp_vector , &third_gyro_bias , 8 ); 
             std::cout   << "Vector of capture bias value is :\n\t"
-                        << *first_gyro_bias << "\n\t"
-                        << *second_gyro_bias << "\n\t"
-                        << *third_gyro_bias << "\n";
+                        << first_gyro_bias << "\n\t"
+                        << second_gyro_bias << "\n\t"
+                        << third_gyro_bias << "\n";
             if( check_value )
             {
-                std::cout   << "Please enter char y to save start value : "
+                std::cout   << "Please enter char y to save start value : ";
                 std::cin    >> save_value;  
             } //  normal situation we have want you to save data
             if( save_value != 'y' )
@@ -205,6 +223,7 @@ namespace IMU
             {
                 result = false;
                 // init_header for create vector save value 
+                std::cout   << "Start to write for get back current value\n";
                 this->init_header();
                 variadic::push_data( &(this->data) 
                     , LORD_MICROSTRAIN::COMMAND::SENSOR::DESCRIPTOR , 0x0f , 0x0f 
@@ -214,18 +233,39 @@ namespace IMU
                     (this->data).push_back( temp_vector[ run ] );
                 }
                 this->add_check_sum();
+                this->print_data( "Before write " );
                 num_check = this->write_data( &( this->data) , (this->data).size() );
-                if( num_check != this->data)
+                std::cout   << "Finish write\n";
+                if( num_check != (this->data).size() )
                 {
                     std::cout   << "Failure to write get current value gyro bias\n";
                 }
                 else
                 {
-                    if( this->read_reply( LORD_MICROSTRAIN::COMMAND::SENSOR::DESCRIPTOR ) )
+                    count = 0;
+                    while( count < limit_round )
                     {
-                        if( this->check_sum() )
+                        count++;
+                        if( this->read_reply( LORD_MICROSTRAIN::COMMAND::SENSOR::DESCRIPTOR ) )
                         {
-                            result = ( *( (this->data).end() - 3 ) == 0x00 );
+                            this->print_data( "Reply " );
+                            if( (  (this->data)[6] ) != 0x38 )
+                            {
+                                std::cout   << "Wrong command" << "\n"; 
+                                continue;
+                            }
+                            else
+                            {
+                                std::cout   << "Correct command\n";
+                            }
+                            if( this->check_sum() )
+                            {    
+                                result = ( *( (this->data).end() - 3 ) == 0x00 );
+                                if( result == true )
+                                {
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
@@ -237,56 +277,46 @@ namespace IMU
             else if( save_value == 'y' )
             {
                 this->init_header();
-                variadic::push_back( &( this->data )
+                variadic::push_data( &( this->data )
                     , LORD_MICROSTRAIN::COMMAND::SENSOR::DESCRIPTOR , 0x03 , 0x03 
                     , LORD_MICROSTRAIN::COMMAND::SENSOR::GYRO_BIAS , 0x02 );
-                this->add_check_sum()
+                this->add_check_sum();
                 num_check = this->write_data( &(this->data) , (this->data).size() );
 
-                if( num_check != this->data)
+                if( num_check != (this->data).size() )
                 {
                     std::cout   << "Failure to write new capture gyro bias\n";
                 }
-                else
-                {
-                    if( this->read_reply( LORD_MICROSTRAIN::COMMAND::SENSOR::DESCRIPTOR ) )
-                    {
-                        if( this->check_sum() )
-                        {
-                            result = ( *( (this->data).end() - 3 ) == 0x00 );
-                        }
-                    }
-                }
-
-                if( this->read_reply( LORD_MICROSTRAIN::COMMAND::SENSOR::DESCRIPTOR ) )
+                else if( this->read_reply( LORD_MICROSTRAIN::COMMAND::SENSOR::DESCRIPTOR ,100 ) )
                 {
                     if( this->check_sum() )
                     {
-                        result = ( ( *(this->data).end() - 8 ) == 0x00 );
+                        this->print_data( "Result feedback : ");
+                        result = ( *( (this->data).end() - 17 ) == 0x00 );
                         if( result )
                         {
                             std::vector< unsigned char > temp_current_vector;
                             for( unsigned int run = 10 ; run < 21 ; run ++ )
                             {
-                                temp_current_vector.push_back( this->data->at(run) );
+                                temp_current_vector.push_back( (this->data).at(run) );
                             }
-                            float* first_current;
-                            float* second_current;
-                            float* third_current;
+                            float first_current;
+                            float second_current;
+                            float third_current;
                             zeabus::convert::bytes::vector_to_float( &temp_current_vector 
-                                , first_current , 0 ); 
+                                , &first_current , 0 ); 
                             zeabus::convert::bytes::vector_to_float( &temp_current_vector 
-                                , second_current , 4 ); 
+                                , &second_current , 4 ); 
                             zeabus::convert::bytes::vector_to_float( &temp_current_vector 
-                                , third_current , 8 ); 
+                                , &third_current , 8 ); 
                             std::cout   << "Vector of current bias value is :\n\t"
-                                        << *first_current << "\n\t"
-                                        << *second_current << "\n\t"
-                                        << *third_current << "\n";
+                                        << first_current << "\n\t"
+                                        << second_current << "\n\t"
+                                        << third_current << "\n";
                             std::cout   << "Vector of capture bias value is :\n\t"
-                                        << *first_gyro_bias << "\n\t"
-                                        << *second_gyro_bias << "\n\t"
-                                        << *third_gyro_bias << "\n";
+                                        << first_gyro_bias << "\n\t"
+                                        << second_gyro_bias << "\n\t"
+                                        << third_gyro_bias << "\n";
                         }
                         else
                         {
@@ -315,10 +345,10 @@ namespace IMU
             else
             {
                 this->init_header();
-                variadic::push_back( &( this->data )
+                variadic::push_data( &( this->data )
                     , LORD_MICROSTRAIN::COMMAND::SENSOR::DESCRIPTOR , 0x03 , 0x03 
                     , LORD_MICROSTRAIN::COMMAND::SENSOR::GYRO_BIAS , 0x03 );
-                this->add_check_sum()
+                this->add_check_sum();
                 if( num_check != ( this->data).size() )
                 {
                     result = false;
@@ -340,6 +370,7 @@ namespace IMU
                 }
             }
         } // condition about save to startup setting
+        this->resume();
         return result;
     }
 
@@ -378,8 +409,8 @@ namespace IMU
 
     bool Interface::read_reply( unsigned char descriptor_byte ,unsigned int max_round )
     {
-        bool result = true;
-        for( unsigned int round = 0 ; ( round < max_round ) && result ; round++ )
+        bool result = false;
+        for( unsigned int round = 0 ; ( round < max_round ) ; round++ )
         {
             this->reader_buffer.resize( 1 );
             for( unsigned int individual = 0 ;  individual < 5 ; individual++ )
@@ -388,6 +419,7 @@ namespace IMU
                 if( (this->reader_buffer)[0] == 'u' )
                 {
                     individual = 4;
+                    result = true;
                 } 
                 else if( individual == 4 )
                 {
@@ -400,15 +432,13 @@ namespace IMU
             }
             if( result )
             {
+                result = false;
                 (void)this->read_data( &(this->reader_buffer) , 1 );
                 if( (this->reader_buffer)[0] != 'e' )
                 {
                     continue;
                 }
-                if( result )
-                {
-                    this->init_header();  
-                }
+                this->init_header();  
                 (this->reader_buffer).resize( 2 );
                 (void)(this->read_data( &(this->reader_buffer) , 2 ));
                 this->push_vector( &(this->reader_buffer) );
@@ -421,8 +451,8 @@ namespace IMU
                 if( (this->data)[2] == descriptor_byte )
                 {
                     result = true;
+                    break;
                 } 
-                round = max_round; 
             }
         }
         return result;

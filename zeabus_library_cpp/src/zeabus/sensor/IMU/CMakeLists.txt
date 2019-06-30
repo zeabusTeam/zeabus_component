@@ -1,6 +1,6 @@
 add_library( IMUConnector SHARED 
     packet.cpp
-    connector.cpp
+    interface.cpp
 )
 target_link_libraries( IMUConnector 
     SynchronousPort 

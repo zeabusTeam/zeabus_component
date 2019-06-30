@@ -71,7 +71,7 @@ namespace IMU
 
             void init_header();
 
-            bool read_reply( unsigned char descriptor_byte , unsigned int max_round = 1 );
+            bool read_reply( unsigned char descriptor_byte , unsigned int max_round = 5 );
 
         private:
             std::vector<unsigned char> reader_buffer;

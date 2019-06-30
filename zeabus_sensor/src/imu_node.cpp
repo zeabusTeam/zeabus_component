@@ -47,7 +47,7 @@
 
 #include    <tf/LinearMath/Quaternion.h>
 
-#include    <zeabus/sensor/IMU/connector.hpp>
+#include    <zeabus/sensor/IMU/interface.hpp>
 
 #include    <zeabus/convert/vector/one_byte.hpp>
 
@@ -76,7 +76,7 @@ int main( int argv , char** argc )
         , full_path_port
         , "/dev/microstrain/3dm_gx5_45_0000__6251.65903");
 
-    zeabus::sensor::IMU::Connector imu( full_path_port , 100 );
+    zeabus::sensor::IMU::Interface imu( full_path_port , 100 );
 
 #ifdef _IMU_ENU_SYSTEM_
 
@@ -300,7 +300,7 @@ int main( int argv , char** argc )
 
     // Below step we want to ensure in case we not use imu. Imu will stop process data stream
     round = 0; // set init value counter is 0 for start process
-    while( imu.port_is_open() ) 
+    while( imu.port_is_open() && round << limit_round) 
     {
         round++;
         status_file = imu.set_idle(); // try to set imu to idle state
