@@ -60,7 +60,7 @@ class AnalysisBuoy:
             , 'ratio_y' : 0.3
         }
 
-        analysis_parameter = {
+        self.analysis_parameter = {
             'x' : { 'ratio' : ( ( detail_line_2['error_x'] - detail_line_1['error_x'] ) 
                                 / ( detail_line_2['size'] - detail_line_1['size'] ) ) # cm / size
                     ,'offset': detail_line_1['error_x'] }
@@ -110,8 +110,8 @@ class AnalysisBuoy:
 
     def echo_data( self ):
         print( "status of found : {:2d}".format( self.found ) )
-        if( self.found == 0 ):
-            print( "RAW_DATA : {:6.3f} {:6.3f} {:6.3f} {6.3f}".format( self.center_x 
+        if( self.found == 1 ):
+            print( "RAW_DATA : {:6.3f} {:6.3f} {:6.3f} {:6.3f}".format( self.center_x 
                 , self.center_y 
                 , self.score 
                 , self.area ) )
