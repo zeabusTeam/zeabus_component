@@ -135,7 +135,7 @@ class CommandInterfaces:
         self.send_command()
 
     # argument 3 yaw will mean you want to rotation will target yaw if that is true
-    def relative_xy( self , x , y , target_yaw = True , target_xy = True ):
+    def relative_xy( self , x , y , target_yaw = True , target_xy = False ):
         self.ever_sleep = False
 
         movement_x = 0
@@ -155,8 +155,12 @@ class CommandInterfaces:
 
         print( "Adding x distance is {:6.3f}".format( movement_x ) )
         print( "Adding y distance is {:6.3f}".format( movement_y ) )
-        self.target_pose[ 0 ] = self.current_pose[ 0 ] + movement_x
-        self.target_pose[ 1 ] = self.current_pose[ 1 ] + movement_y
+        if( target_xy ):
+            self.target_pose[ 0 ] += movement_x
+            self.target_pose[ 1 ] += movement_y
+        else:
+            self.target_pose[ 0 ] = self.current_pose[ 0 ] + movement_x
+            self.target_pose[ 1 ] = self.current_pose[ 1 ] + movement_y
 
         self.control_command.mask = ( True , True , False , False , False , False )
         self.send_command()
