@@ -22,6 +22,8 @@ import rospy
 
 from ..transformation.broadcaster import Broadcaster
 
+from ..math.quaternion import Quaternion
+
 from std_msgs.msg import String
 
 from zeabus_utility.srv import VisionBuoy
@@ -48,45 +50,55 @@ class AnalysisBuoy:
 
         detail_line_1 = {
             'size' : 60
-            , 'error_x' : 3
-            , 'ratio_x' : 0.2
-            , 'ratio_y' : 0.1 
+            , 'error_x' : 300 # cm
+            , 'ratio_x' : 20 # cm / pixels <percent>
+            , 'ratio_y' : 10 # cm / pixels <percent>
         }
 
         detail_line_2 = {
             'size' : 20
-            , 'error_x' : 7
-            , 'ratio_x' : 0.6
-            , 'ratio_y' : 0.3
+            , 'error_x' : 700 # cm
+            , 'ratio_x' : 60 # cm / pixels <percent>
+            , 'ratio_y' : 30 # cm / pixels <percent>
         }
 
-        analysis_parameter = {
-            'x' : { 'ratio' : ( ( detail_line_2['error_x'] - detail_line_1['error_x'] ) 
+        self.rotation = Quaternion
+        self.rotation.set_euler( -0.5*math.pi , math.pi / 2 , 0)
+        self.optical = [0 , 0 , 0] # Data in optical frame
+        
+        self.analysis = { # Data in robot frame
+            'found' : False
+            ,'x' : 0
+            ,'y' : 0
+            ,'z' : 0
+        }
+
+
+        # for y and z unit of ratio is cm per ( pixels * size )
+        self.analysis_parameter = {
+            'z' : { 'ratio' : ( ( detail_line_2['error_x'] - detail_line_1['error_x'] ) 
                                 / ( detail_line_2['size'] - detail_line_1['size'] ) ) # cm / size
-                    ,'offset': detail_line_1['error_x'] }
-            ,'y': { 'ratio' : ( -1 * ( detail_line_2['ratio_x'] - detail_line_1['ratio_x'] ) 
-                                / ( detail_line_2['size'] - detail_line_1['size'] ) ) # cm / size
+                    ,'offset' : detail_line_1['error_x'] }
+            ,'y': { 'ratio' : ( ( detail_line_2['ratio_y'] - detail_line_1['ratio_y'] ) 
+                                / ( detail_line_2['size'] - detail_line_1['size'] ) ) 
                     ,'offset' : 0 }
-            ,'z': { 'ratio' : ( ( detail_line_2['ratio_y'] - detail_line_1['ratio_y'] ) 
-                                / ( detail_line_2['size'] - detail_line_1['size'] ) ) # cm / size
+            ,'x': { 'ratio' : ( ( detail_line_2['ratio_x'] - detail_line_1['ratio_x'] ) 
+                                / ( detail_line_2['size'] - detail_line_1['size'] ) ) 
                     ,'offset' : 0 }
         }
+
+        self.analysis_parameter[ 'z' ][ 'offset' ] -= (
+                self.analysis_parameter[ 'z' ][ 'ratio' ] 
+                * self.analysis_parameter[ 'z' ][ 'offset' ] )
 
         # Part of parameter from vision
-        self.found = 0
+        self.found = False
         self.score = 0
         self.center_x = 0
         self.center_y = 0
         self.area = 0
 
         self.broadcaster = Broadcaster( "front_camera_optical" , child_frame_id )
-
-        self.analysis = {
-            'found' : 0
-            ,'x' : 0
-            ,'y' : 0
-            ,'z' : 0
-        }
 
     def call_data( self ):
         # This variable use to return result from call_data
@@ -99,7 +111,10 @@ class AnalysisBuoy:
             rospy.logfatal( "Service call buoy failed : %s" , e )
 
         if( result ):
-            self.found = raw_data.found
+            if( raw_data.found != 1 ):
+                self.found = False
+            else:
+                self.found = True
             self.center_x = raw_data.cx * 100
             self.center_y = raw_data.cy * 100
             self.score = raw_data.score
@@ -110,30 +125,37 @@ class AnalysisBuoy:
 
     def echo_data( self ):
         print( "status of found : {:2d}".format( self.found ) )
-        if( self.found == 0 ):
+        if( self.found ):
             print( "RAW_DATA : {:6.3f} {:6.3f} {:6.3f} {6.3f}".format( self.center_x 
                 , self.center_y 
                 , self.score 
                 , self.area ) )
-            print( "ANALYSIS : {:6.3f} {:6.3f} {:6.3f}".format( self.analysis['x'] 
+            print( "OPTICAL  : {:6.3f} {:6.3f} {:6.3f}".format( self.optical[0] 
+                , self.optical[1]
+                , self.optical[2] ) )
+            print( "ROBOT    : {:6.3f} {:6.3f} {:6.3f}".format( self.analysis['x'] 
                 , self.analysis['y']
                 , self.analysis['z'] ) )
 
     def analysis_picture( self ):
 
-        if( self.found != 0 ):
-            self.analysis[ 'found' ] = 0
+        if( not self.found ):
+            self.analysis[ 'found' ] = False
             self.analysis[ 'x' ] = 0
             self.analysis[ 'y' ] = 0
             self.analysis[ 'z' ] = 0
         else:
-            self.analysis[ 'found' ] = 1
-            for run_axis in [ 'x' , 'y' , 'z' ]:
-                self.analysis[ run_axis ] = ( ( self.area 
-                        * self.analysis_parameter[ run_axis ][ 'ratio' ] )
-                    + self.analysis_parameter[ run_axis ][ 'offset' ] )
+            self.analysis[ 'found' ] = True 
+
+            self.optical[ 0 ] = ( ( self.center_x * self.analysis_parameter['x']['ratio'] )
+                + self.analysis_parameter['x']['size']
+            self.optical[ 1 ] = ( ( self.center_y * self.analysis_parameter['y']['ratio'] )
+                + self.analysis_parameter['y']['size']
+            self.optical[ 2 ] = ( ( self.area * self.analysis_parameter['z']['ratio'] )
+                + self.analysis_parameter['z']['size']
+
+            ( self.analysis['x'] , self.analysis['y'] , self.analysis['z']) = 
+                ( self.rotation.rotation( 
+                    ( self.optical[0] , self.optical[1] , self.optical[2] , 0 ) ) ).vector[:3]
             # Use in tf broadcaster
-            self.broadcaster.quaternion( ( -1 * self.analysis['y'] 
-                    , self.analysis['z'] 
-                    , -1.0 * self.analysis['x'] ) 
-                , ( 0 , 0 , 0 , 1 ) )
+            self.broadcaster.quaternion( tuple( self.optical ) ) , ( 0 , 0 , 0 , 1 ) )
