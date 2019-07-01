@@ -24,7 +24,7 @@
 //#define _SHOW_ROTATION_
 //#define _SHOW_OUTPUT_CONDITION_
 //#define _SHOW_RULE_TABLE_
-#define _ACTIVE_ROLL_PITCH_
+//#define _ACTIVE_ROLL_PITCH_
 
 // MACRO CONDITION
 
