@@ -18,12 +18,14 @@ if __name__=="__main__":
 
     mission_list = [ "path" , "buoy"]
 
-    analysis_mode = rospy.get_param( "mission" , "path" )
-    frequency = rospy.get_param( "frequency" , 10 )
+    analysis_mode = rospy.get_param( '~mission' , "path" )
+    frequency = rospy.get_param( '~frequency' , 10 )
 
     if( analysis_mode == "path" ):
+            print( "You choose analysis path")
             analysis_vision = AnalysisPath( "base_path" )
     elif( analysis_mode == "buoy" ):
+            print( "You choose analysis buoy")
             analysis_vision = AnalysisBuoy( "base_buoy" )
     else:
         print( "Don't have your mode plesase from them\n" , mission_list )
@@ -37,4 +39,4 @@ if __name__=="__main__":
             analysis_vision.echo_data()
         else:
             print("=============================FALIURE & WAIT==============================")
-            rospy.wait_for_service( "/vision/path" )
+            rospy.wait_for_service( "/vision/" + str( analysis_mode) )

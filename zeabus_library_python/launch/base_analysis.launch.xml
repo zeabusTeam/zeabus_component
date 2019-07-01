@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<launch>
+
+    <arg name="mission" default="path"/>
+    <arg name="frequency" default="10"/>
+
+    <node name="mission_analysis_$(arg mission)" 
+            pkg="zeabus_library_python" 
+            type="zeabus_analysis_vision.py"
+            output="screen">
+        <param name="mission" type="string" value="$(arg mission)"/>
+        <param name="frequency" type="int" value="$(arg frequency)"/>
+    </node>
+
+</launch>
