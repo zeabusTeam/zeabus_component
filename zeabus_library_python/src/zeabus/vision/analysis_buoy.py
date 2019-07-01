@@ -37,7 +37,7 @@ from zeabus_utility.srv import VisionBuoy
 
 class AnalysisBuoy:
 
-    def __init__( self , child_frame_id = "base_buoy" );
+    def __init__( self , child_frame_id = "base_buoy" ):
         rospy.loginfo( "Waiting service of /vision/buoy" )
         rospy.wait_for_service( "/vision/buoy" )
         self.call_vision_data = rospy.ServiceProxy( "/vision/buoy" , VisionBuoy )

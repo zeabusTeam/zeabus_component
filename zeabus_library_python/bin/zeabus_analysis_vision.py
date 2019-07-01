@@ -10,18 +10,31 @@
 
 import rospy
 from zeabus.vision.analysis_path import AnalysisPath
+from zeabus.vision.analysis_buoy import AnalysisBuoy
 
 if __name__=="__main__":
-    rospy.init_node( "analysis_path" )
 
-    analysis_path = AnalysisPath()
+    rospy.init_node( "zeabus_library_analysis" )
 
-    rate = rospy.Rate( 10 )
+    mission_list = [ "path" , "buoy"]
+
+    analysis_mode = rospy.get_param( "mission" , "path" )
+    frequency = rospy.get_param( "frequency" , 10 )
+
+    if( analysis_mode == "path" ):
+            analysis_vision = AnalysisPath( "base_path" )
+    elif( analysis_mode == "buoy" ):
+            analysis_vision = AnalysisBuoy( "base_buoy" )
+    else:
+        print( "Don't have your mode plesase from them\n" , mission_list )
+        rospy.signal_shutdown( "Don't have mode " + str( analysis_mode ) )
+
+    rate = rospy.Rate( frequency )
 
     while( not rospy.is_shutdown() ):
-        if( analysis_path.call_data() ):
+        if( analysis_vision.call_data() ):
             print("================================SUCCESS===================================")
-            analysis_path.echo_data()
+            analysis_vision.echo_data()
         else:
             print("=============================FALIURE & WAIT==============================")
             rospy.wait_for_service( "/vision/path" )
