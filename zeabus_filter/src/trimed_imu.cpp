@@ -87,7 +87,7 @@ int main( int argv , char** argc )
     // Insert optional part param
     const unsigned int buffer_size = 4;
     const unsigned int trimed_size = 1;
-    const unsigned int frequency = 10;
+    const unsigned int frequency = 9;
     const unsigned int limit_same_time = 10;
 
     // Second part of Filter this part mix about data variable
