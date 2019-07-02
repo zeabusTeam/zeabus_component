@@ -28,9 +28,9 @@
 //#define _PROCESS_
 //#define _BOUND_ZERO_
 #define _COLLECT_LOG_
-//#define _RAW_DATA_
+#define _RAW_DATA_
 //#define _TIME_COUNT_
-#define _CONDITION_
+//#define _CONDITION_
 
 // MACRO CONDITION
 #ifdef _RAW_DATA_
@@ -121,11 +121,17 @@ int main( int argv , char** argc )
     static std::string dvl_topic = "/sensor/dvl";
     static std::string imu_topic = "/sensor/imu";
     static std::string pressure_topic = "/filter/pressure";
+#ifdef _SUMMARY_
     static double temp_RPY[3] = { 0 , 0 , 0 };
+#endif
 
     // Second part of variable to use in this pid
     static zeabus_utility::HeaderFloat64 pressure_data;
     static sensor_msgs::Imu imu_data;
+    imu_data.orientation.x = 0;
+    imu_data.orientation.y = 0;
+    imu_data.orientation.z = 0;
+    imu_data.orientation.w = 1;
     static geometry_msgs::Vector3Stamped dvl_data;
     static ros::Time dvl_stamp = ros::Time::now();
     static ros::Time imu_stamp = ros::Time::now();
@@ -191,6 +197,7 @@ int main( int argv , char** argc )
     temp_data.data.pose.pose.orientation.y = 0;
     temp_data.data.pose.pose.orientation.z = 0;
     temp_data.data.pose.pose.orientation.w = 1;
+    service_data.data.pose = temp_data.data.pose;
     node_sensor_fusion.spin();
 
     while( ptr_node_handle->ok() )
@@ -218,7 +225,7 @@ int main( int argv , char** argc )
         std::cout   << "IMU data time : " << imu_data.header.stamp.sec << "."
                     << imu_data.header.stamp.nsec << "\n"
                     << "x : " << imu_data.orientation.x << " y : " << imu_data.orientation.y
-                    << " z : " << imu_data.orientation.z << " w : " << imu_data.orientation.z 
+                    << " z : " << imu_data.orientation.z << " w : " << imu_data.orientation.w 
                     << "\n";
         std::cout   << "DEPTH data time : " << pressure_data.header.stamp.sec << "."
                     << pressure_data.header.stamp.nsec << " data is "
@@ -273,6 +280,7 @@ int main( int argv , char** argc )
         if( pressure_stamp != pressure_data.header.stamp )
         {
             pressure_status( true );
+            pressure_stamp = pressure_data.header.stamp;
             temp_data.data.pose.pose.position.z = (pressure_data.data * -1);
         }
         else
