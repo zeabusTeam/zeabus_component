@@ -43,127 +43,93 @@ class AnalysisBuoy:
         rospy.loginfo( "Waiting service of /vision/buoy" )
         rospy.wait_for_service( "/vision/buoy" )
         self.call_vision_data = rospy.ServiceProxy( "/vision/buoy" , VisionBuoy )
+        self.rate = rospy.Rate( 6 )
 
         # size is area of picture
         # error_x : is distance estimate from size
         # ratio : value of centimeter per pixels of picture and coordinate optical frame
 
-        detail_line_1 = {
-            'size' : 10
-            , 'error_x' : 300.0 # cm
-            , 'ratio_x' : 60.0 # cm / pixels <percent>
-            , 'ratio_y' : 20.0 # cm / pixels <percent>
-        }
-
-        detail_line_2 = {
-            'size' : 2
-            , 'error_x' : 520.0 # cm
-            , 'ratio_x' : 200.0 # cm / pixels <percent>
-            , 'ratio_y' : 60.0 # cm / pixels <percent>
-        }
-
-        self.rotation = Quaternion()
-        self.rotation.set_euler( -math.pi/2 , 0 , math.pi/2 )
-        self.optical = [0 , 0 , 0] # Data in optical frame
-        
-        self.analysis = { # Data in robot frame
+        self.result = {
             'found' : False
-            ,'x' : 0
-            ,'y' : 0
-            ,'z' : 0
+            ,'center_x' : 0.0
+            ,'center_y' : 0.0
+            ,'area' : 0.0
         }
-
-
-        # for y and z unit of ratio is cm per ( pixels * size )
-        self.analysis_parameter = {
-            'z' : { 'ratio' : ( ( detail_line_2['error_x'] - detail_line_1['error_x'] ) 
-                                / ( detail_line_2['size'] - detail_line_1['size'] ) ) # cm / size
-                    ,'offset' : detail_line_1['error_x'] }
-            ,'y': { 'ratio' : ( ( detail_line_2['ratio_y'] - detail_line_1['ratio_y'] ) 
-                                / ( detail_line_2['size'] - detail_line_1['size'] ) ) 
-                    ,'offset' : 0 }
-            ,'x': { 'ratio' : ( ( detail_line_2['ratio_x'] - detail_line_1['ratio_x'] ) 
-                                / ( detail_line_2['size'] - detail_line_1['size'] ) ) 
-                    ,'offset' : 0 }
-        }
-
-        self.analysis_parameter[ 'z' ][ 'offset' ] -= (
-                self.analysis_parameter[ 'z' ][ 'ratio' ] 
-                * self.analysis_parameter[ 'z' ][ 'offset' ] )
-
-        # Part of parameter from vision
-        self.found = False
-        self.score = 0
-        self.center_x = 0
-        self.center_y = 0
-        self.area = 0
-
-        self.broadcaster = Broadcaster( "front_camera_optical" , child_frame_id )
 
     def call_data( self ):
         # This variable use to return result from call_data
+        self.buffer_center_x = []
+        self.buffer_center_y = []
+        self.buffer_area = []
+        self.buffer_score = []
+
+        self.found = False
+        self.can_call = False
+        count = 0 
+        while( count < 5 ):
+            count += 1
+            temp_result = self.individual_call()
+            if( temp_result ):
+                self.found = True
+                self.buffer_center_x.append( self.center_x )
+                self.buffer_center_y.append( self.center_y )
+                self.buffer_score.append( self.score )
+                self.buffer_area.append( self.area )
+
+        self.analysis_picture()
+
+        return self.can_call
+        
+    def individual_call( self ):
         result = False
+        found = False
 
         try:
             raw_data = self.call_vision_data( String('buoy') , String("") )
             result = True
+            self.can_call = True
         except rospy.ServiceException , e :
             rospy.logfatal( "Service call buoy failed : %s" , e )
 
         if( result ):
             if( raw_data.found != 1 ):
-                self.found = False
+                found = False
+            elif( ( raw_data.area < 0.0001 ) or  ( raw_data.score * 100  > 50 ) ):
+                found = False
             else:
-                self.found = True
-            self.center_x = raw_data.cx * 100
-            self.center_y = raw_data.cy * 100
-            self.score = raw_data.score * 100
-            self.area = raw_data.area * 100
-            self.analysis_picture()
+                found = True
 
-        return result
+            if( found ):
+                self.center_x = raw_data.cx * 100
+                self.center_y = raw_data.cy * 100
+                self.score = raw_data.score * 100
+                self.area = raw_data.area * 100
+            else:
+                self.center_x = 0 
+                self.center_y = 0
+                self.score = 0 
+                self.area = 0
+
+        return found 
 
     def echo_data( self ):
-        print( "status of found : {:2d}".format( self.found ) )
         if( self.found ):
-            print( "RAW_DATA : {:6.3f} {:6.3f} {:6.3f} {:6.3f}".format( self.center_x 
-                , self.center_y 
-                , self.score 
-                , self.area ) )
-            print( "OPTICAL  : {:6.3f} {:6.3f} {:6.3f}".format( self.optical[0] 
-                , self.optical[1]
-                , self.optical[2] ) )
-            print( "ROBOT    : {:6.3f} {:6.3f} {:6.3f}".format( self.analysis['x'] 
-                , self.analysis['y']
-                , self.analysis['z'] ) )
+            print( "BUFFER_CENTER_X " + repr( self.buffer_center_x ) )
+            print( "BUFFER_CENTER_y " + repr( self.buffer_center_y ) )
+            print( "BUFFER_AREA" + repr( self.buffer_area ) )
+            print( "RESULT " + repr( self.result ) )
+        else:
+            print( "Don't found picture")
 
     def analysis_picture( self ):
-
-        if( ( not self.found ) or ( self.area < 0.001 ) ):
-            self.analysis[ 'found' ] = False
-            self.analysis[ 'x' ] = 0
-            self.analysis[ 'y' ] = 0
-            self.analysis[ 'z' ] = 0
+        if( self.found ):
+            self.result['found'] = True
+            self.result['area'] = sum( self.buffer_area ) / len( self.buffer_area )
+            self.result['center_x'] = sum( self.buffer_center_x ) / len( self.buffer_center_x )
+            self.result['center_y'] = sum( self.buffer_center_y ) / len( self.buffer_center_y )
         else:
-            self.analysis[ 'found' ] = True 
-
-#            print( repr( self.analysis_parameter ) )
-
-#            self.optical[ 0 ] = ( ( self.center_x * self.area 
-#                    * self.analysis_parameter['x']['ratio'] )
-#                + self.analysis_parameter['x']['offset'] )
-#            self.optical[ 1 ] = ( ( self.center_y * self.area 
-#                    * self.analysis_parameter['y']['ratio'] )
-#                + self.analysis_parameter['y']['offset'] )
-#            self.optical[ 2 ] = ( ( self.area * self.analysis_parameter['z']['ratio'] )
-#                + self.analysis_parameter['z']['offset'] )
-
-            self.optical[ 0 ] = self.center_x * 5
-            self.optical[ 1 ] = self.center_y * 3
-            self.optical[ 2 ] = ( self.area - 12 ) * 50
-
-            ( self.analysis['x'] , self.analysis['y'] , self.analysis['z'] ) = ( 
-                self.rotation.rotation( 
-                    ( self.optical[0] , self.optical[1] , self.optical[2] , 0 ) ) ).vector[:3]
-            # Use in tf broadcaster
-            self.broadcaster.quaternion( tuple( self.optical ) , ( 0 , 0 , 0 , 1 ) )
+            self.result['found'] = False
+            self.result['area'] = 0
+            self.result['center_x'] = 0
+            self.result['center_y'] = 0
+            
