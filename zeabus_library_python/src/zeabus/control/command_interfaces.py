@@ -12,6 +12,7 @@
 # REFERENCE
 #   ref1 : http://wiki.ros.org/ROS/Tutorials/WritingServiceClient%28python%29
 #   ref2 : http://wiki.ros.org/tf/Tutorials/tf%20and%20Time%20%28Python%29
+#   ref3 : https://stackoverflow.com/questions/9549729/vim-insert-the-same-characters-across-multiple-lines
 
 import tf
 import math
@@ -29,9 +30,9 @@ class CommandInterfaces:
 
     def __init__( self , your_name ):
 
-        rospy.loginfo( "Waiting service of auv state")
-        rospy.wait_for_service( "/fusion/auv_state")
-        self.command_to_fusion = rospy.ServiceProxy( '/fusion/auv_state', GetAUVState )
+#        rospy.loginfo( "Waiting service of auv state")
+#        rospy.wait_for_service( "/fusion/auv_state")
+#        self.command_to_fusion = rospy.ServiceProxy( '/fusion/auv_state', GetAUVState )
 
         rospy.loginfo( "Waiting service of command to control")
         rospy.wait_for_service( "/control/interfaces")
@@ -82,6 +83,19 @@ class CommandInterfaces:
                 rospy.logerr( repr(e) )
                 rospy.sleep( 0.3 )
 
+        rospy.loginfo( "Waiting for tf trasform /odom to /base_link" )
+        while( not rospy.is_shutdown() ):
+            try:
+                self.tf_listener.lookupTransform( "/odom" 
+                    , "/base_link" 
+                    , rospy.Time( 0 ) )
+                break
+            except ( tf.LookupException
+                    , tf.ConnectivityException
+                    , tf.ExtrapolationException ) as e:
+                rospy.logerr( repr(e) )
+                rospy.sleep( 0.3 )
+
         self.ever_sleep = False
 
     def update_target( self ):
@@ -109,23 +123,33 @@ class CommandInterfaces:
         self.pub_message.publish(  String( self.my_name + " " + message )  )
 
     def get_state( self ):
-        try:
-            self.current_state = self.command_to_fusion()
-            self.current_pose[0] = self.current_state.auv_state.data.pose.pose.position.x
-            self.current_pose[1] = self.current_state.auv_state.data.pose.pose.position.y
-            self.current_pose[2] = self.current_state.auv_state.data.pose.pose.position.z
-            self.current_quaternion.set_quaternion( (
-                self.current_state.auv_state.data.pose.pose.orientation.x
-                , self.current_state.auv_state.data.pose.pose.orientation.y
-                , self.current_state.auv_state.data.pose.pose.orientation.z
-                , self.current_state.auv_state.data.pose.pose.orientation.w )
-            )
 
-            ( self.current_pose[5] 
-                , self.current_pose[4] 
-                , self.current_pose[3] ) = self.current_quaternion.get_euler()
-        except rospy.ServiceException , e:
-            rospy.logfatal( "Service call AUVState Failed : %s" , e )
+        temp = self.tf_listener.lookupTransform( "/odom" , "/base_link_target" , rospy.Time(0) )
+        self.current_pose[0] = temp[0][0]
+        self.current_pose[1] = temp[0][1]
+        self.current_pose[2] = temp[0][2]
+        self.target_quaternion.set_quaternion( ( temp[1][0], temp[1][1], temp[1][2], temp[1][3]))
+        ( self.current_pose[5]
+            , self.current_pose[4]
+            , self.current_pose[3] ) = self.target_quaternion.get_euler()
+
+#        try:
+#            self.current_state = self.command_to_fusion()
+#            self.current_pose[0] = self.current_state.auv_state.data.pose.pose.position.x
+#            self.current_pose[1] = self.current_state.auv_state.data.pose.pose.position.y
+#            self.current_pose[2] = self.current_state.auv_state.data.pose.pose.position.z
+#            self.current_quaternion.set_quaternion( (
+#                self.current_state.auv_state.data.pose.pose.orientation.x
+#                , self.current_state.auv_state.data.pose.pose.orientation.y
+#                , self.current_state.auv_state.data.pose.pose.orientation.z
+#                , self.current_state.auv_state.data.pose.pose.orientation.w )
+#            )
+#
+#            ( self.current_pose[5] 
+#                , self.current_pose[4] 
+#                , self.current_pose[3] ) = self.current_quaternion.get_euler()
+#        except rospy.ServiceException , e:
+#            rospy.logfatal( "Service call AUVState Failed : %s" , e )
 
     def send_command( self ):
         try:
