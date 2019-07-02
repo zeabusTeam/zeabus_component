@@ -75,8 +75,8 @@ class CommandInterfaces:
         else:
             rospy.sleep( 0.05 )
 
-        time = self.tf_listener.getLatestCommonTime("/odom","/base_link_target")
-        temp = self.tf_listener.lookupTransform( "/odom" , "/base_link_target" , time )
+#        time = self.tf_listener.getLatestCommonTime("/odom","/base_link_target")
+        temp = self.tf_listener.lookupTransform( "/odom" , "/base_link_target" , rospy.Time(0) )
         self.target_pose[0] = temp[0][0]
         self.target_pose[1] = temp[0][1]
         self.target_pose[2] = temp[0][2]
@@ -335,10 +335,15 @@ class CommandInterfaces:
     def force_xy( self, x, y, reset_distance = False ):
         self.get_state()
         if( reset_distance ):
-            self.save_point = self.current_pose
+            self.save_point[0] = self.current_pose[0] * 1.0
+            self.save_point[1] = self.current_pose[1] * 1.0
         self.force_command.mask = (True, True, False, False, False, False)
         self.force_command.target = ( x, y, 0, 0, 0, 0 )
         self.pub_force.publish( self.force_command )
+        print( repr( ( self.save_point[0] 
+            , self.save_point[1] 
+            , self.current_pose[0] 
+            , self.current_pose[1] ) ) )
         return math.sqrt(
             math.pow( self.save_point[0] - self.current_pose[0] , 2 ) 
             + math.pow( self.save_point[1] - self.current_pose[1] , 2 ) )
