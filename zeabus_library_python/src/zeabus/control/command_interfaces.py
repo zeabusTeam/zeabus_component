@@ -7,9 +7,11 @@
 # README
 #   2019 06 16 follow control interfaces version 2 master command use part of mask only
 #   2019 06 26 I add check about status of node for you
+#   2019 07 02 I test how to control force direct will control
 
 # REFERENCE
 #   ref1 : http://wiki.ros.org/ROS/Tutorials/WritingServiceClient%28python%29
+#   ref2 : http://wiki.ros.org/tf/Tutorials/tf%20and%20Time%20%28Python%29
 
 import tf
 import math
@@ -63,8 +65,22 @@ class CommandInterfaces:
         self.target_pose = [0 , 0 , 0 , 0 , 0 , 0]
 
         self.tuple_true = (True, True, True, True, True, True)
+        self.tuple_false = (False, False, False, False, False, False)
 
         self.tf_listener = tf.TransformListener()
+
+        rospy.loginfo( "Waiting for tf trasform /odom to /base_link_target" )
+        while( not rospy.is_shutdown() ):
+            try:
+                self.tf_listener.lookupTransform( "/odom" 
+                    , "/base_link_target" 
+                    , rospy.Time( 0 ) )
+                break
+            except ( tf.LookupException
+                    , tf.ConnectivityException
+                    , tf.ExtrapolationException ) as e:
+                rospy.logerr( repr(e) )
+                rospy.sleep( 0.3 )
 
         self.ever_sleep = False
 
@@ -75,7 +91,6 @@ class CommandInterfaces:
         else:
             rospy.sleep( 0.05 )
 
-#        time = self.tf_listener.getLatestCommonTime("/odom","/base_link_target")
         temp = self.tf_listener.lookupTransform( "/odom" , "/base_link_target" , rospy.Time(0) )
         self.target_pose[0] = temp[0][0]
         self.target_pose[1] = temp[0][1]
