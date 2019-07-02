@@ -49,21 +49,21 @@ class AnalysisBuoy:
         # ratio : value of centimeter per pixels of picture and coordinate optical frame
 
         detail_line_1 = {
-            'size' : 60
-            , 'error_x' : 300 # cm
-            , 'ratio_x' : 20 # cm / pixels <percent>
-            , 'ratio_y' : 10 # cm / pixels <percent>
+            'size' : 10
+            , 'error_x' : 300.0 # cm
+            , 'ratio_x' : 60.0 # cm / pixels <percent>
+            , 'ratio_y' : 20.0 # cm / pixels <percent>
         }
 
         detail_line_2 = {
-            'size' : 20
-            , 'error_x' : 700 # cm
-            , 'ratio_x' : 60 # cm / pixels <percent>
-            , 'ratio_y' : 30 # cm / pixels <percent>
+            'size' : 2
+            , 'error_x' : 520.0 # cm
+            , 'ratio_x' : 200.0 # cm / pixels <percent>
+            , 'ratio_y' : 60.0 # cm / pixels <percent>
         }
 
-        self.rotation = Quaternion
-        self.rotation.set_euler( -0.5*math.pi , math.pi / 2 , 0)
+        self.rotation = Quaternion()
+        self.rotation.set_euler( -math.pi/2 , 0 , math.pi/2 )
         self.optical = [0 , 0 , 0] # Data in optical frame
         
         self.analysis = { # Data in robot frame
@@ -117,8 +117,8 @@ class AnalysisBuoy:
                 self.found = True
             self.center_x = raw_data.cx * 100
             self.center_y = raw_data.cy * 100
-            self.score = raw_data.score
-            self.area = raw_data.area
+            self.score = raw_data.score * 100
+            self.area = raw_data.area * 100
             self.analysis_picture()
 
         return result
@@ -126,7 +126,7 @@ class AnalysisBuoy:
     def echo_data( self ):
         print( "status of found : {:2d}".format( self.found ) )
         if( self.found ):
-            print( "RAW_DATA : {:6.3f} {:6.3f} {:6.3f} {6.3f}".format( self.center_x 
+            print( "RAW_DATA : {:6.3f} {:6.3f} {:6.3f} {:6.3f}".format( self.center_x 
                 , self.center_y 
                 , self.score 
                 , self.area ) )
@@ -139,7 +139,7 @@ class AnalysisBuoy:
 
     def analysis_picture( self ):
 
-        if( not self.found ):
+        if( ( not self.found ) or ( self.area < 0.001 ) ):
             self.analysis[ 'found' ] = False
             self.analysis[ 'x' ] = 0
             self.analysis[ 'y' ] = 0
@@ -147,15 +147,23 @@ class AnalysisBuoy:
         else:
             self.analysis[ 'found' ] = True 
 
-            self.optical[ 0 ] = ( ( self.center_x * self.analysis_parameter['x']['ratio'] )
-                + self.analysis_parameter['x']['size']
-            self.optical[ 1 ] = ( ( self.center_y * self.analysis_parameter['y']['ratio'] )
-                + self.analysis_parameter['y']['size']
-            self.optical[ 2 ] = ( ( self.area * self.analysis_parameter['z']['ratio'] )
-                + self.analysis_parameter['z']['size']
+#            print( repr( self.analysis_parameter ) )
 
-            ( self.analysis['x'] , self.analysis['y'] , self.analysis['z']) = 
-                ( self.rotation.rotation( 
+#            self.optical[ 0 ] = ( ( self.center_x * self.area 
+#                    * self.analysis_parameter['x']['ratio'] )
+#                + self.analysis_parameter['x']['offset'] )
+#            self.optical[ 1 ] = ( ( self.center_y * self.area 
+#                    * self.analysis_parameter['y']['ratio'] )
+#                + self.analysis_parameter['y']['offset'] )
+#            self.optical[ 2 ] = ( ( self.area * self.analysis_parameter['z']['ratio'] )
+#                + self.analysis_parameter['z']['offset'] )
+
+            self.optical[ 0 ] = self.center_x * 5
+            self.optical[ 1 ] = self.center_y * 3
+            self.optical[ 2 ] = ( self.area - 12 ) * 50
+
+            ( self.analysis['x'] , self.analysis['y'] , self.analysis['z'] ) = ( 
+                self.rotation.rotation( 
                     ( self.optical[0] , self.optical[1] , self.optical[2] , 0 ) ) ).vector[:3]
             # Use in tf broadcaster
-            self.broadcaster.quaternion( tuple( self.optical ) ) , ( 0 , 0 , 0 , 1 ) )
+            self.broadcaster.quaternion( tuple( self.optical ) , ( 0 , 0 , 0 , 1 ) )
