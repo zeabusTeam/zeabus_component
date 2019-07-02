@@ -94,7 +94,8 @@ class AnalysisBuoy:
         if( result ):
             if( raw_data.found != 1 ):
                 found = False
-            elif( ( raw_data.area < 0.0001 ) or  ( raw_data.score * 100  > 50 ) ):
+            elif( ( raw_data.area < 0.0001 ) or  ( raw_data.score * 100  < 50 ) ):
+#                print( "Abort (area : score )" + repr( ( raw_data.area , raw_data.score*100) ) )
                 found = False
             else:
                 found = True
