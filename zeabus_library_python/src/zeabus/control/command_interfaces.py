@@ -124,7 +124,7 @@ class CommandInterfaces:
 
     def get_state( self ):
 
-        temp = self.tf_listener.lookupTransform( "/odom" , "/base_link_target" , rospy.Time(0) )
+        temp = self.tf_listener.lookupTransform( "/odom" , "/base_link" , rospy.Time(0) )
         self.current_pose[0] = temp[0][0]
         self.current_pose[1] = temp[0][1]
         self.current_pose[2] = temp[0][2]
