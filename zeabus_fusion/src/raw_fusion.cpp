@@ -28,7 +28,7 @@
 //#define _PROCESS_
 //#define _BOUND_ZERO_
 #define _COLLECT_LOG_
-#define _RAW_DATA_
+//#define _RAW_DATA_
 //#define _TIME_COUNT_
 //#define _CONDITION_
 
