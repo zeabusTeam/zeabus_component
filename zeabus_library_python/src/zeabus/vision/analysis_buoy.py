@@ -24,6 +24,8 @@ from ..transformation.broadcaster import Broadcaster
 
 from ..math.quaternion import Quaternion
 
+from .analysis_constant import *
+
 from std_msgs.msg import String
 
 from zeabus_utility.srv import VisionBuoy
@@ -40,6 +42,10 @@ from zeabus_utility.srv import VisionBuoy
 class AnalysisBuoy:
 
     def __init__( self , child_frame_id = "base_buoy" ):
+
+        print( "CONSTANT : ( AREA , SCORE ) : ( {:8.5f} , {:8.5f})".format( BUOY_AREA 
+            , BUOY_SCORE) )
+
         rospy.loginfo( "Waiting service of /vision/buoy" )
         rospy.wait_for_service( "/vision/buoy" )
         self.call_vision_data = rospy.ServiceProxy( "/vision/buoy" , VisionBuoy )
@@ -94,8 +100,7 @@ class AnalysisBuoy:
         if( result ):
             if( raw_data.found != 1 ):
                 found = False
-            elif( ( raw_data.area < 0.0001 ) or  ( raw_data.score * 100  < 50 ) ):
-#                print( "Abort (area : score )" + repr( ( raw_data.area , raw_data.score*100) ) )
+            elif( ( raw_data.area < BUOY_AREA ) or  ( raw_data.score * 100  < BUOY_SCORE ) ):
                 found = False
             else:
                 found = True
