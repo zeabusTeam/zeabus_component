@@ -119,7 +119,7 @@ int main( int argv , char** argc )
     // Insert optional part param part
     static signed int frequency = 10;
     static std::string dvl_topic = "/sensor/dvl";
-    static std::string imu_topic = "/filter/imu";
+    static std::string imu_topic = "/sensor/imu";
     static std::string pressure_topic = "/filter/pressure";
     static double temp_RPY[3] = { 0 , 0 , 0 };
 
