@@ -166,7 +166,7 @@ class CommandInterfaces:
     def reset_state( self , roll = None, pitch = None):
 
         self.ever_sleep = False
-
+        self.update_target()
         self.get_state()
         self.control_command.target = tuple( self.current_pose )
         self.target_pose[:] = self.current_pose[:] # make sure will not copy pointer
@@ -174,7 +174,7 @@ class CommandInterfaces:
             self.target_pose[3] = roll
         if( pitch != None ):
             self.target_pose[4] = pitch
-        self.control_command.mask = self.tuple_true
+        self.control_command.mask = (True, True, True, True, True, True )
         self.send_command()
 
     # argument 3 yaw will mean you want to rotation will target yaw if that is true
@@ -185,6 +185,7 @@ class CommandInterfaces:
         movement_y = 0
 
         self.get_state()
+        self.update_target()
         if( target_yaw ):
             movement_x = ( (x * math.cos( self.target_pose[5] ) ) 
                 + ( y * math.cos( self.target_pose[5] + ( math.pi / 2 ) ) ) )
@@ -219,6 +220,7 @@ class CommandInterfaces:
     def relative_yaw( self, yaw , target_yaw = True ):
 
         self.ever_sleep = False
+        self.update_target()
 
         print( "Active relative yaw is {:6.3f}".format( yaw ) ) 
 
@@ -235,7 +237,7 @@ class CommandInterfaces:
 
         self.ever_sleep = False
 
-        print( "Active relative yaw is {:6.3f}".format( yaw ) ) 
+        print( "Active absolute yaw is {:6.3f}".format( yaw ) ) 
 
         self.target_pose[ 5 ] = zeabus_math.bound_radian( yaw )
 
@@ -245,6 +247,7 @@ class CommandInterfaces:
     def relative_z( self , z , target_z = True ):
 
         self.ever_sleep = False
+        self.update_target()
 
         print( "Active relative z is {:6.3f}".format( z ) ) 
 
@@ -260,7 +263,7 @@ class CommandInterfaces:
 
         self.ever_sleep = False
 
-        print( "Active absolute_z z is {:6.3f}".format( z ) ) 
+        print( "Active absolute z is {:6.3f}".format( z ) ) 
 
         self.target_pose[ 2 ] = z
         if( _COMMAND_INTERFACES_COMMAND_ ):
@@ -366,6 +369,7 @@ class CommandInterfaces:
             temp_data.append( ( run_command in data ) )
 
         # control_command will help you to reset all pose that you command to activate
+        self.target_pose[:] = self.current_pose[:]
         self.control_command.mask = tuple( temp_data )
         self.send_command()
 
