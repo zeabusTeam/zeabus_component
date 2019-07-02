@@ -45,6 +45,10 @@ class CommandInterfaces:
 
         self.pub_message = rospy.Publisher( "/mission/command", String, queue_size = 10 )
 
+        self.save_point = [0 , 0 , 0 , 0 , 0, 0]
+        self.force_command = ControlCommand() # This use only thruster command
+        self.pub_force = rospy.Publisher( "/control/thruster", ControlCommand, queue_size = 10 )
+
         self.current_state = AUVState() # Use to collect current state msg
 
         self.current_quaternion = Quaternion()
@@ -326,14 +330,45 @@ class CommandInterfaces:
         self.control_command.mask = tuple( temp_data )
         self.send_command()
 
-        self.master_call( self.control_command.mask ) 
+        self.master_call( ( True , True , True , True , True , True ) )
+
+    def force_xy( self, x, y, reset_distance = False ):
+        self.get_state()
+        if( reset_distance ):
+            self.save_point = self.current_pose
+        self.force_command.mask = (True, True, False, False, False, False)
+        self.force_command.target = ( x, y, 0, 0, 0, 0 )
+        self.pub_force.publish( self.force_command )
+        return math.sqrt(
+            math.pow( self.save_point[0] - self.current_pose[0] , 2 ) 
+            + math.pow( self.save_point[1] - self.current_pose[1] , 2 ) )
 
 if( __name__=="__main__"):
     rospy.init_node( "test_lib" )
     
     control = CommandInterfaces( "testing" )
+    print( "Command to depth of water" )
+
+    rate = rospy.Rate( 5 )
+
+    control.absolute_z( -1.5 )
+    print( "Waiting depth")
+    while( not control.check_z( 0.15 ) ):
+        rate.sleep()
+        
+    print( "Waiting yaw")
+    while( not control.check_yaw( 0.15 ) ):
+        rate.sleep()
+    
+    control.deactivate( ["x" , "y"] )
+    control.force_xy( 1 , 0 , True )
+
     while( not rospy.is_shutdown() ):
-        rospy.sleep( 0.5 )
-        control.update_target()
-        print( repr( control.target_pose ) )
-        print( "=========================================================")
+        rate.sleep()
+        distance = control.force_xy( 1 , 0 )
+        print( "Now distance is " + str( distance ) )
+        if( distance > 5 ):
+            break
+
+    control.activate( ["x" , "y"] ) 
+    print( "Finish" )
