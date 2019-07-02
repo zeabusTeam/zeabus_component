@@ -44,14 +44,11 @@ namespace single_thread
 
     bool GetAUVState::normal_call()
     {
-        (this->client_server).call( this->client_data );
-        *(this->ptr_data) = (this->client_data).response.auv_state;
-//        std::cout   << "Call finish and " 
-//                    << (this->ptr_data->data).pose.pose.orientation.x << " "
-//                    << (this->ptr_data->data).pose.pose.orientation.y << " "
-//                    << (this->ptr_data->data).pose.pose.orientation.z << " "
-//                    << (this->ptr_data->data).pose.pose.orientation.w << " "
-//                    <<"\n";
+        bool success = (this->client_server).call( this->client_data );
+        if( success )
+        {
+            *(this->ptr_data) = (this->client_data).response.auv_state;
+        }
         return true;
     }
 

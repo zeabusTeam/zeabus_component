@@ -93,6 +93,10 @@ int main( int argv , char** argc )
     tf::Quaternion target_quaternion(0 , 0 , 0 , 1); // use to collect target quaternion
     geometry_msgs::Point* ptr_target_position = &target_state.data.pose.pose.position; 
     geometry_msgs::Point* ptr_current_position = &current_state.data.pose.pose.position; 
+    current_state.data.pose.pose.orientation.x = 0;
+    current_state.data.pose.pose.orientation.y = 0;
+    current_state.data.pose.pose.orientation.z = 0;
+    current_state.data.pose.pose.orientation.w = 1;
     tf::Quaternion diff_quaternion(0 , 0 , 0 , 1); 
     // use to collect target_qua * current_qua.inv()
     std::array< double , 6 > buffer = {0, 0, 0, 0, 0, 0}; // will always target
