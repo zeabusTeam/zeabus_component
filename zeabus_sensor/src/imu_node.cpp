@@ -178,6 +178,9 @@ int main( int argv , char** argc )
 
 #ifdef _SETUP_TEMP_VARIABLE_
     tf::Quaternion temp_quaternion;
+#endif
+
+#ifdef _SUMMARY_
     double temp_RPY[3];
 #endif
 
