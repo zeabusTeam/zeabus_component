@@ -30,15 +30,6 @@ from std_msgs.msg import String
 
 from zeabus_utility.srv import VisionBuoy
 
-# Picutre have calibration before vision use them
-# I have design paramer is
-#       p1------------p2   <-- line_2
-#         \           |
-#          \          |
-#           \         |
-#            \        |
-#            p3       p4   <-- line_1
-
 class AnalysisBuoy:
 
     def __init__( self , child_frame_id = "base_buoy" ):
@@ -50,10 +41,6 @@ class AnalysisBuoy:
         rospy.wait_for_service( "/vision/buoy" )
         self.call_vision_data = rospy.ServiceProxy( "/vision/buoy" , VisionBuoy )
         self.rate = rospy.Rate( 6 )
-
-        # size is area of picture
-        # error_x : is distance estimate from size
-        # ratio : value of centimeter per pixels of picture and coordinate optical frame
 
         self.result = {
             'found' : False
