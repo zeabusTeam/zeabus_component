@@ -53,7 +53,7 @@ class AnalysisGate:
         result = False
 
         try:
-            raw_data = self.call_vision_data( String("") , String("") )
+            raw_data = self.call_vision_data()
             result = True
         except rospy.ServiceException , e :
             rospy.logfatal( "Service call gate failed : %s" , e )
@@ -65,6 +65,7 @@ class AnalysisGate:
                 self.result['right_x'] = raw_data.x_right * 100
                 self.result['center_x'] = raw_data.cx1 * 100
                 self.center_y = raw_data.cy1 * 100
+                self.analysis_picture()
             else:
                 self.result['found'] = False
         else:
@@ -88,8 +89,8 @@ class AnalysisGate:
             self.result['length_x'] = self.result['right_x'] - self.result[ 'left_x' ]
             self.result['distance'] = ( ( ( GATE_LENGTH - self.result['length_x'] ) 
                 * GATE_RATIO ) + GATE_NEAR )
-            self.broadcaster.euler( ( ( self.result['center_x'] / 100 ) * 3 
-                    , ( self.center_y / 100  ) * 3 
-                    , -1 * self.result['distance'] ) 
+            self.broadcaster.euler( ( ( self.result['center_x'] / 100 ) * 1.5 
+                    , ( self.center_y / 100  ) * 1.5 
+                    , -1.0 * self.result['distance'] ) 
                 , 0 , 0 , 0 )
         
