@@ -286,7 +286,7 @@ class CommandInterfaces:
         self.get_state()
         temp_x = abs( self.target_pose[0] - self.current_pose[0] ) 
         temp_y = abs( self.target_pose[1] - self.current_pose[1] ) 
-        if( temp_x < error_x and temp_y < error_y ):
+        if( ( temp_x < error_x ) and ( temp_y < error_y ) ):
             result = True
         print( "Check xy temp ({:6.2f} , {:6.2f}) : error ok ( {:6.2f} , {:6.2f})".format(
             temp_x , temp_y , error_x , error_y ) )
