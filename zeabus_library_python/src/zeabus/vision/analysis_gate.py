@@ -45,6 +45,10 @@ class AnalysisGate:
             ,'distance' : 0 # distance is calculate estimate for length of x
         }
 
+        self.center_y = 0
+
+        self.broadcaster = Broadcaster( "front_camera_optical" , child_frame_id )
+
     def call_data( self ):
         result = False
 
@@ -58,7 +62,9 @@ class AnalysisGate:
             if( raw_data.found == 1 ):
                 self.result['found'] = True
                 self.result['left_x'] = raw_data.x_left * 100
-                self.result['right'] = raw_data.x_right * 100
+                self.result['right_x'] = raw_data.x_right * 100
+                self.result['center_x'] = raw_data.cx1 * 100
+                self.center_y = raw_data.cy1 * 100
             else:
                 self.result['found'] = False
         else:
@@ -82,4 +88,8 @@ class AnalysisGate:
             self.result['length_x'] = self.result['right_x'] - self.result[ 'left_x' ]
             self.result['distance'] = ( ( ( GATE_LENGTH - self.result['length_x'] ) 
                 * GATE_RATIO ) + GATE_NEAR )
+            self.broadcaster.euler( ( ( self.result['center_x'] / 100 ) * 3 
+                    , ( self.center_y / 100  ) * 3 
+                    , -1 * self.result['distance'] ) 
+                , 0 , 0 , 0 )
         
