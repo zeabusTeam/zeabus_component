@@ -30,7 +30,7 @@ int main( int argv , char** argc )
 {
     zeabus::ros_interfaces::SingleThread imu_node( argv , argc , "imu_capture_gyro_bias" );
 
-    std::string full_path_port = "/dev/microstrain/3dm_gx5_45_0000__6251.65901";
+    std::string full_path_port = "/dev/microstrain/3dm_gx5_45_0000__6251.65903";
 
     zeabus::sensor::IMU::Interface imu( full_path_port , 100 );
 
