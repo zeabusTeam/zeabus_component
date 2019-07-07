@@ -141,6 +141,7 @@ namespace IMU
 
     bool Interface::auto_set_gyro_bias( bool check_value )
     {
+        this->resume();
         std::cout   << "Start to capture gyro bias\n";
         bool result = false;
         unsigned int num_check;
@@ -356,7 +357,7 @@ namespace IMU
                 }
                 else
                 {
-                    if( this->read_reply( LORD_MICROSTRAIN::COMMAND::SENSOR::DESCRIPTOR ) )
+                    if( this->read_reply( LORD_MICROSTRAIN::COMMAND::SENSOR::DESCRIPTOR , 10) )
                     {
                         if( this->check_sum() )
                         {
@@ -370,7 +371,6 @@ namespace IMU
                 }
             }
         } // condition about save to startup setting
-        this->resume();
         return result;
     }
 

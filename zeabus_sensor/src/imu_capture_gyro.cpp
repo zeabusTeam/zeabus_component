@@ -56,26 +56,7 @@ int main( int argv , char** argc )
 				Asio::serial_port_base::stop_bits::one ) );
 	    (void)imu.set_option_port( Asio::serial_port_base::character_size( (unsigned char) 8 ) );
     }
-/*
-    round = 0; // set init value counter is 0 for start process
-    while( ptr_node_handle->ok() )
-    {
-        round++;
-        if( ! imu.set_idle() ) // try to set imu to idle state
-        {
-            std::cout   << "round " << round << " : Failure command set idle\n";
-        }
-        else
-        {
-            std::cout   << "round " << round << " : Success command set idle\n\n";
-            break; // jump success this process
-        }
-        if( round == (limit_round) )
-        {
-            ros::shutdown();
-        }
-    }
-*/
+    imu.resume();
     bool result = imu.auto_set_gyro_bias( true );
     if( result )
     {
