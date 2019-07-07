@@ -27,11 +27,11 @@ namespace z_parameter
 
     // Error is range of error to decision 0 1 2 3 by use 3 value. 
     // Data is vector type
-    const std::array< double , 3 > ERROR_RULE = { 0.1 , 1 , 3 };
+    const std::array< double , 3 > ERROR_RULE = { 0.005 , 0.001 , 0.1 };
     
     // Diff is range to decision about velocity error will be 0 1 2 3 by use 3 value
     // Data is vertor type
-    const std::array< double , 3 > DIFF_RULE = { 0.00001 , 0.10 , 0.20 };
+    const std::array< double , 3 > DIFF_RULE = { 0.00001 , 0.001 , 0.01 };
     
     // Force is range to decision now you have active force what range
     // member 3 (indent 0) use to decision that is limit of force we can do
