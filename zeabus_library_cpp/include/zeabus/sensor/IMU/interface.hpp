@@ -1,20 +1,32 @@
-// FILE         : connector.hpp
+// FILE         : interface.hpp
 // AUTHOR       : Supasan Komonlit
 // CREATE DATE  : 2019, MARCH, 25
+// MAINTAINER   : K.Supasan
+
+#include    <thread> // import sleep_for
+
+#include    <chrono> // import std::chrono::seconds
+
+#include    <iostream> // We want to use std::cin
+
+#include    <zeabus/convert/bytes.hpp>
 
 #include    <zeabus/sensor/IMU/packet.hpp>
 
-#include    <zeabus/sensor/IMU/LORD_IMU_COMMUNICATION.hpp>
-
 #include    <zeabus/serial/synchronous_port.hpp>
+
+#include    <zeabus/sensor/IMU/LORD_IMU_COMMUNICATION.hpp>
 
 // Macro detail will print data for your purpose
 //      _PRINT_DATA_CONNECTION_ for print packet command
 //      _CHECK_MEMORY_ for print detail memory about packet <vector in c++ language>
 //      _ERROR_TYPE_ for data information if return false why we return that
 
-#ifndef _ZEABUS_SENSOR_IMU_CONNECTOR_HPP__
-#define _ZEABUS_SENSOR_IMU_CONNECTOR_HPP__
+// Reference
+//  ref01   : https://en.cppreference.com/w/cpp/container/vector
+
+#ifndef _ZEABUS_SENSOR_IMU_INTERFACE_HPP__
+#define _ZEABUS_SENSOR_IMU_INTERFACE_HPP__
 
 namespace zeabus
 {
@@ -25,10 +37,10 @@ namespace sensor
 namespace IMU
 {
 
-    class Connector : public Packet , public zeabus::serial::SynchronousPort
+    class Interface : public Packet , public zeabus::serial::SynchronousPort
     {
         public:
-            Connector( std::string port_name = "" , unsigned int size = 100 );
+            Interface( std::string port_name = "" , unsigned int size = 100 );
 
             bool set_idle(); // this command will stop stream and set imu ready for setting
             bool ping(); // ping command
@@ -48,6 +60,10 @@ namespace IMU
             bool read_stream(); // this command we will read data for collecting stream DATA
                     // In mode IMU data. WARNING We think this function canread
 
+            // This command to set new value from capture gyro bias
+            // Can study on page 69 for setup data and page 70 for capture 
+            bool auto_set_gyro_bias( bool check_value = false);
+
         protected:
             // we split to 2 variable because our individual member is unsigned char
             unsigned char front_rate;
@@ -55,7 +71,7 @@ namespace IMU
 
             void init_header();
 
-            bool read_reply( unsigned char descriptor_byte , unsigned int max_round = 1 );
+            bool read_reply( unsigned char descriptor_byte , unsigned int max_round = 5 );
 
         private:
             std::vector<unsigned char> reader_buffer;
@@ -67,4 +83,4 @@ namespace IMU
 
 }
 
-#endif
+#endif // _ZEABUS_SENSOR_IMU_INTERFACE_HPP__
