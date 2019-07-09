@@ -303,6 +303,7 @@ int main( int argv , char** argc )
 
     // Below step we want to ensure in case we not use imu. Imu will stop process data stream
     round = 0; // set init value counter is 0 for start process
+    std::cout   << "IMU will set idle before end\n";
     while( imu.port_is_open() && round << limit_round) 
     {
         round++;

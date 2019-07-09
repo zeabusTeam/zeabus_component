@@ -122,7 +122,7 @@ int main( int argv , char** argc )
     fuzzy_x.set_fuzzification_error( &zeabus_control::fuzzy::x_parameter::ERROR_RULE );
     fuzzy_x.set_fuzzification_diff( &zeabus_control::fuzzy::x_parameter::DIFF_RULE );
     fuzzy_x.set_fuzzification_force( &zeabus_control::fuzzy::x_parameter::FORCE_RULE );
-    fuzzy_x.set_fuzzy_rule( &zeabus_control::fuzzy::MASTER_RULE );
+    fuzzy_x.set_fuzzy_rule( &zeabus_control::fuzzy::x_parameter::FUZZY_RULE );
     fuzzy_x.set_defuzzification_rule( &zeabus_control::fuzzy::x_parameter::DEFUZZY_RULE );
 
     // set y axis
@@ -130,7 +130,7 @@ int main( int argv , char** argc )
     fuzzy_y.set_fuzzification_error( &zeabus_control::fuzzy::x_parameter::ERROR_RULE );
     fuzzy_y.set_fuzzification_diff( &zeabus_control::fuzzy::x_parameter::DIFF_RULE );
     fuzzy_y.set_fuzzification_force( &zeabus_control::fuzzy::x_parameter::FORCE_RULE );
-    fuzzy_y.set_fuzzy_rule( &zeabus_control::fuzzy::MASTER_RULE );
+    fuzzy_y.set_fuzzy_rule( &zeabus_control::fuzzy::x_parameter::FUZZY_RULE );
     fuzzy_y.set_defuzzification_rule( &zeabus_control::fuzzy::x_parameter::DEFUZZY_RULE );
 
     // set z axis
@@ -162,7 +162,8 @@ int main( int argv , char** argc )
     fuzzy_yaw.set_fuzzification_error( &zeabus_control::fuzzy::yaw_parameter::ERROR_RULE );
     fuzzy_yaw.set_fuzzification_diff( &zeabus_control::fuzzy::yaw_parameter::DIFF_RULE );
     fuzzy_yaw.set_fuzzification_force( &zeabus_control::fuzzy::yaw_parameter::FORCE_RULE );
-    fuzzy_yaw.set_fuzzy_rule( &zeabus_control::fuzzy::MASTER_RULE );
+//    fuzzy_yaw.set_fuzzy_rule( &zeabus_control::fuzzy::MASTER_RULE );
+    fuzzy_yaw.set_fuzzy_rule( &zeabus_control::fuzzy::yaw_parameter::FUZZY_RULE );
     fuzzy_yaw.set_defuzzification_rule( &zeabus_control::fuzzy::yaw_parameter::DEFUZZY_RULE );
 
     node_control_fuzzy.spin();
@@ -235,6 +236,7 @@ int main( int argv , char** argc )
             }
             else
             {
+                (force.target)[ run ] = 0;
                 (force.mask)[ run ] = false;
                 all_fuzzy[ run ]->clear_system();
             }

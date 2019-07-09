@@ -118,14 +118,14 @@ class ThrusterMapper:
         ])
 
         self.distance = numpy.array([
-            [0.332, 0.2202, -0.023],    # thruster id 0
-            [0.332, -0.2202, -0.023],   # thruster id 1
-            [-0.332, 0.2202, -0.023],   # thruster id 2
-            [-0.332, -0.2202, -0.023],  # thruster id 3
-            [0.3536, 0.3536, -0.023],   # thruster id 4
-            [0.3536, -0.3536, -0.023],  # thruster id 5
-            [-0.3536, 0.3536, -0.023],  # thruster id 6
-            [-0.3536, -0.3536, -0.023]  # thruster id 7
+            [0.44, 0.32, -0.023],    # thruster id 0
+            [0.44, -0.32, -0.023],   # thruster id 1
+            [-0.44, 0.32, -0.023],   # thruster id 2
+            [-0.44, -0.32, -0.023],  # thruster id 3
+            [0.46, 0.34, -0.023],   # thruster id 4
+            [0.46, -0.34, -0.023],  # thruster id 5
+            [-0.46, 0.34, -0.023],  # thruster id 6
+            [-0.46, -0.34, -0.023]  # thruster id 7
         ])
 
         # this variable will show about momentum to calculate about rotatio by euler

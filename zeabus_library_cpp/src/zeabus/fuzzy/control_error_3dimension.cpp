@@ -149,6 +149,7 @@ namespace fuzzy
                 (this->message_pub).force.fuzzy_data + 3 )).at(
                     (this->message_pub).diff.fuzzy_data + 3 ).at(
                         (this->message_pub).error.fuzzy_data + 3 );
+        std::cout << "original data of output " << (this->message_pub).output.fuzzy_data << "\n";
     }
 
     void ControlError3Dimension::defuzzification()
@@ -157,18 +158,6 @@ namespace fuzzy
         short int temp_fuzzy = abs( ( this->message_pub ).output.fuzzy_data );
         ROS_WARN_COND( temp_fuzzy == 6 , "%s I thinsk it impossible case" 
             , this->my_name.c_str() );
-
-        if( fabs( (this->message_pub).force.crisp_data) > this->ptr_force_rule->at( 3 ) )
-        {
-            if( ( signbit( ( (this->message_pub).force.fuzzy_data ) ) 
-                    && signbit( (this->message_pub).output.fuzzy_data ) )
-                || ( !( signbit( (this->message_pub).force.fuzzy_data ) 
-                    || signbit( (this->message_pub).output.fuzzy_data ) ) ) ) 
-            {
-                ROS_ERROR( "%s It over force I can't add force more" , (this->my_name).c_str() );
-                (this->message_pub).output.fuzzy_data = 0;
-            }
-        }
 
         if( temp_fuzzy == 0 )
         {

@@ -260,6 +260,18 @@ int main( int argv , char** argc )
             if( master.mask.at( run ) == false )
             {
                 (error.mask)[run] = false;
+                if( run == 0 )
+                {
+                    ptr_target_position->x = ptr_current_position->x;
+                }
+                else if( run == 1 )
+                {
+                    ptr_target_position->y = ptr_current_position->y;
+                }
+                else
+                {
+                    ;
+                }
             }
         }
         ptr_mutex_master->unlock();

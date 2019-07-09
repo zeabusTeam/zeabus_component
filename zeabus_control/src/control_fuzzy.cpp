@@ -199,7 +199,7 @@ int main( int argv , char** argc )
         ptr_mutex_data->unlock();
         for( unsigned int run = start_run ; run <6 ; run++ )
         {
-            if( (temp.mask)[run] && ( run != 3 ) && ( run != 4 ))
+            if( (temp.mask)[run] && ( run == 2 ) && ( run != 4 ))
             {
                 (force.target)[ run ] = fuzzy_logic[ run ].push( (temp.target)[run] );
                 (force.mask)[run] = true;

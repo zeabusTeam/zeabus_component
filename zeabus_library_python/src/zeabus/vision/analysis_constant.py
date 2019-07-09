@@ -13,6 +13,6 @@ BUOY_SCORE = 50 # Range is 0 - 100
 BUOY_AREA = 0.0001 # Range is 0 - 1 but this mission have area lowest
 
 # Constant for estimate gate value
-GATE_NEAR = 4.0 # Distannce between robot and lenth when length is max ( 200 )
-GATE_RATIO = ( 1.0 / 100.0 ) * 2.0 # Ratio of distance per legth
+GATE_NEAR = 2.0 # Distannce between robot and lenth when length is max ( 200 )
+GATE_RATIO = 2.0 / 100 # Ratio of distance per legth
 GATE_LENGTH = 200.0 # Ditance of x length range 0 to 200
