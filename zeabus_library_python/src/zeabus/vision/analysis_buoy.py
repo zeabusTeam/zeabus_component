@@ -58,16 +58,19 @@ class AnalysisBuoy:
 
         self.found = False
         self.can_call = False
-        count = 0 
+        count = 0
+        count_found = 0 
         while( count < 5 ):
             count += 1
             temp_result = self.individual_call()
             if( temp_result ):
-                self.found = True
+                count_found += 1 
                 self.buffer_center_x.append( self.center_x )
                 self.buffer_center_y.append( self.center_y )
                 self.buffer_score.append( self.score )
                 self.buffer_area.append( self.area )
+                if( count_found == BUOY_MINIMUM_FOUND ):
+                    self.found = True
 
         self.analysis_picture()
 
