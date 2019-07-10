@@ -14,6 +14,6 @@
 			--duration=10m
 			--chunksize=50000
             -a
-            -x (?:/vision/front/image_)(((mono|proc|raw|color)(.*))|(rect|rect_color|rect/(.*))|(rect_color/(compressed((/(.*)|D(.*)))|theora(.*))))|(?:/ueye_cam)(.*)|(?:/vision/bottom/image_raw)($|/compressed(D(.*)|/(.*))|/theora(.*))" >
+            -x (/vision/miss(.*))|(?:/vision/front/image_)(((mono|proc|raw|color)(.*))|(rect|rect_color|rect/(.*))|(rect_color/(compressed((/(.*)|D(.*)))|theora(.*))))|(?:/ueye_cam)(.*)|(?:/vision/bottom/image_raw)($|/compressed(D(.*)|/(.*))|/theora(.*))" >
     </node>
 </launch>
