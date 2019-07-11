@@ -372,6 +372,16 @@ class CommandInterfaces:
             math.pow( self.save_point[0] - self.current_pose[0] , 2 ) 
             + math.pow( self.save_point[1] - self.current_pose[1] , 2 ) )
 
+    def force_yaw( self , yaw ):
+        self.force_command.mask = (False, False, False, False, False, True )
+        self.force_command.target = (0, 0, 0, 0, 0, yaw )
+        self.pub_force.publish( self.force_command )
+
+    def force_xy_yaw( self , x , y , yaw ):
+        self.force_command.mask = (True, True, False, False, False, True )
+        self.force_command.target = (x, y, 0, 0, 0, yaw )
+        self.pub_force.publish( self.force_command )
+
     def force_false( self ):
         self.force_command.mask = (False, False, False, False, False, False)
         self.pub_force.publish( self.force_command )

@@ -194,10 +194,12 @@ class ThrusterMapper:
         temp_time = ( current_time - self.control_stamp ).to_sec()
 
         self.control_lock.acquire( ) #start critical section of control data
+        use_control = False
         if( temp_time > constant.THRUSTER_MAPPER_TIME_OUT ):
             control_data.mask = constant.FALSE_MASK
         else:
             control_data = self.control_message 
+            use_control = True
         self.control_lock.release() # end critical section of control data
 
         # First process is about get value from command of mission and control
@@ -210,7 +212,9 @@ class ThrusterMapper:
                     print("id {:2d} choose mission data is {:6.2f}".format( 
                         run
                         , mission_data.target[run] ) )
-            elif( control_data.mask[ run ] ):
+                if( ( run < 3 ) and ( not control_data.mask[ run ] ) ):
+                    temp_force[ run ] += control_data.target[ run ]
+            elif( use_control ):
                 temp_force.append( control_data.target[ run ] )
                 if( constant.THRUSTER_MAPPER_CHOOSE_PROCESS ):
                     print( "id {:2d} choose control data is {:6.2f}".format( 
