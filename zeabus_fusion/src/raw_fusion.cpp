@@ -7,28 +7,42 @@
 //  _SUMMARY_       : This mean will show current data of robot by all sensor include position
 //  _RAW_DATA_      : This macro will show you raw data to get from filter
 //  _PROCESS_       : This macro use you can know about process of this code
-//  _DELAY_DVL_     : This use when you worry about dvl have low speed
 //  _BOUND_ZERO_    : This use when you think dobuble position zero isn't ok we will bound zero
 //  _COLLECT_LOG_   : This use when you want to colllect log of data input & output this node
+//  _TIME_COUNT_    : This use when you want to know about time to call all data
+//  _CONDITION_     : This use when you want to see calculate type
 
 // README
 //  This will you data from 3 node to fusion but use only simple equation to fusion data
 //  This node response only calculating data If have same time over this file will stop to send
 //  new data to every node
 //  For send data state we will don't use object class we mangae on this code
+//  ========================= UPDATE VERSION DETAIL ON 2019 06 05 ===============================
+//  Now Data about status will only tell you about your data have come form sensor or not
+//  For Decision about use or reset. This node will not reponse to decide about that
 
 // REFERENCE
 
 // MACRO SET
-#define _SUMMARY_
+//#define _SUMMARY_
 //#define _PROCESS_
-#define _DELAY_DVL_
 //#define _BOUND_ZERO_
 #define _COLLECT_LOG_
+//#define _RAW_DATA_
+//#define _TIME_COUNT_
+//#define _CONDITION_
 
 // MACRO CONDITION
 #ifdef _RAW_DATA_
     #undef _SUMMARY_
+#endif
+
+#ifdef _SUMMARY_
+    #define _CONDITION_
+#endif
+
+#ifdef _PROCESS_
+    #define _TIME_COUNT_
 #endif
 
 #include    <cmath>
@@ -40,6 +54,8 @@
 #include    <iostream>
 
 #include    <ros/ros.h>
+
+#include    <ros/console.h>
 
 #include    <zeabus/time.hpp>
 
@@ -87,9 +103,10 @@ int main( int argv , char** argc )
     zeabus::ros_interfaces::SingleThread node_sensor_fusion( argv , argc , "sensor_fusion" );
 
     std::shared_ptr< ros::NodeHandle > ptr_node_handle = 
-            std::make_shared< ros::NodeHandle >("");
+        std::make_shared< ros::NodeHandle >("");
 
-    ros::Publisher fusion_publisher = ptr_node_handle->advertise<zeabus_utility::AUVState>("/fusion/auv_state", 1);
+    ros::Publisher fusion_publisher = 
+        ptr_node_handle->advertise<zeabus_utility::AUVState>("/fusion/auv_state", 1);
 
     std::shared_ptr< std::mutex > dvl_mutex = std::make_shared< std::mutex >();
     std::shared_ptr< std::mutex > imu_mutex = std::make_shared< std::mutex >();
@@ -100,20 +117,26 @@ int main( int argv , char** argc )
     //  use thread for server only one.
 
     // Insert optional part param part
-    static signed int frequency = 30;
+    static signed int frequency = 10;
     static std::string dvl_topic = "/sensor/dvl";
-    static std::string imu_topic = "/filter/imu";
+    static std::string imu_topic = "/sensor/imu";
     static std::string pressure_topic = "/filter/pressure";
+#ifdef _SUMMARY_
     static double temp_RPY[3] = { 0 , 0 , 0 };
-    static tf::Quaternion offset_quaternion;;
-    offset_quaternion.setRPY( temp_RPY[0] , temp_RPY[1] , temp_RPY[2] );
+#endif
 
     // Second part of variable to use in this pid
     static zeabus_utility::HeaderFloat64 pressure_data;
     static sensor_msgs::Imu imu_data;
+    imu_data.orientation.x = 0;
+    imu_data.orientation.y = 0;
+    imu_data.orientation.z = 0;
+    imu_data.orientation.w = 1;
     static geometry_msgs::Vector3Stamped dvl_data;
     static ros::Time dvl_stamp = ros::Time::now();
     static ros::Time imu_stamp = ros::Time::now();
+    static bool help_imu = false;
+    static bool help_dvl = false;
     static ros::Time pressure_stamp = ros::Time::now();
     static unsigned char status_data = 0b000U;
     static zeabus_utility::AUVState service_data; // this use in server we will lock this
@@ -138,10 +161,6 @@ int main( int argv , char** argc )
     static geometry_msgs::Vector3 robot_distance;
     static geometry_msgs::Vector3 world_distance;
     // In the future we will function to reset this
-#ifdef _DELAY_DVL_
-    static unsigned int count_dvl = 5;
-#endif
-    static unsigned int count_imu = 0;
     static tf::Quaternion temp_quaternion;
     // But first time is only about dvl time_stamp
 
@@ -167,29 +186,36 @@ int main( int argv , char** argc )
 
     ros::Rate rate( frequency );
     // Init data first time
-    service_data.data.header.frame_id = "base_link";
+    service_data.data.header.frame_id = "odom";
+    service_data.data.child_frame_id = "base_link";
     service_data.data.twist.twist.linear.x = 0;
     service_data.data.twist.twist.linear.y = 0;
     service_data.data.twist.twist.linear.z = 0;
     temp_data.data.pose.pose.position.x = 0;
     temp_data.data.pose.pose.position.y = 0;
+    temp_data.data.pose.pose.orientation.x = 0;
+    temp_data.data.pose.pose.orientation.y = 0;
+    temp_data.data.pose.pose.orientation.z = 0;
+    temp_data.data.pose.pose.orientation.w = 1;
+    service_data.data.pose = temp_data.data.pose;
     node_sensor_fusion.spin();
+
     while( ptr_node_handle->ok() )
     {
         rate.sleep();
 #ifdef _SUMMARY_
         zeabus::escape_code::clear_screen();
 #endif        
-#ifdef _PROCESS_
+#ifdef _TIME_COUNT_
         std::cout   << "Time start call : " << zeabus::ros_interfaces::time::string() << "\n";
-#endif // _PROCESS_
+#endif // _TIME_COUNT_
 
         client_data.all_call(); 
         client_data.thread_join();
 
-#ifdef _PROCESS_
+#ifdef _TIME_COUNT_
         std::cout   << "Time end call : " << zeabus::ros_interfaces::time::string() << "\n";
-#endif // _PROCESS_
+#endif // _TIME_COUNT_
 
 #ifdef _RAW_DATA_
         std::cout   << "DVL data time : " << dvl_data.header.stamp.sec << "."
@@ -199,7 +225,7 @@ int main( int argv , char** argc )
         std::cout   << "IMU data time : " << imu_data.header.stamp.sec << "."
                     << imu_data.header.stamp.nsec << "\n"
                     << "x : " << imu_data.orientation.x << " y : " << imu_data.orientation.y
-                    << " z : " << imu_data.orientation.z << " w : " << imu_data.orientation.z 
+                    << " z : " << imu_data.orientation.z << " w : " << imu_data.orientation.w 
                     << "\n";
         std::cout   << "DEPTH data time : " << pressure_data.header.stamp.sec << "."
                     << pressure_data.header.stamp.nsec << " data is "
@@ -212,57 +238,55 @@ int main( int argv , char** argc )
         // DVL CHECK
         if( dvl_stamp != dvl_data.header.stamp )
         {
+            dvl_status( true );
             dvl_stamp = dvl_data.header.stamp;
             temp_data.data.twist.twist.linear.x = 1.0*dvl_data.vector.x;
             temp_data.data.twist.twist.linear.y = 1.0*dvl_data.vector.y;
             temp_data.data.twist.twist.linear.z = 1.0*dvl_data.vector.z;
-#ifdef _PROCESS_
-            std::cout   << "Update linear_velocity!\n";
-#endif // _PROCESS_
-#ifdef _DELAY_DVL_
-            count_dvl = 0;
-#endif // _DELAY_DVL_
+            help_dvl = true;
+        }
+        else if( help_dvl )
+        {
+            temp_data.data.twist.twist.linear.x = 1.0*dvl_data.vector.x;
+            temp_data.data.twist.twist.linear.y = 1.0*dvl_data.vector.y;
+            temp_data.data.twist.twist.linear.z = 1.0*dvl_data.vector.z;
+            help_dvl = false;
         }
         else
         {
-#ifdef _DELAY_DVL_
-            // we worry about data dvl doesn't fast to get new data
-            count_dvl++;
-#else
+            dvl_status( false );
             status_data &= 0b110U; // bit DVL failure
-#endif
         }
 
         // IMU CHECK
         if( imu_stamp != imu_data.header.stamp )
         {
+            imu_status( true );
             imu_stamp = imu_data.header.stamp;
             temp_data.data.twist.twist.angular = imu_data.angular_velocity; 
-#ifdef _PROCESS_
-            std::cout   << "Update angular_velocity!\n";
-#endif // _PROCESS_
-            count_imu = 0;
+            help_imu = true;
         }
-        else if( count_imu < 3 )
-        {   // We sure imu should have new data
-            count_imu++;
+        else if( help_imu )
+        {
+            help_imu = false;
         }
         else
         {
+            imu_status( false );
             status_data &= 0b101U; // bit IMU failure 
         }
 
         // pressure check
         if( pressure_stamp != pressure_data.header.stamp )
         {
-#ifdef _PROCESS_
-            std::cout   << "Update DEPTH!\n";
-#endif
+            pressure_status( true );
+            pressure_stamp = pressure_data.header.stamp;
             temp_data.data.pose.pose.position.z = (pressure_data.data * -1);
         }
         else
         {
-            status_data &= 0b011; // bit pressure failure
+            pressure_status( false );
+            status_data &= 0b011U; // bit pressure failure
         }
 
         // Next we will rotation imu data
@@ -270,7 +294,6 @@ int main( int argv , char** argc )
         {
             zeabus::ros_interfaces::convert::quaternion_tf( &(imu_data.orientation) 
                     , &temp_quaternion );
-            temp_quaternion = offset_quaternion * temp_quaternion ;
             tf_data.setRotation( temp_quaternion );
 #ifdef _SUMMARY_
             tf::Matrix3x3( temp_quaternion ).getRPY( temp_RPY[0], temp_RPY[1], temp_RPY[2] );
@@ -280,20 +303,16 @@ int main( int argv , char** argc )
             // data orientation of robot
             zeabus::ros_interfaces::convert::tf_quaternion( &temp_quaternion 
                     , &(temp_data.data.pose.pose.orientation ) );
-#ifdef _DELAY_DVL_
-            if( count_dvl > 5 )
-            {
-                std::cout   << zeabus::escape_code::bold_red << "FATAL! DVL Lose data\n"
-                            << zeabus::escape_code::normal_white;     
-                status_data &= 0b110;
-            }
-#else
+
             if( (status_data & 0b001) == 0 )
             {
+#ifdef _CONDITION_
                 std::cout   << zeabus::escape_code::bold_red << "FATAL! DVL lose data\n"
                             << zeabus::escape_code::normal_white;
-            }
-#endif
+#else
+                ;
+#endif // _CONDITION_
+            } // condition dvl have lose data
             else
             {
                 robot_distance.x = ( service_data.data.twist.twist.linear.x 
@@ -303,6 +322,7 @@ int main( int argv , char** argc )
                 robot_distance.z = ( service_data.data.twist.twist.linear.z 
                         + temp_data.data.twist.twist.linear.z ) / ( frequency * 2 );
                 rotation_linear( &robot_distance , &world_distance , &temp_quaternion );
+
 #ifdef _BOUND_ZERO_
                 if( abs(world_distance.x) < 1 )
                 {
@@ -320,15 +340,17 @@ int main( int argv , char** argc )
                             << robot_distance.y << "\nworld_distance x: y (mm) <---> " 
                             << world_distance.x << " : " << world_distance.y << std::endl;
 #endif // _SUMMARY_ 
-            }
-        }
+            } // condition dvl have new data
+        } // condition imu have new data
         else
         {
+#ifdef _CONDITION_
             std::cout   << zeabus::escape_code::bold_margenta
                         << "condition imu didn't ok\n"
                         << zeabus::escape_code::normal_white;
+#endif // _CONDITION_
             status_data &= 0b110;
-        }
+        } // condition imu have lose data
 #ifdef _SUMMARY_
         std::cout   << "ROBOT Position < x , y , z > : < " 
                     << temp_data.data.pose.pose.position.x << " , "
@@ -343,24 +365,31 @@ int main( int argv , char** argc )
         broadcaster.sendTransform( tf::StampedTransform( tf_data
                 , ros::Time::now() 
                 , "odom"
-                , "base_link_robot" ) );
+                , "base_link" ) );
 
+        // Updated data have to acquire lock before write new data
         ptr_mutex_data->lock();
         service_data.data.header.stamp = ros::Time::now();
         service_data.data.pose = temp_data.data.pose;
         service_data.data.twist = temp_data.data.twist;
         service_data.status = status_data;
         ptr_mutex_data->unlock();
-        fusion_publisher.publish(service_data);
+        // Publish data which same data of service
+        fusion_publisher.publish( service_data );
+
 #ifdef _COLLECT_LOG_
         log_file.logging( &service_data );
 #endif // _COLLECT_LOG_
-    }
+
+    } //  ROS Loop 
+
     ros::shutdown();
+
     node_sensor_fusion.join();
 
 #ifdef _COLLECT_LOG_
     log_file.close();
 #endif
 
+    return 0;
 }

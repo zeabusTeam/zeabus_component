@@ -1,0 +1,21 @@
+#!/usr/bin/env python2
+# FILE			: constant.py
+# AUTHOR		: K.Supasan
+# CREATE ON		: 2019, July 10 (UTC+0)
+# MAINTAINER	: K.Supasan
+
+# README
+
+# REFERENCE
+
+COMMAND_PRINT_ALL_ = False
+COMMAND_PRINT_CHECK_ = True
+COMMAND_PRINT_ORDER_ = False
+COMMAND_PRINT_ECHO_ = True
+COMMAND_PRINT_FORCE_ = False
+
+if( COMMAND_PRINT_ALL_ ):
+    COMMAND_PRINT_CHECK_ = True
+    COMMAND_PRINT_ORDER_ = True
+    COMMAND_PRINT_ECHO_ = True
+    COMMAND_PRINT_FORCE_ = True

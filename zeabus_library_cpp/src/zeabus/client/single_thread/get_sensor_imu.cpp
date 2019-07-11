@@ -44,19 +44,24 @@ namespace single_thread
 #ifdef _CALL_PROCESS_
             std::cout   << "Call data from IMU\n";
 #endif
-            (this->client_server).call( this->client_data );
-            *(this->ptr_data) = (this->client_data).response.data;
-            can_call = true;
+            can_call = (this->client_server).call( this->client_data );
+            if( can_call )
+            {
+                std::cout << "Save data\n";
+                *(this->ptr_data) = (this->client_data).response.data;
+            }
         }
         return can_call;
     } // function normal_call
 
     void GetSensorImu::mutex_call()
     {
-        (this->client_server).call( this->client_data );
-        this->ptr_mutex_data->lock();
-        *(this->ptr_data) = (this->client_data).response.data;
-        this->ptr_mutex_data->unlock();
+        bool success = (this->client_server).call( this->client_data );
+        if( success ){
+            this->ptr_mutex_data->lock();
+            *(this->ptr_data) = (this->client_data).response.data;
+            this->ptr_mutex_data->unlock();
+        }
         this->thread_status[0] = false; // finish run thread
     } // function mutex_call
 

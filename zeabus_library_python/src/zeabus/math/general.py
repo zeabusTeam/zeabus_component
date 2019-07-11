@@ -14,7 +14,7 @@ import math
 def bound_radian( problem ):
     while( problem < -1.0*math.pi or problem > math.pi ):
         if( problem < 0 ):
-            problem += math.pi
+            problem += (2.0*math.pi)
         else:
-            problem -= math.pi
+            problem += (-2.0*math.pi)
     return problem

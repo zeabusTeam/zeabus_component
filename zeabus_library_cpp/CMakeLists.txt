@@ -25,6 +25,7 @@ find_package( zeabus_utility REQUIRED COMPONENTS )
 
 set( SHARED_LIBS 
     Sort
+    Fuzzy
     Array
     Convert
     General

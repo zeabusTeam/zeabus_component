@@ -9,6 +9,8 @@
 
 // README
 //  This file have purpose to count same time and return data for you
+//  Aborted this part because this function I think that shoud be individual or specific purpose
+//      for each node which want to use this style
 
 // REFERENCE
 

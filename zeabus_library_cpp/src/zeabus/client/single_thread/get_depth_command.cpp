@@ -26,7 +26,7 @@ namespace single_thread
         if( this->already_setup_ptr_node_handle )
         {
             this->client_server = this->ptr_node_handle->serviceClient<
-                    zeabus_utility::DepthCommand>( topic_service ); 
+                    zeabus_utility::ServiceDepth>( topic_service ); 
             result = true;
         }
         else

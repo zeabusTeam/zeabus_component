@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+
+<launch>
+
+    <!-- REFERENCE WEBSITE IS http://wiki.ros.org/rosbag/Commandline -->
+    <!-- REFERENCE REGULAR EXPRESSION https://regexr.com/ -->
+
+    <arg name="arg_prefix_name" default="zeabus_record"/>
+
+    <node pkg="rosbag" type="record" name="record_node" output="screen"
+        args="
+            -o $(arg arg_prefix_name)
+			--split
+			--duration=10m
+			--chunksize=50000
+            -a
+            -x (/vision/miss(.*))|(?:/vision/front/image_)(((mono|proc|raw|color)(.*))|(rect|rect_color|rect/(.*))|(rect_color/(compressed((/(.*)|D(.*)))|theora(.*))))|(?:/ueye_cam)(.*)|(?:/vision/bottom/image_raw)($|/compressed(D(.*)|/(.*))|/theora(.*))" >
+    </node>
+</launch>

@@ -4,7 +4,6 @@
 // MAINTAINER	: K.Supasan
 
 // MACRO DETAIL
-//  _DEBUG_FILTER_  : This will print about input and output of filter
 //  _DEBUG_SPIN_    : This will print about spin new thread and will check before full active
 //  _COLLECT_LOG_   : This will collect log about filter input and output
 //  _SUMMARY_       : This will show and clear screen for you can see important data
@@ -19,7 +18,6 @@
 //  ref2    : http://docs.ros.org/melodic/api/roscpp/html/classros_1_1NodeHandle.html#a81d08224944993c4cd38589e68417e12
 
 // MACRO SET
-//#define _DEBUG_FILTER_
 //#define _DEBUG_SPIN_
 #define _COLLECT_LOG_
 //#define _SUMMARY_
@@ -27,6 +25,8 @@
 // Header of genral part that mean you can change algorithm to fileter but can't change this part
 
 #include    <iostream>
+
+#include    <ros/console.h>
 
 #include    <zeabus/time.hpp>
 
@@ -49,6 +49,8 @@
 // Part of algorithm
 #include    <zeabus/filter/trimed_mean.hpp>
 
+void helper_status( bool data );
+
 int main( int argv, char** argc )
 {
     //  First part is about base file in ros system have 3 sub-part
@@ -60,9 +62,10 @@ int main( int argv, char** argc )
     zeabus::ros_interfaces::SingleThread node_pressure_filter( argv , argc , "filter_pressure" );
 
     std::shared_ptr< ros::NodeHandle > ptr_node_handle = 
-            std::make_shared< ros::NodeHandle >("");
+        std::make_shared< ros::NodeHandle >("");
 
-	ros::Publisher pressure_publisher = ptr_node_handle->advertise<zeabus_utility::HeaderFloat64>("/filter/pressure", 1);
+	ros::Publisher pressure_publisher = 
+        ptr_node_handle->advertise<zeabus_utility::HeaderFloat64>("/filter/pressure", 1);
 
     bool process_code = true; // this use to collect process of code
 
@@ -70,10 +73,10 @@ int main( int argv, char** argc )
     std::shared_ptr< std::mutex > ptr_mutex_data = std::make_shared< std::mutex >();
 
     // Insert optional part param part  
-    const static unsigned int buffer_size = 10; // size of buffer to use collect data
-    const static unsigned int trimed_size = 3; // size of buffer will trimed
-    const static unsigned int frequency = 60; // frequency of client to request data for sensor
-    const static unsigned int limit_same_time = 5; // limit to warning when receive 10 time
+    const static unsigned int buffer_size = 7; // size of buffer to use collect data
+    const static unsigned int trimed_size = 2; // size of buffer will trimed
+    const static unsigned int frequency = 100; // frequency of client to request data for sensor
+    const static unsigned int limit_same_time = 5; // limit to warning when receive 5 time
 
     // Second part of Filter this part mix about data variable
     // template< type buffer , size of buffer >
@@ -119,10 +122,6 @@ int main( int argv, char** argc )
         {
             output_data.data = filter_pressure.push( input_data.data );
             output_data.header.stamp = input_data.header.stamp;
-#ifdef _DEBUG_FILTER_
-            std::cout   << "First fill push " << input_data.data
-                        << " and result of fileter " << output_data.data;
-#endif // _DEBUG_FILTER_ 
 #ifdef _COLLECT_LOG_
             my_file.logging( &time_stamp , &(input_data.data) , &(output_data.data) );
 #endif // _COLLECT_LOG_
@@ -188,19 +187,44 @@ int main( int argv, char** argc )
             std::cout   << "Input is  " << input_data.data;
             std::cout   << "\nOutput is " << output_data.data << std::endl;
 #endif
+            helper_status( true );
         }
         if( count_over )
         {
-            std::cout   << zeabus::escape_code::bold_red 
-                        << "Fatal Pressure same data!\n" << zeabus::escape_code::normal_white;
+            helper_status( false );
         }
     }
 
     // Next part is last part we have to close all thread and all ros operate by this code
     ros::shutdown(); // we want to close all NodeHandle in this pid
+
     node_pressure_filter.join();
+
+#ifdef _COLLECT_LOG_
     my_file.close();
+#endif // _COLLECT_LOG_
 
     return 0;
      
+}
+
+void helper_status( bool data )
+{
+    static bool status = false;
+    if( status ) // case current state is ok
+    {
+        if( ! data )
+        {
+            ROS_FATAL_NAMED( "FILTER_PRESSURE_NODE" , "DVL FILTER stop streaming data");
+            status = data;
+        }
+    }
+    else // case current state isn't ok
+    {
+        if( data )
+        {
+            ROS_INFO_NAMED( "FILTER_PRESSURE_NODE" , "DVL FILTER start streaming data");
+            status = data;
+        }
+    }
 }

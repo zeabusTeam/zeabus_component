@@ -4,6 +4,8 @@
 
 #include    <zeabus/serial/serial_port.hpp>
 
+#include    <zeabus/escape_code.hpp>
+
 // This file will derived to zeabus::serial::SerialPort that make me can include just one file.
 // That mean this file we create class for connect to hardware by serial port connection.
 // Type about time to read\write port have two is synchronous and asynchronous.

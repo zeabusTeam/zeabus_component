@@ -33,6 +33,8 @@
 
 #include    <memory>
 
+#include    <ros/console.h>
+
 #include    <iostream>
 
 #include    <zeabus/time.hpp>
@@ -65,6 +67,8 @@
 // Part of algoritm
 #include    <zeabus/filter/trimed_mean_two_pi.hpp>
 
+void helper_status( bool data );
+
 int main( int argv , char** argc )
 {
     // First part is about base file in ros system
@@ -83,7 +87,7 @@ int main( int argv , char** argc )
     // Insert optional part param
     const unsigned int buffer_size = 4;
     const unsigned int trimed_size = 1;
-    const unsigned int frequency = 50;
+    const unsigned int frequency = 9;
     const unsigned int limit_same_time = 10;
 
     // Second part of Filter this part mix about data variable
@@ -231,6 +235,7 @@ int main( int argv , char** argc )
                     , &(output_data.orientation) );
             ptr_mutex_data->unlock();
 
+            helper_status( true );
 			imu_publisher.publish(output_data);
 
 #ifdef _LOG_FILTER_
@@ -250,18 +255,19 @@ int main( int argv , char** argc )
         }
         else if( time_over )
         {
-            std::cout   << zeabus::escape_code::bold_red << "FATAL! Data time out\n"
-                        << zeabus::escape_code::normal_white;
+            helper_status( false );
         }
         else
         {
-            ;
+            ROS_INFO( "IMU FILTER : try to new call again" );
         }
     }
 
     // Last part is close all thread and all ros operate by this code
     ros::shutdown();
+
     node_imu_filter.join();
+
 #ifdef _LOG_FILTER_
     file_in_out.close();
 #endif // _LOG_FILTER_
@@ -272,3 +278,24 @@ int main( int argv , char** argc )
     return 0;
 
 } // function main
+
+void helper_status( bool data )
+{
+    static bool status = false;
+    if( status ) // case current state is ok
+    {
+        if( ! data )
+        {
+            ROS_FATAL_NAMED( "FILTER_IMU_NODE" , "IMU FILTER stop streaming data");
+            status = data;
+        }
+    }
+    else // case current state isn't ok
+    {
+        if( data )
+        {
+            ROS_INFO_NAMED( "FILTER_IMU_NODE" , "IMU FILTER start streaming data");
+            status = data;
+        }
+    }
+}

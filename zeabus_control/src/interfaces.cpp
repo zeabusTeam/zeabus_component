@@ -3,6 +3,9 @@
 // CREATE ON	: 2019, May 25 (UTC+0)
 // MAINTAINER	: K.Supasan
 
+// This version follow number in diagram of software structure
+// VERSION      : 1.2.0 
+
 // MACRO DETAIL
 // _SHOW_DATA_  : You will see all data to help you check calculate
 // _SHOW_RPY_   : This will print RPY of target and current
@@ -15,12 +18,12 @@
 //  This file will use to calculate about error by 10 Hz
 
 // REFERENCE
+//  ref1    : https://www.boost.org/doc/libs/1_67_0/boost/array.hpp
 
 // MACRO SET
 #define _SHOW_DATA_
 #define _SHOW_RESET_TARGET_
 #define _SHOW_RPY_
-//#define _CHECK_FIND_ERROR_RPY_
 
 // MACRO CONDITION
 
@@ -75,12 +78,13 @@ int main( int argv , char** argc )
             std::make_shared< ros::NodeHandle >("");
 
     std::shared_ptr< std::mutex > ptr_mutex_data = std::make_shared< std::mutex >();
+    std::shared_ptr< std::mutex > ptr_mutex_master = std::make_shared< std::mutex >();
 
     // Insert optional part param part
     const unsigned int frequency = 10;
-    zeabus_utility::ControlCommand command; // receive command 
+    zeabus_utility::ControlCommand master; // receive master_command
+    zeabus_utility::ControlCommand command; // receive control_command 
     zeabus_utility::ControlCommand error; // send error
-    ros::Time state_stamp = ros::Time::now();
 
     // Second part setup varialbe have to use
     zeabus_utility::AUVState target_state; // collect target state
@@ -89,6 +93,10 @@ int main( int argv , char** argc )
     tf::Quaternion target_quaternion(0 , 0 , 0 , 1); // use to collect target quaternion
     geometry_msgs::Point* ptr_target_position = &target_state.data.pose.pose.position; 
     geometry_msgs::Point* ptr_current_position = &current_state.data.pose.pose.position; 
+    current_state.data.pose.pose.orientation.x = 0;
+    current_state.data.pose.pose.orientation.y = 0;
+    current_state.data.pose.pose.orientation.z = 0;
+    current_state.data.pose.pose.orientation.w = 1;
     tf::Quaternion diff_quaternion(0 , 0 , 0 , 1); 
     // use to collect target_qua * current_qua.inv()
     std::array< double , 6 > buffer = {0, 0, 0, 0, 0, 0}; // will always target
@@ -99,7 +107,7 @@ int main( int argv , char** argc )
     ros::Rate rate( frequency );
     // this buffer will use to compare with command
 
-    // third part setup service
+    // third part setup service of control command
     zeabus::service::ControlCommand server_control_interfaces;
     server_control_interfaces.setup_ptr_node_handle( ptr_node_handle );
     server_control_interfaces.setup_ptr_mutex_data( ptr_mutex_data );
@@ -117,6 +125,17 @@ int main( int argv , char** argc )
     client_control_command.setup_ptr_node_handle( ptr_node_handle );
     client_control_command.setup_ptr_data( &error ); // error use ConttrolCommand
     client_control_command.setup_client( "/control/fuzzy" );  // set topic where error will send
+
+    // Sixth part setup service of master command (add on version 1.2.0 of control interfaces)
+    zeabus::service::ControlCommand server_master_interfaces;
+    server_master_interfaces.setup_ptr_node_handle( ptr_node_handle );
+    server_master_interfaces.setup_ptr_mutex_data( ptr_mutex_master );
+    server_master_interfaces.setup_ptr_data( &master );
+    server_master_interfaces.setup_server_service( "/control/master" );
+
+    // This is master control will have effect direct of output this node
+    // That make we must to assign start value for manage about that
+    master.mask.fill( true );
 
     // part of tf systemp
     static tf::TransformBroadcaster broadcaster;
@@ -180,6 +199,11 @@ int main( int argv , char** argc )
         diff_quaternion = target_quaternion * current_quaternion.inverse();
         tf::Matrix3x3( diff_quaternion ).getRPY( 
                 (error.target)[3] , (error.target)[4] , (error.target)[5] );
+
+        zeabus::radian::bound( &( ( error.target )[3] ) );
+        zeabus::radian::bound( &( ( error.target )[4] ) );
+        zeabus::radian::bound( &( ( error.target )[5] ) );
+
         tf_data.setRotation( target_quaternion );
         tf_data.setOrigin( tf::Vector3( ptr_target_position->x 
                 , ptr_target_position->y 
@@ -187,19 +211,7 @@ int main( int argv , char** argc )
         broadcaster.sendTransform( tf::StampedTransform( tf_data 
                 , current_state.data.header.stamp 
                 , "odom"
-                , "flag_target" ) );
-
-#ifdef _CHECK_FIND_ERROR_RPY_
-        std::cout   << "Before " << error.target[3] << " " << error.target[4] << " "
-                    << error.target[5] << "\n";
-#endif 
-        zeabus::radian::bound( &( ( error.target )[3] ) );
-        zeabus::radian::bound( &( ( error.target )[4] ) );
-        zeabus::radian::bound( &( ( error.target )[5] ) );
-#ifdef _CHECK_FIND_ERROR_RPY_
-        std::cout   << "After " << error.target[3] << " " << error.target[4] << " "
-                    << error.target[5] << "\n";
-#endif
+                , "base_link_target" ) );
 
         // loop part : forth status of state decision
         //  state you can look by use binay format 3 bit
@@ -226,26 +238,10 @@ int main( int argv , char** argc )
             (error.mask)[3] = true;
             (error.mask)[4] = true;
             (error.mask)[5] = true;
-            // This part we have to edit value about dvl { position }
-//            buffer[ 0 ] = ptr_current_position->x; 
-//            buffer[ 1 ] = ptr_current_position->y;
-#ifdef _SHOW_RESET_TARGET_
-            std::cout   << zeabus::escape_code::bold_margenta 
-                        << "Warning reset data about DVL\n"
-                        << zeabus::escape_code::normal_white;
-#endif // _SHOW_RESET_TARGET_
         }
         else
         {
-            // This part we have to edit value about dvl and imu { position , orientation }
-//            buffer[ 0 ] = ptr_current_position->x; 
-//            buffer[ 1 ] = ptr_current_position->y; 
-            tf::Matrix3x3( current_quaternion ).getRPY( buffer[3], buffer[4], buffer[5] ); 
-#ifdef _SHOW_RESET_TARGET_
-            std::cout   << zeabus::escape_code::bold_margenta 
-                        << "Warning reset data about DVL & IMU\n"
-                        << zeabus::escape_code::normal_white;
-#endif // _SHOW_RESET_TARGET_
+            ;
         }
 
         if( (current_state.status & 0b100 ) == 4 ) // only pressure ok
@@ -254,14 +250,32 @@ int main( int argv , char** argc )
         }
         else
         {
-            buffer[2] = ptr_current_position->z;
-#ifdef _SHOW_RESET_TARGET_
-            std::cout   << zeabus::escape_code::bold_margenta 
-                        << "Warning reset data about PRESSURE\n"
-                        << zeabus::escape_code::normal_white;
-#endif // _SHOW_RESET_TARGET_
+            ;
         }
         
+        // loop part : master direct control command (Add on version 1.2.0)
+        ptr_mutex_master->lock();
+        for( unsigned int run = 0 ; run < 6 ; run++ )
+        {
+            if( master.mask.at( run ) == false )
+            {
+                (error.mask)[run] = false;
+                if( run == 0 )
+                {
+                    ptr_target_position->x = ptr_current_position->x;
+                }
+                else if( run == 1 )
+                {
+                    ptr_target_position->y = ptr_current_position->y;
+                }
+                else
+                {
+                    ;
+                }
+            }
+        }
+        ptr_mutex_master->unlock();
+
         // loop part : send error command
         client_control_command.normal_call();
         interface_publisher.publish(error);
@@ -293,17 +307,27 @@ int main( int argv , char** argc )
                     << diff_quaternion.w() << "\n";
     #endif
         std::cout   << "STATUS OF STATE " << read_bit_value( current_state.status )
-                    << "\nMASK : " 
+                    << "\nMASK           : " 
                     << read_bool( (error.mask)[0] ) << " " 
                     << read_bool( (error.mask)[1] ) << " " 
                     << read_bool( (error.mask)[2] ) << " " 
                     << read_bool( (error.mask)[3] ) << " " 
                     << read_bool( (error.mask)[4] ) << " " 
-                    << read_bool( (error.mask)[5] )<< "\n";        
+                    << read_bool( (error.mask)[5] )<< "\n";
+        std::cout   << "MASK OF MASTER : "        
+                    << read_bool( (master.mask)[0] ) << " " 
+                    << read_bool( (master.mask)[1] ) << " " 
+                    << read_bool( (master.mask)[2] ) << " " 
+                    << read_bool( (master.mask)[3] ) << " " 
+                    << read_bool( (master.mask)[4] ) << " " 
+                    << read_bool( (master.mask)[5] )<< "\n";
 #endif // _SHOW_DATA_
     }
+
     ros::shutdown();
+
     node_control_interfaces.join();
+
     return 0; 
 }
 

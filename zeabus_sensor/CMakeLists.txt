@@ -29,6 +29,11 @@ target_link_libraries( imu_node
     ${catkin_LIBRARIES}
 )
 
+add_executable( capture_gyro_bias src/imu_capture_gyro.cpp)
+target_link_libraries( capture_gyro_bias 
+    ${zeabus_library_cpp_LIBRARIES} 
+    ${catkin_LIBRARIES}
+)
 add_executable( dvl_node src/dvl_node.cpp)
 target_link_libraries( dvl_node 
     ${zeabus_library_cpp_LIBRARIES} 

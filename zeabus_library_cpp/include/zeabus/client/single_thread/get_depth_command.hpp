@@ -11,7 +11,7 @@
 
 #include    <zeabus/client/single_thread/base_class.hpp>
 
-#include    <zeabus_utility/DepthCommand.h>
+#include    <zeabus_utility/ServiceDepth.h>
 
 #include    <zeabus_utility/HeaderFloat64.h>
 
@@ -43,7 +43,7 @@ namespace single_thread
 
         protected:
             ros::ServiceClient client_server;
-            zeabus_utility::DepthCommand client_data;
+            zeabus_utility::ServiceDepth client_data;
     }; // class GetDepthCommand
 
 } // namespace single_thread

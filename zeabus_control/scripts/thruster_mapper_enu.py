@@ -51,7 +51,7 @@ import constant
 from lookup_pwm_force import lookup_pwm_force
 from zeabus_utility.srv import SendThrottle,  SendControlCommand, GetAUVState
 from zeabus_utility.srv import SendControlCommandResponse
-from zeabus_utility.msg import ControlCommand
+from zeabus_utility.msg import ControlCommand, Int16Array
 from std_msgs.msg import Header
 
 class ThrusterMapper:
@@ -68,6 +68,7 @@ class ThrusterMapper:
         #   Have to declare variable in critcal before setup variable in ros system   
         self.control_message = ControlCommand()
         self.mission_message = ControlCommand()
+        self.thruster_message = Int16Array()
         # Two line above will have critical section for read and write that make us have to
         #   use lock to protec about critical senstion
         self.control_lock = thread.allocate_lock()
@@ -82,6 +83,10 @@ class ThrusterMapper:
         self.client_throttle = rospy.ServiceProxy(
             '/hardware/thruster_throttle', SendThrottle)
 
+        self.pub_throttle = rospy.Publisher( "/control/thruster_throttle"
+            , Int16Array 
+            , queue_size = 1)
+
         self.client_state = rospy.ServiceProxy(
             '/fusion/auv_state', GetAUVState)
 
@@ -92,7 +97,7 @@ class ThrusterMapper:
             '/control/thruster' , ControlCommand , self.callback_subscriber )
 
         self.lookup_handle = lookup_pwm_force(
-            "zeabus_control", "scripts", "4th_t200_16.txt")
+            "zeabus_control", "scripts", "throttle_force_table.txt")
 
         cos_45 = math.cos(math.radians(45))
         sin_45 = math.sin(math.radians(45))
@@ -113,14 +118,14 @@ class ThrusterMapper:
         ])
 
         self.distance = numpy.array([
-            [0.332, 0.2202, -0.023],    # thruster id 0
-            [0.332, -0.2202, -0.023],   # thruster id 1
-            [-0.332, 0.2202, -0.023],   # thruster id 2
-            [-0.332, -0.2202, -0.023],  # thruster id 3
-            [0.3536, 0.3536, -0.023],   # thruster id 4
-            [0.3536, -0.3536, -0.023],  # thruster id 5
-            [-0.3536, 0.3536, -0.023],  # thruster id 6
-            [-0.3536, -0.3536, -0.023]  # thruster id 7
+            [0.44, 0.32, -0.023],    # thruster id 0
+            [0.44, -0.32, -0.023],   # thruster id 1
+            [-0.44, 0.32, -0.023],   # thruster id 2
+            [-0.44, -0.32, -0.023],  # thruster id 3
+            [0.46, 0.34, -0.023],   # thruster id 4
+            [0.46, -0.34, -0.023],  # thruster id 5
+            [-0.46, 0.34, -0.023],  # thruster id 6
+            [-0.46, -0.34, -0.023]  # thruster id 7
         ])
 
         # this variable will show about momentum to calculate about rotatio by euler
@@ -189,10 +194,12 @@ class ThrusterMapper:
         temp_time = ( current_time - self.control_stamp ).to_sec()
 
         self.control_lock.acquire( ) #start critical section of control data
+        use_control = False
         if( temp_time > constant.THRUSTER_MAPPER_TIME_OUT ):
             control_data.mask = constant.FALSE_MASK
         else:
             control_data = self.control_message 
+            use_control = True
         self.control_lock.release() # end critical section of control data
 
         # First process is about get value from command of mission and control
@@ -205,7 +212,9 @@ class ThrusterMapper:
                     print("id {:2d} choose mission data is {:6.2f}".format( 
                         run
                         , mission_data.target[run] ) )
-            elif( control_data.mask[ run ] ):
+                if( ( run < 3 ) and ( not control_data.mask[ run ] ) ):
+                    temp_force[ run ] += control_data.target[ run ]
+            elif( use_control ):
                 temp_force.append( control_data.target[ run ] )
                 if( constant.THRUSTER_MAPPER_CHOOSE_PROCESS ):
                     print( "id {:2d} choose control data is {:6.2f}".format( 
@@ -217,12 +226,12 @@ class ThrusterMapper:
                     print("id {:2d} choose zero data is 0".format( run ) )
 
         force = numpy.array( [
-            (temp_force)[0]
-            , (temp_force)[1]
-            , (temp_force)[2]
-            , (temp_force)[3]
-            , (temp_force)[4]
-            , (temp_force)[5]])
+            (temp_force)[0]     * 1
+            , (temp_force)[1]   * 1
+            , (temp_force)[2]   * 1
+            , (temp_force)[3]   * 1
+            , (temp_force)[4]   * 1
+            , (temp_force)[5]   * 1])
 
         # PRINT CONDITION
         if(constant.THRUSTER_MAPPER_CALCULATE_PROCESS):
@@ -233,10 +242,7 @@ class ThrusterMapper:
         cmd = []
         for run in range(0, 8):
             temp = int(self.lookup_handle.find_pwm(torque[run]) )
-            if( 1480 < temp and temp < 1520 ):
-                cmd.append( int( 1500 ) )
-            else:
-                cmd.append( int( temp ) )
+            cmd.append( int( temp ) )
 
         self.header.stamp = rospy.get_rostime()
         pwm = tuple(cmd)
@@ -251,6 +257,9 @@ class ThrusterMapper:
 
         try:
             self.client_throttle( self.header , pwm )
+            self.thruster_message.header = self.header
+            self.thruster_message.data = pwm
+            self.pub_throttle.publish( self.thruster_message )
         except rospy.ServiceException , e :
             rospy.logfatal( "Failure to write pwm response from haredware")
 
