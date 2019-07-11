@@ -75,7 +75,6 @@ class SwitchManager:
                 self.control_status = False
                 self.control.publish_data( "manage now switch tell me time to shutdown" )
                 self.control.deactivate( ("x" , "y" , "z" , "roll" , "pitch" , "yaw" ) )
-                
                 self.header.stamp = rospy.get_rostime()
                 self.client_strategy( self.header , False )
             else:
