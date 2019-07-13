@@ -17,3 +17,8 @@ BUOY_MINIMUM_FOUND = 2
 GATE_NEAR = 2.0 # Distannce between robot and lenth when length is max ( 200 )
 GATE_RATIO = 2.0 / 100 # Ratio of distance per legth
 GATE_LENGTH = 200.0 # Ditance of x length range 0 to 200
+
+# Constant for vision of drop gralic mission
+DROP_FIND_TARGET = "search"
+DROP_FIND_DROP = "drop"
+DROP_FIND_OPEN = "open"

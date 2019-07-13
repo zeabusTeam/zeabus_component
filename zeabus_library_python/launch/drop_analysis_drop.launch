@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<launch>
+
+
+    <include file="$(find zeabus_library_python)/launch/base_analysis.launch.xml">
+        <arg name="mission" value="drop_drop"/>
+        <arg name="frequency" value="5"/>
+    </include>
+
+</launch>

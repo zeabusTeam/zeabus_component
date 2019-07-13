@@ -2,7 +2,7 @@
 
 <launch>
     <arg name="atm_pressure_arg" value="14.8717"/>
-    <arg name="depth_offset_arg" value="-0.4"/>
+    <arg name="depth_offset_arg" value="0"/>
 
     <include file="$(find zeabus_elec_ros)/launch/elec_launch.launch"
             pass_all_args="true"/>

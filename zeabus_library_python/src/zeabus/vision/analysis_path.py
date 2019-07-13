@@ -47,7 +47,7 @@ class AnalysisPath:
             temp_data = self.call_vision_data(String('path') , String('request' ))
             result = True
         except rospy.ServiceException , e :
-            rospy.logfatal( "Sevice call vision part Failed : %s" , e )
+            rospy.logfatal( "Sevice call vision path Failed : %s" , e )
 
         if( result ):
             self.x_point = ( temp_data.data.point_1[0] 
