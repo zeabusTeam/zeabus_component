@@ -40,3 +40,13 @@ target_link_libraries( main_control
     ${zeabus_library_cpp_LIBRARIES}
     ${catkin_LIBRARIES}
 )
+
+add_executable( velocity_interfaces
+    src/velocity_interfaces.cpp
+)
+add_dependencies( velocity_interfaces ${catkin_EXPORTED_TARGETS} )
+target_link_libraries( velocity_interfaces 
+    ${zeabus_library_cpp_LIBRARIES}
+    ${catkin_LIBRARIES}
+)
+
