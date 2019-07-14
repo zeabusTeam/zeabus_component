@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="gate">
+
+    <xacro:property name="PI" value="3.14159265359"/>
+
+    <material name="black">
+        <color rgba="${0/255} ${0/255} ${0/255} 1"/>
+    </material>
+
+    <material name="red">
+        <color rgba="${255/255} ${0/255} ${0/255} 1"/>
+    </material>
+
+    <material name="orange">
+        <color rgba="${219/255} ${68/255} ${10/255} 1"/>
+    </material>
+
+    <link name="base_gate"/>
+
+    <link name="gate">
+
+        <visual>
+            <geometry>
+                <mesh filename="package://zeabus_model/stl/gate.stl"
+                    scale="0.001 0.001 0.001"/>
+            </geometry>
+            <material name="orange"/>
+        </visual>
+
+    </link> 
+
+    <joint name="base_path_to_gate" type="fixed">
+        <origin xyz="-2.2 0.0 0.0" rpy="0 0 0"/>
+        <parent link="base_gate"/>
+        <child link="gate"/>
+    </joint>
+
+</robot>

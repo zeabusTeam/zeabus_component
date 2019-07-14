@@ -11,7 +11,6 @@
 //  ref03   : http://wiki.ros.org/roscpp_tutorials/Tutorials/Parameters
 
 // MACRO SET
-//#define _SUMMARY_
 
 // MACRO CONDITION
 
@@ -24,6 +23,8 @@
 #include    <ros/ros.h>
 
 #include    <ros/console.h>
+
+#include    <std_msgs/String.h>
 
 #include    <geometry_msgs/Vector3Stamped.h>
 
@@ -71,6 +72,8 @@ int main( int argv , char** argc )
 
 	ros::Publisher dvl_publisher = 
 			ptr_node_handle->advertise<geometry_msgs::Vector3Stamped>("/sensor/dvl" , 1);
+    ros::Publisher dvl_raw_publish = 
+            ptr_node_handle->advertise<std_msgs::String>("/sensor/raw_dvl" , 1 );
 
     if( ! dvl.open_port() )
     {
@@ -138,20 +141,14 @@ int main( int argv , char** argc )
         // get type of data
         if( type_line == "BS" )
         {
-#ifdef _SUMMARY_
-            zeabus::escape_code::clear_screen();
-            std::cout   << "Raw data is " << raw_data << "\n";
-#endif // _SUMMARY_
+            std_msgs::String temp;
+            temp.data = raw_data;
+            dvl_raw_publish.publish( temp );
             zeabus::sensor::DVL::PD6_code_BS( &raw_data , &(temp_velocity[0]) 
                     , &(temp_velocity[1]) , &(temp_velocity[2]) , &ok_data );
             if( ok_data == 'A' ) // if data BS is ok
             {
                 helper_status( true );
-#ifdef _SUMMARY_
-                std::cout   << "DVL GOOD DATA\n";
-                std::cout   << "data is " << temp_velocity[0] << " " << temp_velocity[1]
-                            << " " << temp_velocity[2] << "\n";
-#endif // _SUMMARY_
                 temp_message.vector.x = temp_velocity[0];
                 temp_message.vector.y = temp_velocity[1];
                 temp_message.vector.z = temp_velocity[2];
@@ -164,9 +161,6 @@ int main( int argv , char** argc )
             else
             {
                 helper_status( false );
-#ifdef _SUMMARY_
-                std::cout << "DVL BAD DATA\n" ;
-#endif
             }
         } // condition BS data
     } // while loop of ros operating system

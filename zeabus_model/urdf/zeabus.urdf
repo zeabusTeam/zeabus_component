@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+
+<robot name="mission_path" xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <xacro:property name="PI" value="3.14159265359"/>
+
+    <material name="orange">
+        <color rgba="${219/255} ${68/255} ${10/255} 1"/>
+    </material>
+
+    <material name="green">
+        <color rgba="${82/255} ${199/255} ${72/255} 0.8"/>
+    </material>
+
+    <material name="red">
+        <color rgba="${255/255} ${0/255} ${0/255} 0.81"/>
+    </material>
+
+    <!-- base link use to centor in normal real world -->
+    <!-- link use instead robot stl use to look easy to watch -->
+
+    <!-- Warning paramter RPY for rotation input is order roll pitch yaw -->
+    <!-- but in real transformation will use about play rotation order is yaw pitch roll-->
+    <link name="base_link"/>
+
+    <link name="link">
+        <visual>
+            <geometry>
+                <mesh filename="package://zeabus_model/stl/zeabus.stl"
+                    scale="0.001 0.001 0.001"/>
+            </geometry>
+            <material name="green"/>
+        </visual>
+    </link>
+
+    <joint name="base_link_to_link" type="fixed">
+        <origin xyz="0 0 0.0" rpy="0 0 0"/>
+        <parent link="base_link"/>
+        <child link="link"/>
+    </joint>
+
+    <!-- About sensor part bottom_camera -->
+    <link name="bottom_camera"/>
+    <link name="bottom_camera_optical"/>
+
+    <joint name="base_link_bottom_camera" type="fixed">
+        <origin xyz="0.26 0 0" rpy="0 ${PI / 2 } 0"/>
+        <parent link="base_link"/>
+        <child link="bottom_camera"/>
+    </joint>
+
+    <joint name="bottom_camera_to_optical_frame" type="fixed">
+        <origin xyz="0 0 0" rpy="${PI / 2} 0 ${ PI / -2}"/>
+        <parent link="bottom_camera"/>
+        <child link="bottom_camera_optical"/>
+    </joint>
+
+    <!-- About sensor part front_camera -->
+    <link name="front_camera"/>
+    <link name="front_camera_optical"/>
+
+    <joint name="base_link_front_camera" type="fixed">
+        <origin xyz="0.43 0 0" rpy="0 0 0"/>
+        <parent link="base_link"/>
+        <child link="front_camera"/>
+    </joint>
+
+    <joint name="front_camera_to_optical_frame" type="fixed">
+        <origin xyz="0 0 0" rpy="${PI / 2} 0 ${ PI / -2}"/>
+        <parent link="front_camera"/>
+        <child link="front_camera_optical"/>
+    </joint>
+
+</robot>

@@ -32,20 +32,20 @@ target_link_libraries( interfaces
     ${catkin_LIBRARIES}
 )
 
-add_executable( control_fuzzy
-    src/control_fuzzy.cpp
+add_executable( main_control
+    src/main_control.cpp
 )
-add_dependencies( control_fuzzy ${catkin_EXPORTED_TARGETS} )
-target_link_libraries( control_fuzzy 
+add_dependencies( main_control ${catkin_EXPORTED_TARGETS} )
+target_link_libraries( main_control 
     ${zeabus_library_cpp_LIBRARIES}
     ${catkin_LIBRARIES}
 )
 
-add_executable( fuzzy
-    src/fuzzy_test.cpp
+add_executable( velocity_interfaces
+    src/velocity_interfaces.cpp
 )
-add_dependencies( fuzzy ${catkin_EXPORTED_TARGETS} )
-target_link_libraries( fuzzy 
+add_dependencies( velocity_interfaces ${catkin_EXPORTED_TARGETS} )
+target_link_libraries( velocity_interfaces 
     ${zeabus_library_cpp_LIBRARIES}
     ${catkin_LIBRARIES}
 )

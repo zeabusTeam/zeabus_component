@@ -87,7 +87,7 @@ int main( int argv , char** argc )
     // Insert optional part param
     const unsigned int buffer_size = 4;
     const unsigned int trimed_size = 1;
-    const unsigned int frequency = 30;
+    const unsigned int frequency = 9;
     const unsigned int limit_same_time = 10;
 
     // Second part of Filter this part mix about data variable
@@ -259,13 +259,15 @@ int main( int argv , char** argc )
         }
         else
         {
-            ;
+            ROS_INFO( "IMU FILTER : try to new call again" );
         }
     }
 
     // Last part is close all thread and all ros operate by this code
     ros::shutdown();
+
     node_imu_filter.join();
+
 #ifdef _LOG_FILTER_
     file_in_out.close();
 #endif // _LOG_FILTER_

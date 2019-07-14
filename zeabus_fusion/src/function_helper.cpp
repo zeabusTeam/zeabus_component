@@ -28,6 +28,69 @@ void rotation_linear( const geometry_msgs::Vector3* source , geometry_msgs::Vect
     result->z = temp_quaternion.z();
 } // function rotation_linear
 
+void dvl_status( bool data )
+{
+    static bool status = false;
+    if( status )
+    {
+        if( !data )
+        {
+            ROS_WARN( "SENSOR FUSION DVL doesn't have new data"); 
+            status = false;
+        } // new data is false
+    } // original status is true
+    else
+    {
+        if( data )
+        {
+            ROS_WARN( "SENSOR FUSION DVL have new data");
+            status = true; 
+        } // new data is true
+    } // original status is false
+}
+
+void imu_status( bool data )
+{
+    static bool status = false;
+    if( status )
+    {
+        if( !data )
+        {
+            ROS_WARN( "SENSOR FUSION IMU doesn't have new data"); 
+            status = false;
+        } // new data is false
+    } // original status is true
+    else
+    {
+        if( data )
+        {
+            ROS_WARN( "SENSOR FUSION IMU have new data");
+            status = true; 
+        } // new data is true
+    } // original status is false
+}
+
+void pressure_status( bool data )
+{
+    static bool status = false;
+    if( status )
+    {
+        if( !data )
+        {
+            ROS_WARN( "SENSOR FUSION PRESSURE doesn't have new data"); 
+            status = false;
+        } // new data is false
+    } // original status is true
+    else
+    {
+        if( data )
+        {
+            ROS_WARN( "SENSOR FUSION PRESSURE have new data");
+            status = true; 
+        } // new data is true
+    } // original status is false
+}
+
 int read_bit_value( unsigned char number )
 {
     int result = 0;

@@ -11,6 +11,7 @@
 //  _SUMMARY_           : this macro will include _DECLARE_UPDATED_ and show last result
 //                          now available only euler
 //  _IMU_ENU_SYSTEM_    : if you macro this. This programe will convert data from NED to ENU
+//  _SPECIAL_SYSTEM_    : if you macro this. This program will convert data by specific rotation
 
 // MACRO SET
 //#define _DECLARE_PROCESS_ 
@@ -18,6 +19,7 @@
 //#define _DECLARE_UPDATED_
 //#define _SUMMARY_
 #define _IMU_ENU_SYSTEM_
+//#define _SPECIAL_SYSTEM_
 
 // MACRO CONDITION
 #ifdef _SUMMARY_
@@ -45,7 +47,7 @@
 
 #include    <tf/LinearMath/Quaternion.h>
 
-#include    <zeabus/sensor/IMU/connector.hpp>
+#include    <zeabus/sensor/IMU/interface.hpp>
 
 #include    <zeabus/convert/vector/one_byte.hpp>
 
@@ -74,13 +76,17 @@ int main( int argv , char** argc )
         , full_path_port
         , "/dev/microstrain/3dm_gx5_45_0000__6251.65903");
 
-    zeabus::sensor::IMU::Connector imu( full_path_port , 100 );
+    zeabus::sensor::IMU::Interface imu( full_path_port , 100 );
 
 #ifdef _IMU_ENU_SYSTEM_
-    std::string node_name = "imu_node_ned";
+
+#ifndef _SPECIAL_SYSTEM_
     const static tf::Quaternion convert_conventions( 0.7071 , 0.7071 , 0 , 0 );
 #else
-    std::string node_name = "imu_node";
+    const static tf::Quaternion rotation_conventions( 0 , 0 , -0.7071 , 0.7071 );    
+    const static tf::Quaternion convert_conventions( 0 , 0 , 0 , 1 );
+#endif
+
 #endif
 
     std::shared_ptr< ros::NodeHandle > ptr_node_handle = 
@@ -172,6 +178,9 @@ int main( int argv , char** argc )
 
 #ifdef _SETUP_TEMP_VARIABLE_
     tf::Quaternion temp_quaternion;
+#endif
+
+#ifdef _SUMMARY_
     double temp_RPY[3];
 #endif
 
@@ -237,20 +246,31 @@ int main( int argv , char** argc )
 #ifdef _IMU_ENU_SYSTEM_
             zeabus::ros_interfaces::convert::quaternion_tf(
                     &temporary_message.orientation , &temp_quaternion );
-            tf::Matrix3x3( temp_quaternion ).getRPY( temp_RPY[0], temp_RPY[1], temp_RPY[2] );
 #ifdef _SUMMARY_
-            std::cout   << "NED system : " << temp_RPY[0] << " " << temp_RPY[1] 
+            tf::Matrix3x3( temp_quaternion ).getRPY( temp_RPY[0], temp_RPY[1], temp_RPY[2] );
+            std::cout   << "ORIGINAL system : " << temp_RPY[0] << " " << temp_RPY[1] 
                         << " " << temp_RPY[2] << "\n";
 #endif
+
             temp_quaternion = convert_conventions*temp_quaternion*convert_conventions.inverse();
+#ifdef _SPECIAL_SYSTEM_
+            temp_quaternion = rotation_conventions*temp_quaternion;
+#endif // _SPECIAL_SYSTEM_
+
+
 #ifdef _SUMMARY_
             std::cout   << "Use quaternion convert : " << convert_conventions.x() << " "
                         << convert_conventions.y() << " " << convert_conventions.z() 
                         << " " << convert_conventions.w() << "\n";
+#ifdef _SPECIAL_SYSTEM_
+            std::cout   << "Use quaternion rotation : " << rotation_conventions.x() << " "
+                        << rotation_conventions.y() << " " << rotation_conventions.z()
+                        << " " << rotation_conventions.w() << "\n";
+#endif // _SPECIAL_SYSTEM_
 #endif
             zeabus::ros_interfaces::convert::tf_quaternion(
                     &temp_quaternion , &temporary_message.orientation );
-#endif
+#endif //_IMU_ENU_SYSTEM_
 
             helper_status( true );
             ptr_mutex_data->lock();
@@ -283,7 +303,8 @@ int main( int argv , char** argc )
 
     // Below step we want to ensure in case we not use imu. Imu will stop process data stream
     round = 0; // set init value counter is 0 for start process
-    while( imu.port_is_open() ) 
+    std::cout   << "IMU will set idle before end\n";
+    while( imu.port_is_open() && round << limit_round) 
     {
         round++;
         status_file = imu.set_idle(); // try to set imu to idle state

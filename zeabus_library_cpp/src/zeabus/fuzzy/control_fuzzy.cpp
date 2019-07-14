@@ -8,7 +8,7 @@ int fuzzy_rule(int diff, int error,int output)
     return fuzzy;
 }
 
-int check_error(int current, int previous)  // can use return value is array now not done yet
+int check_error(int current, int previous)
 {
     if(current >= 0 && previous >= 0)
     {
@@ -94,15 +94,15 @@ int change_to_fuzzy(int value)
 int crisp_to_error_xyz(double crisp)
 {
     int error = 0;
-    if(crisp < -5)
+    if(crisp < -50)
     {
         error = -3;
     }
-    else if(crisp < -2 && crisp >= -5)
+    else if(crisp < -25 && crisp >= -50)
     {
         error = -2;
     }
-    else if(crisp < 0 && crisp >= -2)
+    else if(crisp < 0 && crisp >= -25)
     {
         error = -1;
     }
@@ -110,15 +110,15 @@ int crisp_to_error_xyz(double crisp)
     {
         error = 0;
     }
-    else if(crisp > 0 && crisp <= 2)
+    else if(crisp > 0 && crisp <= 25)
     {
         error = 1;
     }
-    else if(crisp > 2 && crisp <= 5)
+    else if(crisp > 25 && crisp <= 50)
     {
         error = 2;
     }
-    else if(crisp > 5)
+    else if(crisp > 50)
     {
         error = 3;
     }
@@ -128,15 +128,15 @@ int crisp_to_error_xyz(double crisp)
 int crisp_to_error_rpy(double crisp)
 {
     int error = 0;
-    if(crisp < -2 && crisp >= -3.14)
+    if(crisp < -1 && crisp >= -3.14)
     {
         error = -3;
     }
-    else if(crisp < -1 && crisp >= -2)
+    else if(crisp < -0.5 && crisp >= -1)
     {
         error = -2;
     }
-    else if(crisp < 0 && crisp >= -1)
+    else if(crisp < 0 && crisp >= -0.5)
     {
         error = -1;
     }
@@ -144,15 +144,15 @@ int crisp_to_error_rpy(double crisp)
     {
         error = 0;
     }
-    else if(crisp > 0 && crisp <= 1)
+    else if(crisp > 0 && crisp <= 0.5)
     {
         error = 1;
     }
-    else if(crisp > 1 && crisp <= 2)
+    else if(crisp > 0.5 && crisp <= 1)
     {
         error = 2;
     }
-    else if(crisp > 2 && crisp <= 3.14)
+    else if(crisp > 1 && crisp <= 3.14)
     {
         error = 3;
     }
@@ -164,27 +164,34 @@ int crisp_to_output_x(int fuzzy_value)
     int num=0;
     if(fuzzy_value == -3)
     {
-        num = -6;
+        //num = -1;
+        num = -5;
     }
     else if(fuzzy_value == -2)
     {
-        num = -4;
+        //num = -1;
+        num = -3;
     }
     else if(fuzzy_value == -1)
     {
-        num = -2;
+        //num = -1;
+        num = -1;
     }
     else if(fuzzy_value == 0) {
+        //num = -1;
         num = 0;
     }
     else if(fuzzy_value == 1) {
-        num = 2;
+        //num = -1;
+        num = 1;
     }
     else if(fuzzy_value == 2) {
-        num = 4;
+        //num = -1;
+        num = 3;
     }
     else if(fuzzy_value == 3) {
-        num = 6;
+        //num = -1;
+        num = 5;
     }
     return num;
 }
@@ -316,8 +323,8 @@ void print(int type, int output, double crisp, int diff)
     std::cout << std::endl;
 }
 
-int run_system(double crisp,int type)
-{   
+double run_system(double crisp,int type)
+{ 
     int current_error = 0;
     int value_of_diff;
     int change_error;
@@ -348,6 +355,16 @@ int run_system(double crisp,int type)
     output_fuzzy = change_to_fuzzy(output_fuzzy);
     std::cout << "output fuzzy : " << output_fuzzy << std::endl;
     previous_output[type] = output_fuzzy;
+    /*
+    if(crisp < 0.5 && crisp > 0)
+    {
+        output = 1;
+    }
+    else if(crisp < 0.5 && crisp > 0)
+    {
+        output = -1;
+    }
+    */
     if(type == 0)
     {
         output = crisp_to_output_x(output_fuzzy);
@@ -365,5 +382,5 @@ int run_system(double crisp,int type)
         output = crisp_to_output_rpy(output_fuzzy);
     }
     print(type, output, crisp, value_of_diff);
-    return output;
+    return output*(-1);
 }
