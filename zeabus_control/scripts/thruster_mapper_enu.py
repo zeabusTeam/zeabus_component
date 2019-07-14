@@ -91,6 +91,7 @@ class ThrusterMapper:
             '/fusion/auv_state', GetAUVState)
 
         self.server_service = rospy.Service(
+#        self.server_service = rospy.Subscriber(
             '/control/thruster', SendControlCommand(), self.callback_service )
 
         self.server_subscriber = rospy.Subscriber(
@@ -250,6 +251,9 @@ class ThrusterMapper:
         # PRINT CONDITION
         if(constant.THRUSTER_MAPPER_RESULT ):
             if( self.count_print == constant.THRUSTER_MAPPER_COUNT  ):
+                print("===================================================")
+                print("{:6.3f} {:6.3f} {:6.3f} {:6.3f} {:6.3f} {:6.3f}".format(
+                    force[0], force[1], force[2], force[3], force[4], force[5] ) )
                 print("{:6d} {:6d} {:6d} {:6d} {:6d} {:6d} {:6d} {:6d}".format(
                     pwm[0], pwm[1], pwm[2], pwm[3], pwm[4], pwm[5], pwm[6], pwm[7]))
                 self.count_print = 0
