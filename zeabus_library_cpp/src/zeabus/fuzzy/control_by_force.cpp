@@ -9,7 +9,7 @@
 
 int out_range = 0;
 
-int choose_range(double error)
+double choose_range(double error)
 {
     if(fabs(error) >= input_force[4])
     {
@@ -57,7 +57,6 @@ double add(double output_force, double forces)
 double run_system(double error)
 {
     double output = 0;
-    double out_of_diff = 0;
     double out_of_choose = 0;
     double out_of_out = 0;
     out_of_choose = choose_range(error);

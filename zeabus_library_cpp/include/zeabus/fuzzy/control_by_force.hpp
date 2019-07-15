@@ -12,7 +12,7 @@ double output_force[6] = {0.0, 0.05, 0.1, 0.2, 0.5, 1.0};
 
 double choose_range(double error);
 
-double out(double out_range, double error);
+double out(int out_range, double error);
 
 double add(double output_force, double forces);
 
