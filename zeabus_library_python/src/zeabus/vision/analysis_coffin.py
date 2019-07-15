@@ -19,7 +19,7 @@ from .analysis_constant import *
 
 from std_msgs.msg import String
 
-from zeabus_utility.srv import VisionGate
+from zeabus_utility.srv import VisionSrvCoffin
 
 class AnalysisCoffin:
 
@@ -34,13 +34,18 @@ class AnalysisCoffin:
             ,'center_x' : 0.0 # Avaliable when you found num_object == 2
             ,'center_y' : 0.0 # Avaliable when you found num_object == 2
             ,'object_1' : { 
-                'center_x' : 0.0 
+                'type' : False 
+                ,'center_x' : 0.0 
                 ,'center_y' : 0.0
                 ,'area' : 0.0
-                ,'rotation' : 0.0
+                ,'rotation' : 0.0 # Avaliable when type is true
                 }
             ,'object_2' : {
-                
+                'type' : False
+                ,'center_x' : 0.0
+                ,'center_y' : 0.0
+                ,'area' : 0.0
+                ,'rotation' : 0.0 # Avaliable when type is true
             }
         }
 
@@ -58,39 +63,54 @@ class AnalysisCoffin:
             rospy.logfatal( "Service call gate failed : %s" , e )
 
         if( result ):
-            if( raw_data.found == 1 ):
-                self.result['found'] = True
-                self.result['left_x'] = raw_data.x_left * 100
-                self.result['right_x'] = raw_data.x_right * 100
-                self.result['center_x'] = raw_data.cx1 * 100
-                self.result['center_y'] = raw_data.cy1 * 100
-                self.center_y = raw_data.cy1 * 100
-                self.analysis_picture()
+            self.result['num_object'] = raw_data.state
+            if( raw_data.state > 0 ):
+
+
+                if( raw_data.data[0].state == 1 ):
+                    self.result['object_1']['center_x'] = sum( raw_data.data[0].point_1[0] 
+                        , raw_data.data[0].point_2[0] , raw_data.data[0].point_3[0]
+                        , raw_data.data[0].point_4[0] ) / 4
+                    self.result['object_1']['center_y'] = sum( raw_data.data[0].point_1[1] 
+                        , raw_data.data[0].point_2[1] , raw_data.data[0].point_3[1]
+                        , raw_data.data[0].point_4[1] ) / 4
+                    self.result['object_1']['type'] = True 
+                else:
+                    self.result['object_1']['center_x'] = raw_data.daa[0].point_1[0]
+                    self.result['object_1']['center_y'] = raw_data.daa[0].point_1[1]
+                    self.result['object_1']['type'] = False 
+
+                if( raw_data.data[1].state == 1 ):
+                    self.result['object_2']['center_x'] = sum( raw_data.data[1].point_1[0] 
+                        , raw_data.data[1].point_2[0] , raw_data.data[1].point_3[0]
+                        , raw_data.data[1].point_4[0] ) / 4
+                    self.result['object_2']['center_y'] = sum( raw_data.data[1].point_1[1] 
+                        , raw_data.data[1].point_2[1] , raw_data.data[1].point_3[1]
+                        , raw_data.data[1].point_4[1] ) / 4
+                    self.result['object_2']['type'] = True 
+                elif( raw_data.data[1].state == 2 ):
+                    self.result['object_2']['center_x'] = raw_data.daa[0].point_1[0]
+                    self.result['object_2']['center_y'] = raw_data.daa[0].point_1[1]
+                    self.result['object_2']['type'] = False 
+                else:
+                    self.result['object_2']['center_x'] = 0
+                    self.result['object_2']['center_y'] = 0
+                    self.result['object_2']['type'] = False 
+
+                self.analysis_data()    
             else:
-                self.result['found'] = False
+                pass
         else:
-            self.result['found'] = False
+            self.result['num_object'] = 0
 
         return result
 
     def echo_data( self ):
         if( self.result['found'] ):
-            print( "x_point ( left , center , right ) : ({:6.3f} , {:6.3f} , {:6.3f})" .format( 
-                self.result['left_x']
-                , self.result['center_x'] 
-                , self.result['right_x'] ) )
-            print( "length data " + str( self.result['length_x'] ) )
-            print( "distance " + str( self.result[ 'distance' ] ) )
+            pass
         else:
             print( "Don't found target")
 
-    def analysis_picture( self ):
-        if( self.result['found'] ):
-            self.result['length_x'] = self.result['right_x'] - self.result[ 'left_x' ]
-            self.result['distance'] = ( ( ( GATE_LENGTH - self.result['length_x'] ) 
-                * GATE_RATIO ) + GATE_NEAR )
-            self.broadcaster.euler( ( ( self.result['center_x'] / 100 ) * 1.5 
-                    , ( self.center_y / 100  ) * 1.5 
-                    , -1.0 * self.result['distance'] ) 
-                , 0 , 0 , 0 )
-        
+    def analysis_data( self ):
+        if( self.result['num_object'] == 2 ):
+            self.result['']
