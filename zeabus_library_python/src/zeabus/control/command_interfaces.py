@@ -382,6 +382,16 @@ class CommandInterfaces:
         self.force_command.target = (x, y, 0, 0, 0, yaw )
         self.pub_force.publish( self.force_command )
 
+    def force_xyz_yaw( self , x , y , z , yaw ):
+        self.force_command.mask = (True, True, True, False, False, True )
+        self.force_command.target = (x, y, z, 0, 0, yaw )
+        self.pub_force.publish( self.force_command )
+    
+    def force_xyz( self , x, y, z ):
+        self.force_command.mask = (True, True, True, False, False, False)
+        self.force_command.target = (x, y, z, 0, 0, 0 )
+        self.pub_force.publish( self.force_command )
+
     def force_false( self ):
         self.force_command.mask = (False, False, False, False, False, False)
         self.pub_force.publish( self.force_command )
