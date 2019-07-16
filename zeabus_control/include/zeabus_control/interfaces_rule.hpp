@@ -27,7 +27,7 @@ namespace xy
 
 namespace z
 {
-    static std::array< double , 3 > error_rule = { 0.8 , 1.2 , 2 };
+    static std::array< double , 3 > error_rule = { 0.1 , 0.8 , 2 };
     static std::array< double , 3 > target_velocity = { 0.1 , 0.3 , 0.5};
 }
 
