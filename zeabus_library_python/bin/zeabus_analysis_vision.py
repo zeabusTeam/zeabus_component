@@ -55,6 +55,14 @@ if __name__=="__main__":
         print("You choose analysis stake heart")
         analysis_vision = AnalysisStake( "base_drop" , STAKE_FIND_HEART )
         analysis_mode = "heart"
+    elif( analysis_mode == "stake_left" ):
+        print("You choose analysis stake left")
+        analysis_vision = AnalysisStake( "base_drop" , STAKE_FIND_LEFT )
+        analysis_mode = "heart"
+    elif( analysis_mode == "stake_right" ):
+        print("You choose analysis stake right")
+        analysis_vision = AnalysisStake( "base_drop" , STAKE_FIND_RIGHT )
+        analysis_mode = "heart"
     else:
         print( "Don't have your mode plesase from them\n" , mission_list )
         rospy.signal_shutdown( "Don't have mode " + str( analysis_mode ) )

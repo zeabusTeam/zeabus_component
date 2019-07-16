@@ -36,9 +36,10 @@ class AnalysisStake:
             , 'rotation' : 0.0
             , 'area' : 0.0 # range 0 to 100
             , 'distance' : 0 # distance is calculate estimate for length of x
+            , 'left' : 0.0 # use when you search vampire
+            , 'right' : 0.0 # use when you search vampire
         }
         
-
         self.broadcaster = Broadcaster( "front_camera_optical" , child_frame_id )
         self.rate = rospy.Rate( 10 )
 
@@ -71,6 +72,8 @@ class AnalysisStake:
                 buffer_area.append( temp_result[3] )
                 buffer_distance.append( temp_result[4] )
                 buffer_top_y.append( temp_result[5] )
+                buffer_left.append( temp_result[6] )
+                buffer_right.append( temp_result[7] )
                 if( count_found == STAKE_MINIMUM_FOUND ):
                     self.result['found'] = True
 
@@ -81,7 +84,8 @@ class AnalysisStake:
             self.result['area'] = sum( buffer_area ) / count_found
             self.result['distance'] = sum( buffer_distance ) / count_found
             self.result['top'] = sum( buffer_top_y ) / count_found
-
+            self.result['left'] = sum( buffer_left ) / count_found
+            self.result['right'] = sum( buffer_right ) / count_found
         return self.can_call
 
     def echo_data( self ):
@@ -106,10 +110,12 @@ class AnalysisStake:
             rospy.logfatal( "Service call stake failed : %s" , e )
 
         if( result[0] ):
-            if( request == STAKE_FIND_HEART ):
+            if( request != STAKE_FIND_TARGET ):
                 result.append( raw_data.point_1 )
                 result.append( 0.0 )
                 result.append( raw_data.area )
+                result.append( 0.0 )
+                result.append( 0.0 )
                 result.append( 0.0 )
                 result.append( 0.0 )
             else:
@@ -124,5 +130,7 @@ class AnalysisStake:
                 result.append( 0.0 )
                 result.append( max( ( raw_data.point_1[0] * 100 , raw_data.point_2[0] * 100
                     , raw_data.point_3[0] * 100 , raw_data.point_4[ 0] * 100 ) ) )
+                result.append( ( raw_data.point_1[0] * 100 + raw_data.point_4[0] * 100 ) / 2 )
+                result.append( ( raw_data.point_2[0] * 100 + raw_data.point_3[0] * 100 ) / 2 )
 
         return result
