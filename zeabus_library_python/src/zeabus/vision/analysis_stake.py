@@ -19,14 +19,15 @@ from .analysis_constant import *
 
 from std_msgs.msg import String
 
-from zeabus_utility.srv import VisionSrvStake.srv
+from zeabus_utility.srv import VisionSrvStake
 
 class AnalysisStake:
 
     def __init__( self , child_frame_id = "base_stake" , default = STAKE_FIND_TARGET ):
 
         rospy.loginfo( "Waiting service of /vision/stake" )
-        rospy.wait_for_service( "/vision/stake" , VisionSrvStake )
+        rospy.wait_for_service( "/vision/stake" )
+        self.call_vision_data = rospy.ServiceProxy( "/vision/stake" , VisionSrvStake )
 
         self.result = {
             'found' : 0
@@ -36,6 +37,7 @@ class AnalysisStake:
             , 'area' : 0.0 # range 0 to 100
             , 'distance' : 0 # distance is calculate estimate for length of x
         }
+        
 
         self.broadcaster = Broadcaster( "front_camera_optical" , child_frame_id )
         self.rate = rospy.Rate( 10 )
@@ -43,10 +45,10 @@ class AnalysisStake:
         self.default = default
 
     def call_data( self , request = None ): 
-        buffer_center_x : []
-        buffer_center_y : []
-        buffer_rotation : []
-        buffer_area : []
+        buffer_center_x = []
+        buffer_center_y = []
+        buffer_rotation = []
+        buffer_area = []
         buffer_distance = []
         buffer_top_y = []
 
@@ -82,7 +84,7 @@ class AnalysisStake:
 
         return self.can_call
 
-    def echo_data( self , request ):
+    def echo_data( self ):
         if( self.result['found'] ):
             print( "RESULT center : {:7.2f} {:7.2f}".format( self.result['center'][0] 
                 , self.result['center'][1] ) )
@@ -94,35 +96,33 @@ class AnalysisStake:
 
     def individual_call( self , request ):
 
-        found = False
         result = [ False ]
         try:
             raw_data = self.call_vision_data( String("stake") , String( request ) ).data
             if( raw_data.state == 1 ):
-                found = True
-            result[ 0 ] = True
+                result[ 0 ] = True
+            self.can_call = True
         except rospy.ServiceException , e :
             rospy.logfatal( "Service call stake failed : %s" , e )
 
-        if( call_success ):
-            if( found ):
-                if( request == STAKE_FIND_HEART ):
-                    result.append( raw_data.point_1 )
-                    result.append( 0.0 )
-                    result.append( raw_data.area )
-                    result.append( 0.0 )
-                    result.append( 0.0 )
-                else:
-                    result.append( ( ( ( raw_data.point_1[ 0 ] * 100, raw_data.point_2[ 0 ] * 100
-                            , raw_data.point_3[ 0 ] * 100 , raw_data.point_4[ 0 ] * 100 ) / 4)
-                        , ( ( raw_data.point_1[ 1 ] * 100 , raw_data.point_2[ 1 ] * 100
-                            , raw_data.point_3[ 1 ] * 100 , raw_data.point_4[ 1 ] * 100 ) / 4)))
-                    result.append( ( ( raw_data.point_4[1] * 100 - raw_data.point_1[1] * 100 ) 
-                            - ( raw_data.point_3[1] * 100 - raw_data.point_4 * 100 ) ) 
-                        * STAKE_RATIO_RADIAN )
-                    result.append( raw_data.area )
-                    result.apeend( 0.0 )
-                    result.append( max( ( raw_data.point_1[0] * 100 , raw_data.point_2[0] * 100
-                        , raw_data.point_3[0] * 100 , raw_data.point_4[ 0] * 100 ) ) )
+        if( result[0] ):
+            if( request == STAKE_FIND_HEART ):
+                result.append( raw_data.point_1 )
+                result.append( 0.0 )
+                result.append( raw_data.area )
+                result.append( 0.0 )
+                result.append( 0.0 )
+            else:
+                result.append( ( ( ( raw_data.point_1[ 0 ] * 100+ raw_data.point_2[ 0 ] * 100
+                        + raw_data.point_3[ 0 ] * 100 + raw_data.point_4[ 0 ] * 100 ) / 4)
+                    , ( ( raw_data.point_1[ 1 ] * 100 + raw_data.point_2[ 1 ] * 100
+                        + raw_data.point_3[ 1 ] * 100 + raw_data.point_4[ 1 ] * 100 ) / 4)))
+                result.append( ( ( raw_data.point_4[1] * 100 - raw_data.point_1[1] * 100 ) 
+                        - ( raw_data.point_3[1] * 100 - raw_data.point_2[1] * 100 ) ) 
+                    * STAKE_RATIO_RADIAN )
+                result.append( raw_data.area )
+                result.append( 0.0 )
+                result.append( max( ( raw_data.point_1[0] * 100 , raw_data.point_2[0] * 100
+                    , raw_data.point_3[0] * 100 , raw_data.point_4[ 0] * 100 ) ) )
 
         return result
