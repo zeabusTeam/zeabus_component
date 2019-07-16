@@ -1,4 +1,4 @@
-#include <zeabus/fuzzy/control_by_force.hpp>
+#include <zeabus/fuzzy/control_by_velocity.hpp>
 
 #include <zeabus_utility/ControlCommand.h>
 
@@ -22,7 +22,7 @@ void callback( const zeabus_utility::ControlCommand&  msg)
         {
             input[ run ] = 0;
         }
-        
+        std::cout << "input" << input[run] << std::endl;
     }
 }
 
@@ -31,8 +31,8 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "control_by_force");
     ros::NodeHandle sub;
     ros::NodeHandle pub;
-    ros::Subscriber control_subscriber = sub.subscribe("controlfuzzy", 1000, callback);
-    ros::Publisher control_publisher = pub.advertise<zeabus_utility::ControlCommand>("pub_to_thruster", 1000);
+    ros::Subscriber control_subscriber = sub.subscribe("/control/fuzzy", 1000, callback);
+    ros::Publisher control_publisher = pub.advertise<zeabus_utility::ControlCommand>("/control/thrusters", 1000);
     ros::Rate rate( 10 );
     while( sub.ok() )
     {
@@ -40,7 +40,11 @@ int main(int argc, char** argv)
         ros::spinOnce();
         for( unsigned int run = 0 ; run < 6 ; run++ )
         {
-            output.target[ run ] = run_system( input[ run ] );
+            if(run == 2)
+            {
+                output.target[ run ] = run_system( input[ run ] ,run);
+                output.mask[ run ] = true;
+            }
         }
         control_publisher.publish(output);
     }

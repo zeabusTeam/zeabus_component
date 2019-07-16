@@ -1,4 +1,4 @@
-#include <zeabus/fuzzy/control_by_force.hpp>
+#include <zeabus/fuzzy/control_by_velocity.hpp>
 
 // double diff(double target, double current)
 // {
@@ -45,26 +45,28 @@ double out(int out_range, double error)
     return out_add;
 }
 
-double add(double output_force, double forces)
+double add(double output_force, double forces[6], int axis)
 {
-    std::cout << "force " << force << std::endl;
+    std::cout << "force " << force[axis] << std::endl;
     std::cout << "output_force " << output_force << std::endl;
-    force = forces + output_force;
-    std::cout << "force " << force << std::endl;
-    return force;
+    force[axis] = forces[axis] + output_force;
+    std::cout << "force " << force[axis] << std::endl;
+    return force[axis];
 }
 
-double run_system(double error)
+double run_system(double error, unsigned int run)
 {
     double output = 0;
     double out_of_choose = 0;
     double out_of_out = 0;
+    std::cout << "axis: " << run+1 << std::endl;
     out_of_choose = choose_range(error);
     std::cout << "out_of_choose " << out_of_choose << std::endl;
     out_of_out = out(out_of_choose, error);
-    output = add(out_of_out, force);
+    output = add(out_of_out, force, run);
     std::cout << "out_of_out " << out_of_out << std::endl;
     std::cout << "output " << output << std::endl;
+    std::cout << std::endl;
     return output;
 }
 

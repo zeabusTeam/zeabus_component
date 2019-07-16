@@ -55,7 +55,7 @@ namespace z_parameter
     const std::array< double , 5 > DEFUZZY_RULE = {0.02 , 0.04 , 0.08, 0.16, 0.32};
     
     // Offset is value to do and don't have affect with robot in real time always
-    const double OFFSET = -1.75;
+    const double OFFSET = -1.9;
     
 } // namespace z_parameter
 

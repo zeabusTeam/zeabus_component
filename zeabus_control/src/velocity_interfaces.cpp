@@ -11,6 +11,9 @@
 // REFERENCE
 
 // MACRO SET
+#define _SHOW_DATA_
+#define _SHOW_RPY_
+#define _SHOW_VELOCITY_
 
 // MACRO CONDITION
 
@@ -320,14 +323,14 @@ int main( int argv , char** argc )
         error_velocity.target[ 0 ] = target_velocity[0]-(ptr_current_velocity->linear.x / 100 );
         error_velocity.target[ 1 ] = target_velocity[1]-(ptr_current_velocity->linear.y / 100 );
         error_velocity.target[ 2 ] = target_velocity[2]-(ptr_current_velocity->linear.z / 100 );
-        error_velocity.target[ 4 ] = target_velocity[0]-(ptr_current_velocity->angular.x / 100 );
-        error_velocity.target[ 5 ] = target_velocity[1]-(ptr_current_velocity->angular.y / 100 );
-        error_velocity.target[ 6 ] = target_velocity[2]-(ptr_current_velocity->angular.z / 100 );
+        error_velocity.target[ 3 ] = target_velocity[0]-(ptr_current_velocity->angular.x / 100 );
+        error_velocity.target[ 4 ] = target_velocity[1]-(ptr_current_velocity->angular.y / 100 );
+        error_velocity.target[ 5 ] = target_velocity[2]-(ptr_current_velocity->angular.z / 100 );
         error_velocity.mask = error.mask;
 
         // loop part : send error command
         client_control_command.normal_call();
-        interface_publisher.publish(error);
+        interface_publisher.publish(error_velocity);
 
 #ifdef _SHOW_DATA_
         std::cout   << "\n--------------------------------------------------------------\n"
@@ -370,6 +373,20 @@ int main( int argv , char** argc )
                     << read_bool( (master.mask)[3] ) << " " 
                     << read_bool( (master.mask)[4] ) << " " 
                     << read_bool( (master.mask)[5] )<< "\n";
+        std::cout   << "TARGET_VELOCITY " 
+                    << target_velocity[0] << " "
+                    << target_velocity[1] << " "
+                    << target_velocity[2] << " "
+                    << target_velocity[3] << " "
+                    << target_velocity[4] << " "
+                    << target_velocity[5] << "\n";
+        std::cout   << "ERROR VELOCITY " 
+                    << error_velocity.target[0] << " "
+                    << error_velocity.target[1] << " "
+                    << error_velocity.target[2] << " "
+                    << error_velocity.target[3] << " "
+                    << error_velocity.target[4] << " "
+                    << error_velocity.target[5] << "\n";
 #endif // _SHOW_DATA_
     }
 

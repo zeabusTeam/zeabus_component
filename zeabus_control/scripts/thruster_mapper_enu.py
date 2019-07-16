@@ -97,6 +97,8 @@ class ThrusterMapper:
         self.server_subscriber = rospy.Subscriber(
             '/control/thruster' , ControlCommand , self.callback_subscriber )
 
+        self.server_force_velocity = rospy.Subscriber(
+            '/control/thrusters' , ControlCommand , self.callback_subscribers )
         self.lookup_handle = lookup_pwm_force(
             "zeabus_control", "scripts", "throttle_force_table.txt")
 
@@ -282,6 +284,22 @@ class ThrusterMapper:
             self.mission_stamp = message.header.stamp
 
         self.mission_lock.release( )
+
+    def callback_subscribers( self ,  message ):
+
+        # PRINT_CONDTION
+        if( constant.THRUSTER_MAPPER_CALLBACK_CALLED ):
+            print("callback of subscriber have been called!")
+
+        self.control_lock.acquire( )
+
+        self.control_message = message
+        if( constant.THRUSTER_MAPPER_AUTO_TIME ):
+            self.control_stamp = rospy.get_rostime()
+        else:
+            self.control_stamp = message.header.stamp
+
+        self.control_lock.release( )
 
     def callback_service( self , request ):
         

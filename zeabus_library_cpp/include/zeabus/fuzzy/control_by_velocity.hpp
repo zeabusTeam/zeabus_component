@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-double force = 0;
+double force[6] = {0, 0, 0, 0, 0, 0};
 
 double input_force[5] = {0.1, 0.2, 0.5, 1.0, 1.5};
 
@@ -14,6 +14,6 @@ double choose_range(double error);
 
 double out(int out_range, double error);
 
-double add(double output_force, double forces);
+double add(double output_force, double forces[6], int axis);
 
-double run_system(double error);
+double run_system(double error, unsigned int run);
