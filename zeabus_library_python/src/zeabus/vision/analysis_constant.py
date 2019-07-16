@@ -22,3 +22,8 @@ GATE_LENGTH = 200.0 # Ditance of x length range 0 to 200
 DROP_FIND_TARGET = "search"
 DROP_FIND_DROP = "drop"
 DROP_FIND_OPEN = "open"
+
+STAKE_FIND_TARGET = "vampire"
+STAKE_FIND_HEART = "heart"
+STAKE_FIND_OVAL = "oval"
+STAKE_RATIO_RADIAN = 0.2 

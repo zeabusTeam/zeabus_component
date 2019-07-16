@@ -13,13 +13,15 @@ from zeabus.vision.analysis_path import AnalysisPath
 from zeabus.vision.analysis_buoy import AnalysisBuoy
 from zeabus.vision.analysis_gate import AnalysisGate
 from zeabus.vision.analysis_drop import AnalysisDrop
+from zeabus.vision.analysis_stake import AnalysisStake
 from zeabus.vision.analysis_constant import *
 
 if __name__=="__main__":
 
     rospy.init_node( "zeabus_library_analysis" )
 
-    mission_list = [ "path" , "buoy" , "gate" , "drop_find" , "drop_drop" , "drop_open"]
+    mission_list = ( "path" , "buoy" , "gate" , "drop_find" , "drop_drop" , "drop_open"
+        , "stake_find" , "stake_heart")
 
     analysis_mode = rospy.get_param( '~mission' , "path" )
     frequency = rospy.get_param( '~frequency' , 10 )
@@ -45,6 +47,14 @@ if __name__=="__main__":
         print( "You choose analysis drop open")
         analysis_vision = AnalysisDrop( "base_drop" , DROP_FIND_OPEN )
         analysis_mode = "drop_garlic"
+    elif( analysis_mode == "stake_find" ):
+        print("You choose analysis stake find")
+        analysis_vision = AnalysisStake( "base_drop" , STAKE_FIND_TARGET )
+        analysis_mode = "stake"
+    elif( analysis_mode == "stake_heart" ):
+        print("You choose analysis stake heart")
+        analysis_vision = AnalysisStake( "base_drop" , STAKE_FIND_HEART )
+        analysis_mode = "heart"
     else:
         print( "Don't have your mode plesase from them\n" , mission_list )
         rospy.signal_shutdown( "Don't have mode " + str( analysis_mode ) )
