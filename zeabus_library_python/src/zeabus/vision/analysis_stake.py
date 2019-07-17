@@ -134,7 +134,6 @@ class AnalysisStake:
                 result.append( 0.0 )
                 result.append( max( ( raw_data.point_1[1] * 100 , raw_data.point_2[1] * 100
                     , raw_data.point_3[1] * 100 , raw_data.point_4[1] * 100 ) ) )
-                result.append( ( raw_data.point_1[0] * 100 + raw_data.point_4[0] * 100 ) / 2 )
-                result.append( ( raw_data.point_2[0] * 100 + raw_data.point_3[0] * 100 ) / 2 )
-
+                result.append( ( min( (raw_data.point_1[0] * 100 , raw_data.point_4[0] * 100 )))
+                result.append( ( max( (raw_data.point_2[0] * 100 + raw_data.point_3[0] * 100 )))
         return result
