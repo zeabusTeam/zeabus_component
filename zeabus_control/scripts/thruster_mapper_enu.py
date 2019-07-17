@@ -228,6 +228,10 @@ class ThrusterMapper:
                 if( constant.THRUSTER_MAPPER_CHOOSE_PROCESS ):
                     print("id {:2d} choose zero data is 0".format( run ) )
 
+        if( abs( temp_force[5] ) > 3 ):
+            print("Yaw over")
+            temp_force[5] = 0
+
         force = numpy.array( [
             (temp_force)[0]     * 1
             , (temp_force)[1]   * 1

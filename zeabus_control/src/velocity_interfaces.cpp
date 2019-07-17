@@ -320,12 +320,12 @@ int main( int argv , char** argc )
             
         } // big loop for calcualte target_velocity
         // next I will calcualte error of velocity
-        error_velocity.target[ 0 ] = target_velocity[0]-(ptr_current_velocity->linear.x / 100 );
-        error_velocity.target[ 1 ] = target_velocity[1]-(ptr_current_velocity->linear.y / 100 );
-        error_velocity.target[ 2 ] = target_velocity[2]-(ptr_current_velocity->linear.z / 100 );
-        error_velocity.target[ 3 ] = target_velocity[0]-(ptr_current_velocity->angular.x );
-        error_velocity.target[ 4 ] = target_velocity[1]-(ptr_current_velocity->angular.y );
-        error_velocity.target[ 5 ] = target_velocity[2]-(ptr_current_velocity->angular.z );
+        error_velocity.target[ 0 ] = target_velocity[0]-(ptr_current_velocity->linear.x / 1000 );
+        error_velocity.target[ 1 ] = target_velocity[1]-(ptr_current_velocity->linear.y / 1000 );
+        error_velocity.target[ 2 ] = target_velocity[2]-(ptr_current_velocity->linear.z / 1000 );
+        error_velocity.target[ 3 ] = target_velocity[3]-(ptr_current_velocity->angular.x );
+        error_velocity.target[ 4 ] = target_velocity[4]-(ptr_current_velocity->angular.y );
+        error_velocity.target[ 5 ] = target_velocity[5]-(ptr_current_velocity->angular.z );
         error_velocity.mask = error.mask;
 
         // loop part : send error command
@@ -340,7 +340,7 @@ int main( int argv , char** argc )
                     << euler[0] << " " << euler[1] << " " << euler[2] << "\n";
         tf::Matrix3x3( target_quaternion ).getRPY( euler[0] , euler[1] , euler[2] );
         std::cout   << "target state  : " << ptr_target_position->x << " "
-                    << ptr_target_position->y << " " << ptr_target_position->z
+                    << ptr_target_position->y << " " << ptr_target_position->z << " "
                     << euler[0] << " " << euler[1] << " " << euler[2] << "\n";
     
         std::cout   << "error state   : " << error.target[0] << " " << error.target[1] << " "
@@ -353,9 +353,9 @@ int main( int argv , char** argc )
                     << robot_error_array[4] << " " << robot_error_array[5] << "\n\n";
 
         std::cout   << "current velocity : " 
-                    << ptr_current_velocity->linear.x / 100 << " "
-                    << ptr_current_velocity->linear.y / 100 << " "
-                    << ptr_current_velocity->linear.z / 100 << " "
+                    << ptr_current_velocity->linear.x / 1000 << " "
+                    << ptr_current_velocity->linear.y / 1000 << " "
+                    << ptr_current_velocity->linear.z / 1000 << " "
                     << ptr_current_velocity->angular.x << " "
                     << ptr_current_velocity->angular.y << " "
                     << ptr_current_velocity->angular.z << "\n";
