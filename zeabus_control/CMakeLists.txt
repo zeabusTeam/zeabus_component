@@ -58,3 +58,10 @@ target_link_libraries( control_by_velocity
     ${zeabus_library_cpp_LIBRARIES}
     ${catkin_LIBRARIES}
 )
+
+add_executable( test_lib_fuzzy test/fuzzy_3_dimension.cpp)
+add_dependencies( test_lib_fuzzy ${catkin_EXPORTED_TARGETS})
+target_link_libraries( test_lib_fuzzy
+    ${zeabus_library_cpp_LIBRARIES}
+    ${catkin_LIBRARIES}
+)
