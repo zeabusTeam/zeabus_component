@@ -50,11 +50,11 @@ target_link_libraries( velocity_interfaces
     ${catkin_LIBRARIES}
 )
 
-add_executable( control_by_velocity
-    src/control_by_velocity.cpp
+add_executable( control_velocity
+    src/control_velocity.cpp
 )
-add_dependencies( control_by_velocity ${catkin_EXPORTED_TARGETS} )
-target_link_libraries( control_by_velocity
+add_dependencies( control_velocity ${catkin_EXPORTED_TARGETS} )
+target_link_libraries( control_velocity
     ${zeabus_library_cpp_LIBRARIES}
     ${catkin_LIBRARIES}
 )

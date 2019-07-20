@@ -6,7 +6,7 @@ target_link_libraries( ControlFuzzy ${catkin_LIBRARIES} )
 
 add_library( Fuzzy  SHARED 
     control_fuzzy.cpp
-    control_by_velocity.cpp
+    control_velocity.cpp
 )
 
 
