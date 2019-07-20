@@ -75,8 +75,8 @@ if __name__=="__main__":
 
     while( not rospy.is_shutdown() ):
         if( analysis_vision.call_data() ):
-            print("================================SUCCESS===================================")
             analysis_vision.echo_data()
+            print("================================SUCCESS===================================")
         else:
             print("=============================FALIURE & WAIT==============================")
             rospy.wait_for_service( "/vision/" + str( analysis_mode) )
