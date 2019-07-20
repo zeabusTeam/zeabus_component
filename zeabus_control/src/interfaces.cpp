@@ -255,6 +255,8 @@ int main( int argv , char** argc )
         
         // loop part : master direct control command (Add on version 1.2.0)
         // loop part : master will auto reset target position (Add on 2019 07 18)
+        // Readme why we reset on variable master mark that is because we want to ensure
+        //      control will reset state by command from user
         tf::Matrix3x3( current_quaternion ).getRPY( euler[0] , euler[1] , euler[2] );
         ptr_mutex_master->lock();
         for( unsigned int run = 0 ; run < 6 ; run++ )
@@ -265,18 +267,16 @@ int main( int argv , char** argc )
                 switch( run )
                 {
                     case 0 :
-                        ptr_target_position->x = ptr_current_position->x;
+                        buffer[0] = ptr_current_position->x;
                         break;
                     case 1 :
-                        ptr_target_position->y = ptr_current_position->y;
+                        buffer[1] = ptr_current_position->y;
                         break;
                     case 2 :
-                        ptr_target_position->z = ptr_current_position->z;
-                        break;
-                    case 5 :
-                        buffer[5] = euler[2];
+                        buffer[2] = ptr_current_position->z;
                         break;
                     default :
+                        buffer[ run ] = euler[ run - 3 ];
                         break; 
                 }
             }
