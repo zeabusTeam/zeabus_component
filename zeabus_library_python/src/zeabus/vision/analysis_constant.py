@@ -9,22 +9,10 @@
 # REFERENCE
 
 # Constant for convert norm value to orinal value
-FRONT_WIDTH = 0.0
-FRONT_HEIGHT = 0.0
-BOTTOM_WIDTH = 1936.0
-BOTTOM_HEIGHT = 1238.0
-
-def bin_w( data ):
-    return ( data + 1 ) * BOTTOM_WIDTH / 2.0 
-
-def bin_h( data ):
-    return ( data + 1 ) * BOTTOM_HEIGHT / 2.0
-
-def fin_w( data ):
-    return ( data + 1 ) * FRONT_WIDTH / 2.0
-
-def fin_h( data ):
-    return ( data + 1 ) * FRONT_HEIGHT / 2.0
+FRONT_WIDTH = 581.0
+FRONT_HEIGHT = 365.0
+BOTTOM_WIDTH = 581.0
+BOTTOM_HEIGHT = 365.0
 
 # Constant for filter parameter of buoy mission
 BUOY_SCORE = 50 # Range is 0 - 100

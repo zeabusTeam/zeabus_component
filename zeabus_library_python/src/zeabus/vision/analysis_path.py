@@ -58,11 +58,11 @@ class AnalysisPath:
                 , temp_data.data.point_3[1] )
             self.rotation = ( 
                 math.atan2(
-                    self.y_point[1] - self.y_point[0]
-                    , self.x_point[1] - self.x_point[0] )
+                    bin_h( self.y_point[1] - self.y_point[0] )
+                    , bin_w( self.x_point[1] - self.x_point[0] ) )
                 , math.atan2(
-                    self.y_point[2] - self.y_point[1]
-                    , self.x_point[2] - self.x_point[1] ) )
+                    bin_h( self.y_point[2] - self.y_point[1] )
+                    , bin_w( self.x_point[2] - self.x_point[1] ) ) )
 
             self.area = ( temp_data.data.area[0] , temp_data.data.area[1] )
 

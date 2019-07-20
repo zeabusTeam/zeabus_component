@@ -18,6 +18,7 @@ import numpy
 from ..transformation.broadcaster import Broadcaster
 
 from .analysis_constant import *
+from .analysis_handle import *
 
 from std_msgs.msg import String
 
@@ -71,18 +72,10 @@ class AnalysisCoffin:
                         , raw_data.data[0].point_2[1] , raw_data.data[0].point_3[1]
                         , raw_data.data[0].point_4[1] ) ) * 100 / 4
                     # calculate rotation
-                    first_pair = ( raw_data.data[0].point_1 , raw_data.data[0].point_2 )
-                    second_pair = ( raw_data.data[0].point_1 , raw_data.data[0].point_4 )
-                    first_distance = ( first_pair[1][0] - first_pair[0][0] 
-                        , first_pair[1][1] - first_pair[0][1] )
-                    second_distance = ( second_pair[1][0] - second_pair[0][0] 
-                        , second_pair[1][1] - second_pair[0][1] )
-                    if numpy.linalg.norm(first_distance) > numpy.linalg.norm(second_distance):
-                        self.result['object_1']['rotation'] = math.atan2( first_distance[1] 
-                            , first_distance[0] )
-                    else:
-                        self.result['object_1']['rotation'] = math.atan2( second_distance[1] 
-                            , second_distance[0] )
+                    self.result['object_1']['rotation'] = bottom_find_radian( ( 
+                        raw_data.data[0].point_1 
+                        , raw_data.data[0].point_2 
+                        , raw_data.data[0].point_4 ) )
                         
                 if( raw_data.data[1].state == 1 ):
                     self.result['object_2']['center_x'] = sum( raw_data.data[1].point_1[0] 
@@ -92,18 +85,10 @@ class AnalysisCoffin:
                         , raw_data.data[1].point_2[1] , raw_data.data[1].point_3[1]
                         , raw_data.data[1].point_4[1] ) * 100 / 4
                     # calculate rotation
-                    first_pair = ( raw_data.data[1].point_1 , raw_data.data[1].point_2 )
-                    second_pair = ( raw_data.data[1].point_1 , raw_data.data[1].point_4 )
-                    first_distance = ( first_pair[1][0] - first_pair[0][0] 
-                        , first_pair[1][1] - first_pair[0][1] )
-                    second_distance = ( second_pair[1][0] - second_pair[0][0] 
-                        , second_pair[1][1] - second_pair[0][1] )
-                    if numpy.linalg.norm(first_distance) > numpy.linalg.norm(second_distance):
-                        self.result['object_2']['rotation'] = math.atan2( first_distance[1] 
-                            , first_distance[0] )
-                    else:
-                        self.result['object_2']['rotation'] = math.atan2( second_distance[1] 
-                            , second_distance[0] )
+                    self.result['object_2']['rotation'] = bottom_find_radian( ( 
+                        raw_data.data[1].point_1 
+                        , raw_data.data[1].point_2 
+                        , raw_data.data[1].point_4 ) )
 
                 self.analysis_data()    
         else:
