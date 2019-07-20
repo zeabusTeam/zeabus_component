@@ -23,6 +23,7 @@ from __future__ import print_function
 
 import math
 import rospy
+import numpy 
 
 from ..transformation.broadcaster import Broadcaster
 
@@ -94,8 +95,17 @@ class AnalysisDrop:
                     , raw_data.point_3[1] , raw_data.point_4[1] ) ) / 4
                 self.result['area'] = raw_data.area
                 self.result['bottom_y'] = ( raw_data.point_1[ 1 ] + raw_data.point_2[1] ) / 2
-                self.result['rotation'] = math.atan2( raw_data.point_2[1] - raw_data.point_1[1] 
-                    , raw_data.point_2[0] - raw_data.point_1[0] )
+                if( numpy.linalg.norm( ( raw_data.point_1[0] - raw_data.point_2[0] 
+                        , raw_data.point_1[1] - raw_data.point_2[1] ) ) 
+                    > numpy.linalg.norm( ( raw_data.point_1[0] - raw_data.point_4[0] 
+                        , raw_data.point_1[1] - raw_data.point_4[1] ) ) ):
+                    self.result['rotation'] = math.atan2( 
+                        raw_data.point_2[1] - raw_data.point_1[1] 
+                        , raw_data.point_2[0] - raw_data.point_1[0] )
+                else:
+                    self.result['rotation'] = math.atan2( 
+                        raw_data.point_4[1] - raw_data.point_1[1] 
+                        , raw_data.point_4[0] - raw_data.point_1[0] )
             elif( raw_data.state == 2 ):
                 self.result['found'] = True
                 self.result['type'] = False

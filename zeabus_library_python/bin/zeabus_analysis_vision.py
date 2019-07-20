@@ -14,6 +14,7 @@ from zeabus.vision.analysis_buoy import AnalysisBuoy
 from zeabus.vision.analysis_gate import AnalysisGate
 from zeabus.vision.analysis_drop import AnalysisDrop
 from zeabus.vision.analysis_stake import AnalysisStake
+from zeabus.vision.analysis_coffin import AnalysisCoffin
 from zeabus.vision.analysis_constant import *
 
 if __name__=="__main__":
@@ -21,7 +22,7 @@ if __name__=="__main__":
     rospy.init_node( "zeabus_library_analysis" )
 
     mission_list = ( "path" , "buoy" , "gate" , "drop_find" , "drop_drop" , "drop_open"
-        , "stake_find" , "stake_heart")
+        , "stake_find" , "stake_heart" ,  "coffin")
 
     analysis_mode = rospy.get_param( '~mission' , "path" )
     frequency = rospy.get_param( '~frequency' , 10 )
@@ -63,6 +64,9 @@ if __name__=="__main__":
         print("You choose analysis stake right")
         analysis_vision = AnalysisStake( "base_drop" , STAKE_FIND_RIGHT )
         analysis_mode = "heart"
+    elif( analysis_mode == "coffin" ):
+        print("You choose analysis coffin" )
+        analysis_vision = AnalysisCoffin( "base_coffin" )
     else:
         print( "Don't have your mode plesase from them\n" , mission_list )
         rospy.signal_shutdown( "Don't have mode " + str( analysis_mode ) )
