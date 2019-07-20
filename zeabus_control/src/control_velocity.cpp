@@ -1,4 +1,4 @@
-#include <zeabus/fuzzy/control_by_velocity.hpp>
+#include <zeabus/fuzzy/control_velocity.hpp>
 
 #include <zeabus_utility/ControlCommand.h>
 
