@@ -30,7 +30,7 @@ class AnalysisStake:
         self.call_vision_data = rospy.ServiceProxy( "/vision/stake" , VisionSrvStake )
 
         self.result = {
-            'found' : 0
+            'found' : False
             , 'center' : [ 0.0 , 0.0 ] # range -100 to 100
             , 'top' : [ 0.0 ]
             , 'rotation' : 0.0
