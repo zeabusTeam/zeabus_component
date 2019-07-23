@@ -22,7 +22,7 @@ if __name__=="__main__":
     rospy.init_node( "zeabus_library_analysis" )
 
     mission_list = ( "path" , "buoy" , "gate" , "drop_find" , "drop_drop" , "drop_open"
-        , "stake_find" , "stake_heart" ,  "coffin")
+        , "stake_find" , "stake_heart" ,  "coffin" , "stake_left" , "stake_right")
 
     analysis_mode = rospy.get_param( '~mission' , "path" )
     frequency = rospy.get_param( '~frequency' , 10 )
@@ -55,15 +55,15 @@ if __name__=="__main__":
     elif( analysis_mode == "stake_heart" ):
         print("You choose analysis stake heart")
         analysis_vision = AnalysisStake( "base_drop" , STAKE_FIND_HEART )
-        analysis_mode = "heart"
+        analysis_mode = "stake"
     elif( analysis_mode == "stake_left" ):
         print("You choose analysis stake left")
         analysis_vision = AnalysisStake( "base_drop" , STAKE_FIND_LEFT )
-        analysis_mode = "heart"
+        analysis_mode = "stake"
     elif( analysis_mode == "stake_right" ):
         print("You choose analysis stake right")
         analysis_vision = AnalysisStake( "base_drop" , STAKE_FIND_RIGHT )
-        analysis_mode = "heart"
+        analysis_mode = "stake"
     elif( analysis_mode == "coffin" ):
         print("You choose analysis coffin" )
         analysis_vision = AnalysisCoffin( "base_coffin" )

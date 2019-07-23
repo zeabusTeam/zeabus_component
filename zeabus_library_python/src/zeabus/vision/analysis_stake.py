@@ -115,7 +115,7 @@ class AnalysisStake:
 
         if( result[0] ):
             if( request != STAKE_FIND_TARGET ):
-                result.append( raw_data.point_1 )
+                result.append( ( raw_data.point_1[0] * 100 , raw_data.point_1[1] * 100 ) )
                 result.append( 0.0 )
                 result.append( raw_data.area * 100)
                 result.append( 0.0 )
