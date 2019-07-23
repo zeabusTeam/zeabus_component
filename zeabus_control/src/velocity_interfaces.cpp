@@ -323,9 +323,9 @@ int main( int argv , char** argc )
         error_velocity.target[ 0 ] = target_velocity[0]-(ptr_current_velocity->linear.x / 1000 );
         error_velocity.target[ 1 ] = target_velocity[1]-(ptr_current_velocity->linear.y / 1000 );
         error_velocity.target[ 2 ] = target_velocity[2]-(ptr_current_velocity->linear.z / 1000 );
-        error_velocity.target[ 3 ] = target_velocity[3]-(ptr_current_velocity->angular.x );
-        error_velocity.target[ 4 ] = target_velocity[4]-(ptr_current_velocity->angular.y );
-        error_velocity.target[ 5 ] = target_velocity[5]-(ptr_current_velocity->angular.z );
+        error_velocity.target[ 3 ] = target_velocity[3]-(ptr_current_velocity->angular.y );
+        error_velocity.target[ 4 ] = target_velocity[4]-(ptr_current_velocity->angular.x );
+        error_velocity.target[ 5 ] = target_velocity[5]+(ptr_current_velocity->angular.z );
         error_velocity.mask = error.mask;
 
         // loop part : send error command
