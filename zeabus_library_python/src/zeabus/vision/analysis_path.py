@@ -51,16 +51,71 @@ class AnalysisPath:
             rospy.logfatal( "Sevice call vision path Failed : %s" , e )
 
         if( result ):
-            self.x_point = ( temp_data.data.point_1[0] 
-                , temp_data.data.point_2[0] 
-                , temp_data.data.point_3[0] )
-            self.y_point = ( temp_data.data.point_1[1] 
-                , temp_data.data.point_2[1] 
-                , temp_data.data.point_3[1] )
+            if( temp_data.data.n_point == 3 ):
+                if( temp_data.data.point_3[1] > temp_data.data.point_2[1] 
+                    and temp_data.data.point_2[1] > temp_data.data.point_1[1] ):
+                    self.x_point = ( temp_data.data.point_1[0] 
+                        , temp_data.data.point_2[0]
+                        , temp_data.data.point_3[0] )
+                    self.y_point = ( temp_data.data.point_1[1]
+                        , temp_data.data.point_2[1]
+                        , temp_data.data.point_3[1] )
+                elif( temp_data.data.point_3[1] > temp_data.data.point_1[1] 
+                    and temp_data.data.point_1[1] > temp_data.data.point_2[1] ):
+                    self.x_point = ( temp_data.data.point_2[0] 
+                        , temp_data.data.point_1[0]
+                        , temp_data.data.point_3[0] )
+                    self.y_point = ( temp_data.data.point_2[1]
+                        , temp_data.data.point_1[1]
+                        , temp_data.data.point_3[1] )
+                elif( temp_data.data.point_2[1] > temp_data.data.point_3[1] 
+                    and temp_data.data.point_3[1] > temp_data.data.point_1[1] ):
+                    self.x_point = ( temp_data.data.point_1[0] 
+                        , temp_data.data.point_3[0]
+                        , temp_data.data.point_2[0] )
+                    self.y_point = ( temp_data.data.point_1[1]
+                        , temp_data.data.point_3[1]
+                        , temp_data.data.point_2[1] )
+                elif( temp_data.data.point_2[1] > temp_data.data.point_1[1] 
+                    and temp_data.data.point_1[1] > temp_data.data.point_3[1] ):
+                    self.x_point = ( temp_data.data.point_3[0] 
+                        , temp_data.data.point_1[0]
+                        , temp_data.data.point_2[0] )
+                    self.y_point = ( temp_data.data.point_3[1]
+                        , temp_data.data.point_1[1]
+                        , temp_data.data.point_2[1] )
+                elif( temp_data.data.point_1[1] > temp_data.data.point_2[1] 
+                    and temp_data.data.point_2[1] > temp_data.data.point_3[1] ):
+                    self.x_point = ( temp_data.data.point_3[0] 
+                        , temp_data.data.point_2[0]
+                        , temp_data.data.point_1[0] )
+                    self.y_point = ( temp_data.data.point_3[1]
+                        , temp_data.data.point_2[1]
+                        , temp_data.data.point_1[1] )
+                else:
+                    self.x_point = ( temp_data.data.point_2[0] 
+                        , temp_data.data.point_3[0]
+                        , temp_data.data.point_1[0] )
+                    self.y_point = ( temp_data.data.point_2[1]
+                        , temp_data.data.point_3[1]
+                        , temp_data.data.point_1[1] )
+            else:
+                if( temp_data.data.point_1[1] < temp_data.data.point_2[1] ):
+                    self.x_point = ( temp_data.data.point_1[0] 
+                        , temp_data.data.point_2[0] , 0)
+                    self.y_point = ( temp_data.data.point_1[1]
+                        , temp_data.data.point_2[1] , 0)
+                else:
+                    self.x_point = ( temp_data.data.point_2[0] 
+                        , temp_data.data.point_1[0] , 0)
+                    self.y_point = ( temp_data.data.point_2[1]
+                        , temp_data.data.point_1[1] , 0)
+                    
+
             self.rotation = ( 
                 math.atan2(
-                    bin_h( self.y_point[1] - self.y_point[0] )
-                    , bin_w( self.x_point[1] - self.x_point[0] ) )
+                     self.y_point[1] - self.y_point[0] 
+                    , self.x_point[1] - self.x_point[0]  )
                 , math.atan2(
                     bin_h( self.y_point[2] - self.y_point[1] )
                     , bin_w( self.x_point[2] - self.x_point[1] ) ) )
