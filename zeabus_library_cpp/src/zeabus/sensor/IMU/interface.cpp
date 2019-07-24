@@ -42,6 +42,10 @@ namespace IMU
                 {
                     // This is one case to can make result is true
                     result = ( *( (this->data).end() - 3 ) == 0x00 );
+                    if( result )
+                    {
+                        std::cout   << "Success set idle\n";
+                    }
                 }
             }
         }

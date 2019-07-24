@@ -51,6 +51,10 @@ int pre_output_range(double pre_output, int type)
     {
         pre_output_range_value = 4;
     }
+    else
+    {
+        std::cout << "error" << std::endl;
+    }
     return pre_output_range_value;
 }
 
