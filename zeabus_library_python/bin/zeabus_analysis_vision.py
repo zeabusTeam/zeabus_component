@@ -30,10 +30,6 @@ if __name__=="__main__":
     if( analysis_mode == "path" ):
         print( "You choose analysis path" )
         analysis_vision = AnalysisPath( "base_path" )
-    elif( analysis_mode == "path_tracking" ):
-        print( "You choose analysis path tracking" )
-        analysis_vision = AnalysisPath( "base_path" )
-        analysis_vision.set_tracking( True )
     elif( analysis_mode == "buoy" ):
         print( "You choose analysis buoy" )
         analysis_vision = AnalysisBuoy( "base_buoy" )

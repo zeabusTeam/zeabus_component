@@ -27,10 +27,6 @@ class AnalysisPath:
     def __init__( self , child_frame_id = "base_path" ):
 
         # Below is part of tracking mode have to collect data
-        self.mode_tracking = False
-        self.tracking_new_data = [True , True , True ]
-        self.tracking_point = [ [0 , 0 ] , [ 0 , 0 ] , [ 0 , 0 ] ]
-        self.tracking_data = [False, False, False ] 
 
         rospy.loginfo( "Waiting service of /vision/path" )
         rospy.wait_for_service( "/vision/path" )
@@ -46,15 +42,6 @@ class AnalysisPath:
         self.broadcaster = Broadcaster( "bottom_camera_optical" , child_frame_id )
 
         # Part for filter data of path
-
-    def set_tracking( self, mode ):
-        self.mode_tracking = mode
-        if( self.mode_tracking ):
-            print( "Please call data again to updaed tracking") 
-        else:
-            self.tracking_new_data = [True , True , True ]
-            self.tracking_point = [ [0 , 0 ] , [ 0 , 0 ] , [ 0 , 0 ] ]
-            selt.tracking_data = [False, False, False ] 
 
     def call_data( self ):
         # call service of vision
