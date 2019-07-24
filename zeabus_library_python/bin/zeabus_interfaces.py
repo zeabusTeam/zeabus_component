@@ -33,33 +33,52 @@ class NodeInterfaces:
 
         self.service_gripper = rospy.Service( "/interfaces/gripper"
             , SendBool() , self.command_gripper )
+        self.service_torpido = rospy.Service( "/interfaces/torpido" 
+            , SendBool() , self.command_torpido )
 
     def relative_x( self , message ):
         self.control.relative_xy( message.data , 0 )
+        self.control.publish_data( "Interfaces command forward " + str( message.data ) )
         return SendFloatResponse()
 
     def relative_y( self , message ):
         self.control.relative_xy( 0 , message.data )
+        self.control.publish_data( "Interfaces command survey " + str( message.data ) )
         return SendFloatResponse()
 
     def relative_yaw( self , message ):
         self.control.relative_yaw( message.data )
+        self.control.publish_data( "Interfaces command relative yaw " + str( message.data ) )
         return SendFloatResponse()
 
     def absolute_yaw( self , message ):
         self.control.absolute_yaw( message.data)
+        self.control.publish_data( "Interfaces command absolute yaw " + str( message.data ) )
         return SendFloatResponse()
 
     def absolute_z( self , message ):
         self.control.absolute_z( message.data )
+        self.control.publish_data( "Interfaces command absolute z " + str( message.data ) )
         return SendFloatResponse()
 
     def command_gripper( self , message ):
+        if message.data :
+            self.control.publish_data( "Interfaces command to release garlic") 
+        else:
+            self.control.publish_data( "Interfaces command to pick garlic")
         self.control.command_gripper( message.data )
+        return SendBoolResponse()
+
+    def command_torpido( self , message ):
+        if message.data :
+            self.control.publish_data( "Interfaces command to fire torpido")
+        else:
+            self.control.publish_data( "Interfaces command to reload torpido")
+        self.control.command_torpido( message.data )
         return SendBoolResponse()
 
 if __name__=="__main__":
     rospy.init_node( 'interfaces' )
     interfaces = NodeInterfaces()
-    print("SPIN data")
+    print("Node Interfaces waiting command by user")
     rospy.spin()
