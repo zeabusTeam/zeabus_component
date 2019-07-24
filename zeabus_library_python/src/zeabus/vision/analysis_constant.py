@@ -24,6 +24,11 @@ GATE_NEAR = 2.0 # Distannce between robot and lenth when length is max ( 200 )
 GATE_RATIO = 2.0 / 100 # Ratio of distance per legth
 GATE_LENGTH = 200.0 # Ditance of x length range 0 to 200
 
+# Constant for mode tracking pate
+PATH_RADIUS_TRACKING = 1000     # unit pixels
+PATH_RADIUS_NEW_DATA = 30000    # unit pixels
+PATH_ROTATION = False           # True use P'tul service type
+
 # Constant for vision of drop gralic mission
 DROP_FIND_TARGET = "search"
 DROP_FIND_DROP = "drop"

@@ -56,3 +56,12 @@ def front_find_radian( data , mode = True ): # Front find radian
         else:
             result = math.atan2( first_distance[1] , first_distance[0] )
     return result
+
+def bottom_distance( first , second , divide=False):
+    answer = 0.
+    if divide:
+        answer = np.linalg.norm( 
+            ( bin_w( first[0] - second[0] ) / 100 , bin_h( first[1] - second[1] ) / 100 ) )
+    else:
+        answer = np.linalg.norm( ( bin_w( first[0] - second[0] ) , bin_h( first[1] - second[1] ) ) )
+    return answer
