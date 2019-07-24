@@ -251,23 +251,27 @@ int main( int argv , char** argc )
         }
         
         // loop part : master direct control command (Add on version 1.2.0)
+        tf::Matrix3x3( current_quaternion ).getRPY( euler[0] , euler[1] , euler[2] );
         ptr_mutex_master->lock();
         for( unsigned int run = 0 ; run < 6 ; run++ )
         {
             if( master.mask.at( run ) == false )
             {
                 (error.mask)[run] = false;
-                if( run == 0 )
+                switch( run )
                 {
-                    ptr_target_position->x = ptr_current_position->x;
-                }
-                else if( run == 1 )
-                {
-                    ptr_target_position->y = ptr_current_position->y;
-                }
-                else
-                {
-                    ;
+                    case 0 :
+                        buffer[0] = ptr_current_position->x;
+                        break;
+                    case 1 :
+                        buffer[1] = ptr_current_position->y;
+                        break;
+                    case 2 :
+                        buffer[2] = ptr_current_position->z;
+                        break;
+                    default :
+                        buffer[ run ] = euler[ run - 3 ];
+                        break; 
                 }
             }
         }
