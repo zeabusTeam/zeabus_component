@@ -26,7 +26,10 @@ class AnalysisPath:
 
     def __init__( self , child_frame_id = "base_path" ):
 
-        # Below is part of tracking mode have to collect data
+        self.pub_message = rospy.Publisher( "/mission/analysis" , String, queue_size = 10 )
+
+        self.mode = 0   # 0 is not found, 1 is found point 1 2, 2 is found 3 point
+                        # , 4 found point 2 4
 
         rospy.loginfo( "Waiting service of /vision/path" )
         rospy.wait_for_service( "/vision/path" )
@@ -73,16 +76,16 @@ class AnalysisPath:
                 bin_h( ( self.y_point[2] - self.y_point[1] ) / 100 )
                 , bin_w( ( self.x_point[2] - self.x_point[1] ) / 100 ) ) )
 
-        if( self.num_point == 2 ):
-            self.x_point = ( data.point_1[0] , data.point_1[0] , data.point_2[0] )
-            self.y_point = ( data.point_1[1] , data.point_1[1] , data.point_2[1] )
-            self.rotation = ( self.rotation[0] , self.rotation[0] )
+#        if( self.num_point == 2 ):
+#            self.x_point = ( data.point_1[0] , data.point_1[0] , data.point_2[0] )
+#            self.y_point = ( data.point_1[1] , data.point_1[1] , data.point_2[1] )
+#            self.rotation = ( self.rotation[0] , self.rotation[0] )
 
         if PATH_ROTATION :
             self.rotation = (-data.area[0] + (math.pi / 2) , ( -data.area[1] + (math.pi/2)))
 
-        self.x_point = ( data.point_1[0] , data.point_1[0] , data.point_1[0] )
-        self.y_point = ( data.point_1[1] , data.point_1[1] , data.point_1[1] )
+            self.x_point = ( data.point_1[0] , data.point_1[0] , data.point_1[0] )
+            self.y_point = ( data.point_1[1] , data.point_1[1] , data.point_1[1] )
 
         temp_x = 0
         temp_y = 0
