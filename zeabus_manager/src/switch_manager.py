@@ -85,6 +85,7 @@ class SwitchManager:
                 self.control.publish_data( "manage now switch tell me to open all" )
                 self.control.reset_state()
                 self.control.activate( ("x", "y" , "z" , "roll" , "pitch" , "yaw" ) )
+                self.control.sleep()
                 self.header.stamp = rospy.get_rostime()
                 self.client_strategy( self.header , True )
             else:

@@ -254,23 +254,30 @@ int main( int argv , char** argc )
         }
         
         // loop part : master direct control command (Add on version 1.2.0)
+        // loop part : master will auto reset target position (Add on 2019 07 18)
+        // Readme why we reset on variable master mark that is because we want to ensure
+        //      control will reset state by command from user
+        tf::Matrix3x3( current_quaternion ).getRPY( euler[0] , euler[1] , euler[2] );
         ptr_mutex_master->lock();
         for( unsigned int run = 0 ; run < 6 ; run++ )
         {
             if( master.mask.at( run ) == false )
             {
                 (error.mask)[run] = false;
-                if( run == 0 )
+                switch( run )
                 {
-                    ptr_target_position->x = ptr_current_position->x;
-                }
-                else if( run == 1 )
-                {
-                    ptr_target_position->y = ptr_current_position->y;
-                }
-                else
-                {
-                    ;
+                    case 0 :
+                        buffer[0] = ptr_current_position->x;
+                        break;
+                    case 1 :
+                        buffer[1] = ptr_current_position->y;
+                        break;
+                    case 2 :
+                        buffer[2] = ptr_current_position->z;
+                        break;
+                    default :
+                        buffer[ run ] = euler[ run - 3 ];
+                        break; 
                 }
             }
         }
@@ -289,7 +296,6 @@ int main( int argv , char** argc )
                     << "\nerror potision   : " << (error.target)[0] << " " << (error.target)[1]
                     <<  " " << (error.target)[2] << std::endl;
     #ifdef _SHOW_RPY_
-        tf::Matrix3x3( current_quaternion ).getRPY( euler[0] , euler[1] , euler[2] );
         std::cout   << "current RPY: " << euler[0] << " " << euler[1] << " " << euler[2] << "\n";
         tf::Matrix3x3( target_quaternion ).getRPY( euler[0] , euler[1] , euler[2] );
         std::cout   << "target RPY : " << euler[0] << " " << euler[1] << " " << euler[2] << "\n"

@@ -15,6 +15,8 @@ import rospy
 # math.atan2( y , x ) will use find radian for y/x
 
 from ..transformation.broadcaster import Broadcaster
+from .analysis_handle import *
+from .analysis_constant import *
 
 from std_msgs.msg import String
 
@@ -23,6 +25,12 @@ from zeabus_utility.srv import VisionSrvPath
 class AnalysisPath:
 
     def __init__( self , child_frame_id = "base_path" ):
+
+        # Below is part of tracking mode have to collect data
+        self.mode_tracking = False
+        self.tracking_new_data = [True , True , True ]
+        self.tracking_point = [ [0 , 0 ] , [ 0 , 0 ] , [ 0 , 0 ] ]
+        self.tracking_data = [False, False, False ] 
 
         rospy.loginfo( "Waiting service of /vision/path" )
         rospy.wait_for_service( "/vision/path" )
@@ -39,6 +47,15 @@ class AnalysisPath:
 
         # Part for filter data of path
 
+    def set_tracking( self, mode ):
+        self.mode_tracking = mode
+        if( self.mode_tracking ):
+            print( "Please call data again to updaed tracking") 
+        else:
+            self.tracking_new_data = [True , True , True ]
+            self.tracking_point = [ [0 , 0 ] , [ 0 , 0 ] , [ 0 , 0 ] ]
+            selt.tracking_data = [False, False, False ] 
+
     def call_data( self ):
         # call service of vision
         result = False
@@ -50,48 +67,62 @@ class AnalysisPath:
             rospy.logfatal( "Sevice call vision path Failed : %s" , e )
 
         if( result ):
-            self.x_point = ( temp_data.data.point_1[0] 
-                , temp_data.data.point_2[0] 
-                , temp_data.data.point_3[0] )
-            self.y_point = ( temp_data.data.point_1[1] 
-                , temp_data.data.point_2[1] 
-                , temp_data.data.point_3[1] )
-            self.rotation = ( 
-                math.atan2(
-                    self.y_point[1] - self.y_point[0]
-                    , self.x_point[1] - self.x_point[0] )
-                , math.atan2(
-                    self.y_point[2] - self.y_point[1]
-                    , self.x_point[2] - self.x_point[1] ) )
-
-            self.area = ( temp_data.data.area[0] , temp_data.data.area[1] )
-
-            self.num_point = temp_data.data.n_point
-
-            temp_x = 0
-            temp_y = 0
-
-            # Now we can't estimate z but  I think we can estimate xy
-            # I gave ratio y is 100 : 0.2 and x is 100 : 0.35
-            if( self.num_point == 2 ):
-                print("=======================broadcaster point 2")
-                temp_y = 0.2 * self.y_point[0] / 100
-                temp_x = 0.35 * self.x_point[0] / 100
-                self.broadcaster.euler( ( temp_x , temp_y , -2 ) , 0 , 0 , self.rotation[0] )
-            elif( self.num_point == 3 ):
-                print("=======================broadcaster point 3")
-                temp_y = ( 0.2 * self.y_point[0] / 100 ) + (-0.4 * math.sin( self.rotation[0] ))
-                temp_x = ( 0.35 * self.x_point[0] / 100 ) + (-0.4 * math.cos( self.rotation[0] ))
-                self.broadcaster.euler( ( temp_x , temp_y , -2 ) , 0 , 0 , self.rotation[0] )
-            else:
-                None
-                
+            self.analysis( temp_data.data )
 
         return result
+
+    def analysis( self, data ):
+
+        self.num_point = data.n_point
+
+        self.x_point = ( data.point_1[0] , data.point_2[0] , data.point_3[0] )
+        self.y_point = ( data.point_1[1] , data.point_2[1] , data.point_3[1] )
+                 
+        self.rotation = ( 
+            math.atan2(
+                 ( self.y_point[1] - self.y_point[0] ) / 100
+                , ( self.x_point[1] - self.x_point[0] ) / 100 )
+            , math.atan2(
+                bin_h( ( self.y_point[2] - self.y_point[1] ) / 100 )
+                , bin_w( ( self.x_point[2] - self.x_point[1] ) / 100 ) ) )
+
+        if( self.num_point == 2 ):
+            self.x_point = ( data.point_1[0] , data.point_1[0] , data.point_2[0] )
+            self.y_point = ( data.point_1[1] , data.point_1[1] , data.point_2[1] )
+            self.rotation = ( self.rotation[0] , self.rotation[0] )
+
+        if PATH_ROTATION :
+            self.rotation = (-data.area[0] + (math.pi / 2) , ( -data.area[1] + (math.pi/2)))
+
+        self.x_point = ( data.point_1[0] , data.point_1[0] , data.point_1[0] )
+        self.y_point = ( data.point_1[1] , data.point_1[1] , data.point_1[1] )
+
+        temp_x = 0
+        temp_y = 0
+
+        # Now we can't estimate z but  I think we can estimate xy
+        # I gave ratio y is 100 : 0.2 and x is 100 : 0.35
+        if( self.num_point == 2 ):
+#                print("=======================broadcaster point 2")
+            temp_y = 0.2 * self.y_point[0] / 100
+            temp_x = 0.35 * self.x_point[0] / 100
+            self.broadcaster.euler( ( temp_x , temp_y , -2 ) , 0 , 0 , self.rotation[0] )
+        elif( self.num_point == 3 ):
+#                print("=======================broadcaster point 3")
+            temp_y = ( 0.2 * self.y_point[0] / 100 ) + (-0.4 * math.sin( self.rotation[0] ))
+            temp_x = ( 0.35 * self.x_point[0] / 100 ) + (-0.4 * math.cos( self.rotation[0] ))
+            self.broadcaster.euler( ( temp_x , temp_y , -2 ) , 0 , 0 , self.rotation[0] )
+        else:
+            pass
+                
 
     def echo_data( self ):
         print( "Numpoint is {:4d}".format( self.num_point ) )
         if( self.num_point != 0 ):
+            if( self.mode_tracking ):
+                print( "TRACKING : " + repr( self.tracking_data ) )
+            else:
+                pass
             print("Point is ({:6.2f},{:6.2f}) : ({:6.2f},{:6.2f}) : ({:6.2f},{:6.2f}) : ".format(
                 self.x_point[0] , self.y_point[0]
                 , self.x_point[1] , self.y_point[1] 

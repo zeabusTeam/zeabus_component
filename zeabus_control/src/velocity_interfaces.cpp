@@ -11,6 +11,9 @@
 // REFERENCE
 
 // MACRO SET
+#define _SHOW_DATA_
+#define _SHOW_RPY_
+#define _SHOW_VELOCITY_
 
 // MACRO CONDITION
 
@@ -248,23 +251,27 @@ int main( int argv , char** argc )
         }
         
         // loop part : master direct control command (Add on version 1.2.0)
+        tf::Matrix3x3( current_quaternion ).getRPY( euler[0] , euler[1] , euler[2] );
         ptr_mutex_master->lock();
         for( unsigned int run = 0 ; run < 6 ; run++ )
         {
             if( master.mask.at( run ) == false )
             {
                 (error.mask)[run] = false;
-                if( run == 0 )
+                switch( run )
                 {
-                    ptr_target_position->x = ptr_current_position->x;
-                }
-                else if( run == 1 )
-                {
-                    ptr_target_position->y = ptr_current_position->y;
-                }
-                else
-                {
-                    ;
+                    case 0 :
+                        buffer[0] = ptr_current_position->x;
+                        break;
+                    case 1 :
+                        buffer[1] = ptr_current_position->y;
+                        break;
+                    case 2 :
+                        buffer[2] = ptr_current_position->z;
+                        break;
+                    default :
+                        buffer[ run ] = euler[ run - 3 ];
+                        break; 
                 }
             }
         }
@@ -317,52 +324,64 @@ int main( int argv , char** argc )
             
         } // big loop for calcualte target_velocity
         // next I will calcualte error of velocity
-        error_velocity.target[ 0 ] = target_velocity[0]-(ptr_current_velocity->linear.x / 100 );
-        error_velocity.target[ 1 ] = target_velocity[1]-(ptr_current_velocity->linear.y / 100 );
-        error_velocity.target[ 2 ] = target_velocity[2]-(ptr_current_velocity->linear.z / 100 );
-        error_velocity.target[ 4 ] = target_velocity[0]-(ptr_current_velocity->angular.x / 100 );
-        error_velocity.target[ 5 ] = target_velocity[1]-(ptr_current_velocity->angular.y / 100 );
-        error_velocity.target[ 6 ] = target_velocity[2]-(ptr_current_velocity->angular.z / 100 );
+        error_velocity.target[ 0 ] = target_velocity[0]-(ptr_current_velocity->linear.x / 1000 );
+        error_velocity.target[ 1 ] = target_velocity[1]-(ptr_current_velocity->linear.y / 1000 );
+        error_velocity.target[ 2 ] = target_velocity[2]-(ptr_current_velocity->linear.z / 1000 );
+        error_velocity.target[ 3 ] = target_velocity[3]-(ptr_current_velocity->angular.y );
+        error_velocity.target[ 4 ] = target_velocity[4]-(ptr_current_velocity->angular.x );
+        error_velocity.target[ 5 ] = target_velocity[5]+(ptr_current_velocity->angular.z );
         error_velocity.mask = error.mask;
 
         // loop part : send error command
         client_control_command.normal_call();
-        interface_publisher.publish(error);
+        interface_publisher.publish(error_velocity);
 
 #ifdef _SHOW_DATA_
-        std::cout   << "\n--------------------------------------------------------------\n"
-                    << "current position : " << ptr_current_position->x << " " 
-                    << ptr_current_position->y << " " << ptr_current_position->z
-                    << "\ntarget position  : " << ptr_target_position->x << " "
-                    << ptr_target_position->y << " " << ptr_target_position->z
-                    << "\nerror potision   : " << (error.target)[0] << " " << (error.target)[1]
-                    <<  " " << (error.target)[2] << std::endl;
-    #ifdef _SHOW_RPY_
         tf::Matrix3x3( current_quaternion ).getRPY( euler[0] , euler[1] , euler[2] );
-        std::cout   << "current RPY: " << euler[0] << " " << euler[1] << " " << euler[2] << "\n";
+        std::cout   << "\n--------------------------------------------------------------\n"
+                    << "current state : " << ptr_current_position->x << " " 
+                    << ptr_current_position->y << " " << ptr_current_position->z << " "
+                    << euler[0] << " " << euler[1] << " " << euler[2] << "\n";
         tf::Matrix3x3( target_quaternion ).getRPY( euler[0] , euler[1] , euler[2] );
-        std::cout   << "target RPY : " << euler[0] << " " << euler[1] << " " << euler[2] << "\n"
-                    << "diff RPY   : " << (error.target)[3] << " " << (error.target)[4]
-                    << " " << (error.target)[5] << "\n";
-    #else
-        std::cout   << "current quaternion : " << current_quaternion.x() << " " 
-                    << current_quaternion.y() << " " << current_quaternion.z() << " "
-                    << current_quaternion.w() << "\n"
-                    << "target quaternion : " << target_quaternion.x() << " " 
-                    << target_quaternion.y() << " " << target_quaternion.z() << " "
-                    << target_quaternion.w() << "\n"
-                    << "diff quaternion : " << diff_quaternion.x() << " " 
-                    << diff_quaternion.y() << " " << diff_quaternion.z() << " "
-                    << diff_quaternion.w() << "\n";
-    #endif
+        std::cout   << "target state  : " << ptr_target_position->x << " "
+                    << ptr_target_position->y << " " << ptr_target_position->z << " "
+                    << euler[0] << " " << euler[1] << " " << euler[2] << "\n";
+    
+        std::cout   << "error state   : " << error.target[0] << " " << error.target[1] << " "
+                    << error.target[2] << " " << error.target[3] << " " 
+                    << error.target[4] << " " << error.target[5] << "\n";
+
+        std::cout   << "error robot coor : "  
+                    << robot_error_array[0] << " " << robot_error_array[1] << " "
+                    << robot_error_array[2] << " " << robot_error_array[3] << " "
+                    << robot_error_array[4] << " " << robot_error_array[5] << "\n\n";
+
+        std::cout   << "current velocity : " 
+                    << ptr_current_velocity->linear.x / 1000 << " "
+                    << ptr_current_velocity->linear.y / 1000 << " "
+                    << ptr_current_velocity->linear.z / 1000 << " "
+                    << ptr_current_velocity->angular.x << " "
+                    << ptr_current_velocity->angular.y << " "
+                    << ptr_current_velocity->angular.z << "\n";
+
+        std::cout   << "target velocity  : " 
+                    << target_velocity[0] << " " << target_velocity[1] << " "
+                    << target_velocity[2] << " " << target_velocity[3] << " "
+                    << target_velocity[4] << " " << target_velocity[5] << "\n";
+
+        std::cout   << "error velocity   : "  
+                    << error_velocity.target[0] << " " << error_velocity.target[1] << " "
+                    << error_velocity.target[2] << " " << error_velocity.target[3] << " "
+                    << error_velocity.target[4] << " " << error_velocity.target[5] << "\n";
+
         std::cout   << "STATUS OF STATE " << read_bit_value( current_state.status )
                     << "\nMASK           : " 
-                    << read_bool( (error.mask)[0] ) << " " 
-                    << read_bool( (error.mask)[1] ) << " " 
-                    << read_bool( (error.mask)[2] ) << " " 
-                    << read_bool( (error.mask)[3] ) << " " 
-                    << read_bool( (error.mask)[4] ) << " " 
-                    << read_bool( (error.mask)[5] )<< "\n";
+                    << read_bool( (error_velocity.mask)[0] ) << " " 
+                    << read_bool( (error_velocity.mask)[1] ) << " " 
+                    << read_bool( (error_velocity.mask)[2] ) << " " 
+                    << read_bool( (error_velocity.mask)[3] ) << " " 
+                    << read_bool( (error_velocity.mask)[4] ) << " " 
+                    << read_bool( (error_velocity.mask)[5] )<< "\n";
         std::cout   << "MASK OF MASTER : "        
                     << read_bool( (master.mask)[0] ) << " " 
                     << read_bool( (master.mask)[1] ) << " " 
