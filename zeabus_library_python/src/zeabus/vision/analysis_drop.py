@@ -23,10 +23,12 @@ from __future__ import print_function
 
 import math
 import rospy
+import numpy 
 
 from ..transformation.broadcaster import Broadcaster
 
 from .analysis_constant import *
+from .analysis_handle import *
 
 from std_msgs.msg import String
 
@@ -94,8 +96,8 @@ class AnalysisDrop:
                     , raw_data.point_3[1] , raw_data.point_4[1] ) ) / 4
                 self.result['area'] = raw_data.area
                 self.result['bottom_y'] = ( raw_data.point_1[ 1 ] + raw_data.point_2[1] ) / 2
-                self.result['rotation'] = math.atan2( raw_data.point_2[1] - raw_data.point_1[1] 
-                    , raw_data.point_2[0] - raw_data.point_1[0] )
+                self.result['rotation'] = bottom_find_radian( ( raw_data.point_1
+                    , raw_data.point_2 , raw_data.point_4 ) )
             elif( raw_data.state == 2 ):
                 self.result['found'] = True
                 self.result['type'] = False

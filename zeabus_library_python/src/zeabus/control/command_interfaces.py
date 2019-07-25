@@ -17,12 +17,14 @@
 import tf
 import math
 import rospy
+import numpy 
 from .constant import *
 from ..math.quaternion import Quaternion
 from ..math import general as zeabus_math
 from std_msgs.msg import Header, String
 from zeabus_utility.msg import AUVState, ControlCommand
 from zeabus_utility.srv import SendControlCommand, GetAUVState
+from zeabus_elec_ros.srv import ServiceSetIOPinState
 
 class CommandInterfaces:
 
@@ -34,6 +36,12 @@ class CommandInterfaces:
 
         rospy.loginfo( "Waiting service of master to control")
         rospy.wait_for_service( "/control/master")
+
+        rospy.loginfo( "Waiting service of elec")
+        rospy.wait_for_service( "/elec/set_io_pin_state" )
+
+        self.command_elec = rospy.ServiceProxy( '/elec/set_io_pin_state' , ServiceSetIOPinState)
+
         self.command_master_control = rospy.ServiceProxy( '/control/master' ,SendControlCommand )
         self.master_command = ControlCommand() # This use only master command
         self.master_command.target = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
@@ -382,12 +390,39 @@ class CommandInterfaces:
         self.force_command.target = (x, y, 0, 0, 0, yaw )
         self.pub_force.publish( self.force_command )
 
+    def force_xyz_yaw( self , x , y , z , yaw ):
+        self.force_command.mask = (True, True, True, False, False, True )
+        self.force_command.target = (x, y, z, 0, 0, yaw )
+        self.pub_force.publish( self.force_command )
+    
+    def force_xyz( self , x, y, z ):
+        self.force_command.mask = (True, True, True, False, False, False)
+        self.force_command.target = (x, y, z, 0, 0, 0 )
+        self.pub_force.publish( self.force_command )
+
     def force_false( self ):
         self.force_command.mask = (False, False, False, False, False, False)
         self.pub_force.publish( self.force_command )
 
     def sleep( self ):
         rospy.sleep( 0.25 )
+
+# Command to elec
+    def command_gripper( self , command ):
+        if( command ):
+            self.command_elec( numpy.uint8(0) , True )
+            self.command_elec( numpy.uint8(5) , False )
+        else:
+            self.command_elec( numpy.uint8(0) , False )
+            self.command_elec( numpy.uint8(5) , True )
+
+    def command_torpido( self , command ):
+        if( command ):
+            self.command_elec( numpy.uint8(4) , True )
+            self.command_elec( numpy.uint8(6) , False )
+        else:
+            self.command_elec( numpy.uint8(4) , False )
+            self.command_elec( numpy.uint8(6) , True )
 
 if( __name__=="__main__"):
     rospy.init_node( "test_lib" )

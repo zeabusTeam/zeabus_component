@@ -4,7 +4,7 @@
 
 
     <include file="$(find zeabus_library_python)/launch/base_analysis.launch.xml">
-        <arg name="mission" value="path"/>
+        <arg name="mission" value="stake_right"/>
         <arg name="frequency" value="5"/>
     </include>
 

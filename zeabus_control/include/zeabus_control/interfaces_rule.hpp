@@ -27,7 +27,7 @@ namespace xy
 
 namespace z
 {
-    static std::array< double , 3 > error_rule = { 0.8 , 1.2 , 2 };
+    static std::array< double , 3 > error_rule = { 0.1 , 0.8 , 2 };
     static std::array< double , 3 > target_velocity = { 0.1 , 0.3 , 0.5};
 }
 
@@ -39,8 +39,8 @@ namespace zero
 
 namespace yaw
 {
-    static std::array< double , 3 > error_rule = { 0.1 , 1.5 , 2.5 };
-    static std::array< double , 3 > target_velocity = { 0.1 , 0.2 , 1 };
+    static std::array< double , 3 > error_rule = { 0.1 , 0.5 , 1 };
+    static std::array< double , 3 > target_velocity = { 0.1 , 0.2 , 0.4 };
 }
 
 } // namespace interfaces

@@ -50,11 +50,35 @@ target_link_libraries( velocity_interfaces
     ${catkin_LIBRARIES}
 )
 
+<<<<<<< HEAD
 add_executable( control_by_force
     src/control_by_force.cpp
 )
 add_dependencies( control_by_force ${catkin_EXPORTED_TARGETS} )
 target_link_libraries( control_by_force
+=======
+#add_executable( control_velocity
+#    src/control_velocity.cpp
+#)
+#add_dependencies( control_velocity ${catkin_EXPORTED_TARGETS} )
+#target_link_libraries( control_velocity
+#    ${zeabus_library_cpp_LIBRARIES}
+#    ${catkin_LIBRARIES}
+#)
+
+add_executable( control_velocity_output
+    src/control_velocity_output.cpp
+)
+add_dependencies( control_velocity_output ${catkin_EXPORTED_TARGETS} )
+target_link_libraries( control_velocity_output
+    ${zeabus_library_cpp_LIBRARIES}
+    ${catkin_LIBRARIES}
+)
+
+add_executable( test_lib_fuzzy test/fuzzy_3_dimension.cpp)
+add_dependencies( test_lib_fuzzy ${catkin_EXPORTED_TARGETS})
+target_link_libraries( test_lib_fuzzy
+>>>>>>> 6ff860c33f1f9a1f6c049c896f2220b814c6b50b
     ${zeabus_library_cpp_LIBRARIES}
     ${catkin_LIBRARIES}
 )

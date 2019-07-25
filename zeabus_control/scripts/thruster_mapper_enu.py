@@ -91,11 +91,14 @@ class ThrusterMapper:
             '/fusion/auv_state', GetAUVState)
 
         self.server_service = rospy.Service(
+#        self.server_service = rospy.Subscriber(
             '/control/thruster', SendControlCommand(), self.callback_service )
 
         self.server_subscriber = rospy.Subscriber(
             '/control/thruster' , ControlCommand , self.callback_subscriber )
 
+        self.server_force_velocity = rospy.Subscriber(
+            '/control/thrusters' , ControlCommand , self.callback_subscribers )
         self.lookup_handle = lookup_pwm_force(
             "zeabus_control", "scripts", "throttle_force_table.txt")
 
@@ -225,6 +228,10 @@ class ThrusterMapper:
                 if( constant.THRUSTER_MAPPER_CHOOSE_PROCESS ):
                     print("id {:2d} choose zero data is 0".format( run ) )
 
+        if( abs( temp_force[5] ) > 3 ):
+            print("Yaw over")
+            temp_force[5] = 0
+
         force = numpy.array( [
             (temp_force)[0]     * 1
             , (temp_force)[1]   * 1
@@ -250,6 +257,9 @@ class ThrusterMapper:
         # PRINT CONDITION
         if(constant.THRUSTER_MAPPER_RESULT ):
             if( self.count_print == constant.THRUSTER_MAPPER_COUNT  ):
+                print("===================================================")
+                print("{:6.3f} {:6.3f} {:6.3f} {:6.3f} {:6.3f} {:6.3f}".format(
+                    force[0], force[1], force[2], force[3], force[4], force[5] ) )
                 print("{:6d} {:6d} {:6d} {:6d} {:6d} {:6d} {:6d} {:6d}".format(
                     pwm[0], pwm[1], pwm[2], pwm[3], pwm[4], pwm[5], pwm[6], pwm[7]))
                 self.count_print = 0
@@ -278,6 +288,22 @@ class ThrusterMapper:
             self.mission_stamp = message.header.stamp
 
         self.mission_lock.release( )
+
+    def callback_subscribers( self ,  message ):
+
+        # PRINT_CONDTION
+        if( constant.THRUSTER_MAPPER_CALLBACK_CALLED ):
+            print("callback of subscriber have been called!")
+
+        self.control_lock.acquire( )
+
+        self.control_message = message
+        if( constant.THRUSTER_MAPPER_AUTO_TIME ):
+            self.control_stamp = rospy.get_rostime()
+        else:
+            self.control_stamp = message.header.stamp
+
+        self.control_lock.release( )
 
     def callback_service( self , request ):
         

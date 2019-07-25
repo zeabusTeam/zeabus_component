@@ -71,6 +71,7 @@ class AnalysisBuoy:
                 self.buffer_area.append( self.area )
                 if( count_found == BUOY_MINIMUM_FOUND ):
                     self.found = True
+                    break
 
         self.analysis_picture()
 
