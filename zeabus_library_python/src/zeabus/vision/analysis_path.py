@@ -70,11 +70,11 @@ class AnalysisPath:
                  
         self.rotation = ( 
             math.atan2(
-                 ( self.y_point[1] - self.y_point[0] ) / 100
-                , ( self.x_point[1] - self.x_point[0] ) / 100 )
+                  (self.y_point[1] - self.y_point[0] ) / 100 
+                ,  ( self.x_point[1] - self.x_point[0] ) / 100  )
             , math.atan2(
-                bin_h( ( self.y_point[2] - self.y_point[1] ) / 100 )
-                , bin_w( ( self.x_point[2] - self.x_point[1] ) / 100 ) ) )
+                 ( self.y_point[2] - self.y_point[1] ) / 100 
+                , ( self.x_point[2] - self.x_point[1] ) / 100 )  )
 
 #        if( self.num_point == 2 ):
 #            self.x_point = ( data.point_1[0] , data.point_1[0] , data.point_2[0] )
@@ -109,10 +109,6 @@ class AnalysisPath:
     def echo_data( self ):
         print( "Numpoint is {:4d}".format( self.num_point ) )
         if( self.num_point != 0 ):
-            if( self.mode_tracking ):
-                print( "TRACKING : " + repr( self.tracking_data ) )
-            else:
-                pass
             print("Point is ({:6.2f},{:6.2f}) : ({:6.2f},{:6.2f}) : ({:6.2f},{:6.2f}) : ".format(
                 self.x_point[0] , self.y_point[0]
                 , self.x_point[1] , self.y_point[1] 
