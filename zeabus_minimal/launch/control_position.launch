@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<launch>
+    <node pkg="zeabus_control" type="interfaces" name="interface" output="screen"/>
+    <node pkg="zeabus_library_python" type="zeabus_interfaces" name="zeabusinterface" output="screen"/>
+</launch>
