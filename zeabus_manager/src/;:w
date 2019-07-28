@@ -38,8 +38,8 @@ class ToggleManager:
         self.message_subscribe = MessagePlannerSwitch()
         
         self.control = CommandInterfaces( "manager" )
-        self.control.publish_data( "manager have been start by deactivate all axies of control")
-        self.control.deactivate( ['x' , 'y' , 'z' , 'roll' , 'pitch' , 'yaw' ] )
+        self.control.publish_data( "manager have been start by deactive all axies of control")
+        self.control.deactive( ['x' , 'y' , 'z' , 'roll' , 'pitch' , 'yaw' ] )
 
         # lock handle use to protect message when want to use because spin of python
         #   din't protect you about problem cach inherent
@@ -49,9 +49,7 @@ class ToggleManager:
         self.client_strategy = rospy.ServiceProxy( "/mission/strategy" , SendBool() )
 
         # set up ros system connection
-        rospy.Subscriber( topic_subscribe, MessagePlannerSwitch, self.listen_switch, queue_size = 1 )
-
-        self.loop_toggle( limit_toggle , start_mode )
+        rospy.Subscriber( topic_subscrbe, MessagePlannerSwitch, self.listen_switch, queue_size = 1 )
 
     def loop_toggle( self , limit_toggle , start_mode ):
 
@@ -70,8 +68,6 @@ class ToggleManager:
 
         header = Header()
         header.frame_id = "odom"
-
-        self.control.publish_data( "ToggleManager start loop manager")
 
         while not rospy.is_shutdown() :
             rate.sleep()
@@ -96,7 +92,7 @@ class ToggleManager:
                 else:
                     count -= 1
 
-            if mode == 0 :  # Mode deactivate control
+            if mode == 0 :  # Mode deactive control
 
                 if count == limit_toggle :
                     self.control.publish_data( "MODE 0 save current yaw and command force z" )
@@ -104,7 +100,7 @@ class ToggleManager:
                     self.control.get_state()
 
                 if ( rospy.get_rostime() - toggle_time).to_sec() > 5 :
-                    self.control.deactivate( ('x' , 'y' , 'z' , 'roll' , 'pitch' , 'yaw' ) )
+                    self.control.deactive( ('x' , 'y' , 'z' , 'roll' , 'pitch' , 'yaw' ) )
                     toggle_time = rospy.get_rostime()
 
             elif mode == 1 : # Mode save yaw
@@ -112,7 +108,7 @@ class ToggleManager:
                 if count == 0 :
                     self.control.publish_data( "MODE 1 change to mode 2" )
                     mode = 2
-                    self.control.deactivate( ('x' , 'y' , 'z' , 'roll' , 'pitch' , 'yaw' ) )
+                    self.control.deactive( ('x' , 'y' , 'z' , 'roll' , 'pitch' , 'yaw' ) )
                     self.control.force_false( )
                     self.control.publish_data( "MODE 1 exit and target yaw at " + str(target_yaw) )
                 else:
@@ -120,7 +116,7 @@ class ToggleManager:
                     self.control.get_state()
                     target_yaw = self.control.current_pose[5]
 
-            elif mode == 2 : # Mode deactivate control waiting to open contrl
+            elif mode == 2 : # Mode deactive control waiting to open contrl
 
                 if count == limit_toggle :
                     mode = 3
@@ -136,14 +132,14 @@ class ToggleManager:
                     self.client_strategy(  header , True )
 
                 if ( rospy.get_rostime() - toggle_time ).to_sec() > 5 :
-                    self.control.deactivate( ('x' , 'y' , 'z' , 'roll' , 'pitch' , 'yaw' ) )
+                    self.control.deactive( ('x' , 'y' , 'z' , 'roll' , 'pitch' , 'yaw' ) )
                     toggle_time = rospy.get_rostime()
 
             else: # Mode to start control,by rotation and depth before call switch start mission
 
                 if count == 0 :
                     self.control.publish_data( "MODE 3 change to mode 0 shutdown process" )
-                    self.control.deactivate( ('x' , 'y' , 'z' , 'roll' , 'pitch' , 'yaw' ) )
+                    self.control.deactive( ('x' , 'y' , 'z' , 'roll' , 'pitch' , 'yaw' ) )
                     mode = 0
                     toggle_time = rospy.get_rostime()
 
@@ -153,6 +149,7 @@ class ToggleManager:
             self.message_subscribe = message
             self.message_subscribe.header.stamp = rospy.get_rostime()
         
+
     # Function __enter__ and __exit__ I have create for only remeber syntax
     def __enter__( self ):
         pass

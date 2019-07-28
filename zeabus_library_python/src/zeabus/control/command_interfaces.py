@@ -98,6 +98,7 @@ class CommandInterfaces:
                 rospy.logerr( repr(e) )
                 rospy.sleep( 0.3 )
 
+        rospy.loginfo( "Now already for using")
 
     def update_target( self ):
 
