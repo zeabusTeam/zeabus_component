@@ -43,7 +43,8 @@ class SwitchManager:
 
         # First time we must to deactive all freedom of control
         self.count_switch = 0
-        rospy.Subscriber( topic_subscribe_switch , MessagePlannerSwitch , self.listen_switch )
+        rospy.Subscriber( topic_subscribe_switch , MessagePlannerSwitch , self.listen_switch 
+            , queue_size = 1)
 
         self.control.publish_data( "manager now spin node")
         rospy.spin()
