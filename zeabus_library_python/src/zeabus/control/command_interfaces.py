@@ -38,7 +38,7 @@ class CommandInterfaces:
         rospy.wait_for_service( "/control/master")
 
         rospy.loginfo( "Waiting service of elec")
-        rospy.wait_for_service( "/elec/set_io_pin_state" )
+#        rospy.wait_for_service( "/elec/set_io_pin_state" )
 
         self.command_elec = rospy.ServiceProxy( '/elec/set_io_pin_state' , ServiceSetIOPinState)
 

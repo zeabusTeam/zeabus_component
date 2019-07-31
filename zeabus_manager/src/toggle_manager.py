@@ -116,7 +116,7 @@ class ToggleManager:
                     self.control.force_false( )
                     self.control.publish_data( "MODE 1 exit and target yaw at " + str(target_yaw) )
                 else:
-                    self.control.force_xyz( 0.0 , 0.0 , 0.2 )
+                    self.control.force_xyz( 0.0 , 0.0 , 0.5 )
                     self.control.get_state()
                     target_yaw = self.control.current_pose[5]
 
@@ -130,7 +130,7 @@ class ToggleManager:
                     self.control.publish_data( "MODE 2 command absolute yaw is " + str(target_yaw) )
                     self.control.absolute_yaw( target_yaw )
                     self.control.sleep()
-                    while not self.control.check_yaw( 0.12 ):
+                    while not self.control.check_yaw( 0.15 ):
                         rate.sleep()
                     header.stamp = rospy.get_rostime()
                     self.client_strategy(  header , True )
