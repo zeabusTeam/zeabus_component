@@ -138,7 +138,8 @@ int main( int argv , char** argc )
     fuzzy_z.set_fuzzification_error( &zeabus_control::fuzzy::z_parameter::ERROR_RULE );
     fuzzy_z.set_fuzzification_diff( &zeabus_control::fuzzy::z_parameter::DIFF_RULE );
     fuzzy_z.set_fuzzification_force( &zeabus_control::fuzzy::z_parameter::FORCE_RULE );
-    fuzzy_z.set_fuzzy_rule( &zeabus_control::fuzzy::MASTER_RULE );
+    //fuzzy_z.set_fuzzy_rule( &zeabus_control::fuzzy::MASTER_RULE );
+    fuzzy_z.set_fuzzy_rule( &zeabus_control::fuzzy::z_parameter::FUZZY_RULE );
     fuzzy_z.set_defuzzification_rule( &zeabus_control::fuzzy::z_parameter::DEFUZZY_RULE );
 
     // set roll axis

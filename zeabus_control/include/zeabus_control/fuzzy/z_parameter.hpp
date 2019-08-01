@@ -57,6 +57,78 @@ namespace z_parameter
     // Offset is value to do and don't have affect with robot in real time always
     const double OFFSET = -2.65;
     
+    const std::array< std::array< std::array < int , 7 >, 7 >, 7 > FUZZY_RULE = 
+    {
+        // CASE fuzzy force = -3
+        //  -3  -2  -1  +0  +1  +2  +3  = CASE error fuzzy
+            +1, +5, +6, +6, +6, +6, +6, // CASE diff fuzzy = -3
+            +2, +5, +4, +6, +5, +6, +6, // CASE diff fuzzy = -2
+            +0, +0, +0, +6, +4, +5, +5, // CASE diff fuzzy = -1
+            -1, -1, -1, +0, +3, +3, +4, // CASE diff fuzzy = -0
+            -4, -4, -4, -6, +0, +0, +0, // CASE diff fuzzy = +1
+            -5, -5, -5, -6, -2, -1, -1, // CASE diff fuzzy = +2
+            -6, -6, -5, -6, -3, -2, -1, // CASE diff fuzzy = +3
+        
+        // CASE fuzzy force = -2
+        //  -3  -2  -1  +0  +1  +2  +3  = CASE error fuzzy
+            +2, +3, +4, +4, +4, +4, +4, // CASE diff fuzzy = -3
+            +1, +2, +3, +4, +4, +4, +4, // CASE diff fuzzy = -2
+            +0, +0, +0, +3, +3, +3, +4, // CASE diff fuzzy = -1
+            -1, -1, -1, +0, +2, +2, +3, // CASE diff fuzzy = -0
+            -2, -2, -2, -1, +0, +0, +0, // CASE diff fuzzy = +1
+            -3, -2, -2, -1, -1, -1, -1, // CASE diff fuzzy = +2
+            -4, -4, -3, -3, -2, -2, -2, // CASE diff fuzzy = +3
+        
+        // CASE fuzzy force = -1
+        //  -3  -2  -1  +0  +1  +2  +3  = CASE error fuzzy
+            +1, +2, +3, +4, +4, +4, +5, // CASE diff fuzzy = -3
+            +1, +1, +2, +3, +3, +3, +4, // CASE diff fuzzy = -2
+            +0, +0, +0, +2, +2, +3, +4, // CASE diff fuzzy = -1
+            -2, -1, -1, +0, +2, +2, +2, // CASE diff fuzzy = -0
+            -3, -2, -2, -2, +0, +0, +0, // CASE diff fuzzy = +1
+            -4, -3, -3, -2, -2, -1, +1, // CASE diff fuzzy = +2
+            -5, -4, -4, -4, -3, -2, +1, // CASE diff fuzzy = +3
+        
+        // CASE fuzzy force = 0
+        //  -3  -2  -1  +0  +1  +2  +3  = CASE error fuzzy
+            +1, +2, +3, +4, +4, +4, +5, // CASE diff fuzzy = -3
+            +0, +2, +3, +3, +3, +3, +4, // CASE diff fuzzy = -2
+            -1, +0, +0, +1, +2, +3, +3, // CASE diff fuzzy = -1
+            -2, -2, -1, +0, +1, +2, +3, // CASE diff fuzzy = -0
+            -3, -3, -2, -1, +0, +0, +1, // CASE diff fuzzy = +1
+            -4, -3, -3, -3, -3, -2, +0, // CASE diff fuzzy = +2
+            -5, -4, -4, -4, -3, -2, -1, // CASE diff fuzzy = +3
+        
+        // CASE fuzzy force = +1
+        //  -3  -2  -1  +0  +1  +2  +3  = CASE error fuzzy
+            +1, +2, +3, +4, +4, +4, +5, // CASE diff fuzzy = -3
+            +1, +1, +2, +3, +3, +3, +4, // CASE diff fuzzy = -2
+            +0, +0, +0, +1, +2, +2, +3, // CASE diff fuzzy = -1
+            -2, -2, -2, +0, +1, +1, +1, // CASE diff fuzzy = -0
+            -4, -3, -2, -2, +0, +0, +0, // CASE diff fuzzy = +1
+            -4, -3, -3, -3, -2, -1, +1, // CASE diff fuzzy = +2
+            -5, -4, -4, -4, -3, -2, -1, // CASE diff fuzzy = +3
+        
+        // CASE fuzzy force = +2
+        //  -3  -2  -1  +0  +1  +2  +3  = CASE error fuzzy
+            +2, +2, +2, +3, +3, +4, +4, // CASE diff fuzzy = -3
+            +1, +1, +1, +1, +2, +2, +3, // CASE diff fuzzy = -2
+            +0, +0, +0, +1, +2, +2, +2, // CASE diff fuzzy = -1
+            -3, -2, -2, +0, +1, +1, +1, // CASE diff fuzzy = -0
+            -4, -3, -3, -3, +0, +0, +0, // CASE diff fuzzy = +1
+            -4, -4, -4, -4, -2, -2, -1, // CASE diff fuzzy = +2
+            -4, -4, -4, -4, -3, -3, -1, // CASE diff fuzzy = +3
+        
+        // CASE fuzzy force = +3
+        //  -3  -2  -1  +0  +1  +2  +3  = CASE error fuzzy
+            +0, +0, +0, +0, +0, +0, +0, // CASE diff fuzzy = -3
+            +0, +0, +0, +0, +0, +0, +0, // CASE diff fuzzy = -2
+            +0, +0, +0, +0, +0, +0, +0, // CASE diff fuzzy = -1
+            -4, -3, -3, +0, +0, +0, +0, // CASE diff fuzzy = -0
+            -5, -5, -4, -6, +0, +0, +0, // CASE diff fuzzy = +1
+            -6, -6, -5, -6, -4, -5, -1, // CASE diff fuzzy = +2
+            -6, -6, -6, -6, -6, -5, -2  // CASE diff fuzzy = +3
+    };
 } // namespace z_parameter
 
 } // namespace fuzzy
