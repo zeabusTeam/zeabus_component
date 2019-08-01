@@ -27,7 +27,7 @@ namespace z_parameter
 
     // Error is range of error to decision 0 1 2 3 by use 3 value. 
     // Data is vector type
-    const std::array< double , 3 > ERROR_RULE = { 0.08 , 1 , 3 };
+    const std::array< double , 3 > ERROR_RULE = { 0.08 , 1.2 , 3 };
     
     // Diff is range to decision about velocity error will be 0 1 2 3 by use 3 value
     // Data is vertor type
@@ -64,10 +64,10 @@ namespace z_parameter
             +1, +5, +6, +6, +6, +6, +6, // CASE diff fuzzy = -3
             +2, +5, +4, +6, +5, +6, +6, // CASE diff fuzzy = -2
             +0, +0, +0, +6, +4, +5, +5, // CASE diff fuzzy = -1
-            -1, -1, -1, +0, +3, +3, +4, // CASE diff fuzzy = -0
-            -4, -4, -4, -6, +0, +0, +0, // CASE diff fuzzy = +1
-            -5, -5, -5, -6, -2, -1, -1, // CASE diff fuzzy = +2
-            -6, -6, -5, -6, -3, -2, -1, // CASE diff fuzzy = +3
+            -0, -0, -0, +0, +3, +3, +4, // CASE diff fuzzy = -0
+            -0, -0, -0, -0, +0, +0, +0, // CASE diff fuzzy = +1
+            -0, -0, -0, -0, -0, -0, -0, // CASE diff fuzzy = +2
+            -0, -0, -0, -0, -0, -0, -0, // CASE diff fuzzy = +3
         
         // CASE fuzzy force = -2
         //  -3  -2  -1  +0  +1  +2  +3  = CASE error fuzzy
