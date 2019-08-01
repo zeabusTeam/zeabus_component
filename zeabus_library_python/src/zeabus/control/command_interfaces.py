@@ -409,6 +409,8 @@ class CommandInterfaces:
         rospy.sleep( 0.25 )
 
 # Command to elec
+    # True for release 
+    # False for pickup
     def command_gripper( self , command ):
         if( command ):
             self.command_elec( numpy.uint8(0) , True )
@@ -417,6 +419,8 @@ class CommandInterfaces:
             self.command_elec( numpy.uint8(0) , False )
             self.command_elec( numpy.uint8(5) , True )
 
+    # True for fire torpido
+    # False for collect torpido
     def command_torpido( self , command ):
         if( command ):
             self.command_elec( numpy.uint8(4) , True )

@@ -73,6 +73,7 @@ class ToggleManager:
 
         self.control.publish_data( "ToggleManager start loop manager")
 
+        self.control.command_gripper( True )
         while not rospy.is_shutdown() :
             rate.sleep()
 
@@ -99,9 +100,10 @@ class ToggleManager:
             if mode == 0 :  # Mode deactivate control
 
                 if count == limit_toggle :
-                    self.control.publish_data( "MODE 0 save current yaw and command force z" )
+                    self.control.publish_data( "MODE 0 -> 1 and command force z" )
                     mode = 1 
                     self.control.get_state()
+                    self.control.command_gripper( False )
 
                 if ( rospy.get_rostime() - toggle_time).to_sec() > 5 :
                     self.control.deactivate( ('x' , 'y' , 'z' , 'roll' , 'pitch' , 'yaw' ) )
@@ -116,7 +118,7 @@ class ToggleManager:
                     self.control.force_false( )
                     self.control.publish_data( "MODE 1 exit and target yaw at " + str(target_yaw) )
                 else:
-                    self.control.force_xyz( 0.0 , 0.0 , 0.5 )
+                    self.control.force_xyz( 0.0 , 0.0 , 0.8 )
                     self.control.get_state()
                     target_yaw = self.control.current_pose[5]
 
@@ -146,6 +148,7 @@ class ToggleManager:
                     self.control.deactivate( ('x' , 'y' , 'z' , 'roll' , 'pitch' , 'yaw' ) )
                     mode = 0
                     toggle_time = rospy.get_rostime()
+                    self.control.command_gripper( True )
 
     def listen_switch( self , message ):
 
