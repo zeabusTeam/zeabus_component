@@ -422,7 +422,7 @@ class CommandInterfaces:
     # True for fire torpido
     # False for collect torpido
     def command_torpido( self , command ):
-        if( command ):
+        if( not command ):
             self.command_elec( numpy.uint8(4) , True )
             self.command_elec( numpy.uint8(6) , False )
         else:
