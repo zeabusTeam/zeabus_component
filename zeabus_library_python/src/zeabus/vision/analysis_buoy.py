@@ -47,6 +47,7 @@ class AnalysisBuoy:
             ,'center_x' : 0.0
             ,'center_y' : 0.0
             ,'area' : 0.0
+            ,'distance' : 0.0
         }
 
     def call_data( self ):
@@ -124,6 +125,8 @@ class AnalysisBuoy:
             self.result['area'] = sum( self.buffer_area ) / len( self.buffer_area )
             self.result['center_x'] = sum( self.buffer_center_x ) / len( self.buffer_center_x )
             self.result['center_y'] = sum( self.buffer_center_y ) / len( self.buffer_center_y )
+            self.result['distance'] = BUOY_MIN_DISTANCE - ( ( self.result['area'] - BUOY_MIN_AREA )
+                * BUOY_RATIO_DISTANCE )
         else:
             self.result['found'] = False
             self.result['area'] = 0
