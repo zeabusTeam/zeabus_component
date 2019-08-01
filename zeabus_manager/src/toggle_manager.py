@@ -146,6 +146,8 @@ class ToggleManager:
                 if count == 0 :
                     self.control.publish_data( "MODE 3 change to mode 0 shutdown process" )
                     self.control.deactivate( ('x' , 'y' , 'z' , 'roll' , 'pitch' , 'yaw' ) )
+                    header.stamp = rospy.get_rostime()
+                    self.client_strategy(  header , False )
                     mode = 0
                     toggle_time = rospy.get_rostime()
                     self.control.command_gripper( True )
