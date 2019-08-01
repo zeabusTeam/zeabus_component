@@ -18,9 +18,9 @@ BOTTOM_HEIGHT = 365.0
 BUOY_SCORE = 10 # Range is 0 - 100
 BUOY_AREA = 0.02 # Range is 0 - 1 but this mission have area lowest
 BUOY_MINIMUM_FOUND = 2
-BUOY_MIN_AREA = 20
-BUOY_MIN_DISTANCE = 10
-BUOY_RATIO_DISTANCE = 0.05 
+BUOY_MIN_AREA = 2
+BUOY_MIN_DISTANCE = 6
+BUOY_RATIO_DISTANCE = 0.1 
 
 # Constant for estimate gate value
 GATE_NEAR = 2.0 # Distannce between robot and lenth when length is max ( 200 )
