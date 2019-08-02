@@ -221,7 +221,7 @@ int main( int argv , char** argc )
             // Below function usally check mask
             if( (temp.mask)[run] )
 #else
-            if( (temp.mask)[run] && ( ! ( (run == 3 ) || ( run == 4 ) ) ) )
+            if( (temp.mask)[run] && ( ! ( (run == 3 ) || ( run == 3 ) ) ) )
 #endif
             {
                 (force.target)[ run ] = all_fuzzy[ run ]->push_error( (temp.target)[run] );

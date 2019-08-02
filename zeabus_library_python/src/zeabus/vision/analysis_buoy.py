@@ -61,7 +61,7 @@ class AnalysisBuoy:
         self.can_call = False
         count = 0
         count_found = 0 
-        while( count < 5 ):
+        while( count < 3 ):
             count += 1
             temp_result = self.individual_call()
             if( temp_result ):

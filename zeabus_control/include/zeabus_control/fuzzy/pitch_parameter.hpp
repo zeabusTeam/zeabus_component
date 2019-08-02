@@ -26,7 +26,7 @@ namespace pitch_parameter
 {
     // Error is range of error to decision 0 1 2 3 by use 3 value. 
     // Data is vector type
-    const std::array< double , 3 > ERROR_RULE = { 0.1 , 1 , 2 };
+    const std::array< double , 3 > ERROR_RULE = { 0.06 , 1 , 2 };
     
     // Diff is range to decision about velocity error will be 0 1 2 3 by use 3 value
     // Data is vertor type
