@@ -237,8 +237,8 @@ class CommandInterfaces:
         else:
             self.target_pose[ 2 ] = self.current_pose[2] + z
 
-        if( self.target_pose[ 2 ] > -0.1 ):
-            rospy.logwarn( "Warning this depth can command")
+        if( self.target_pose[ 2 ] > -0.3 ):
+            rospy.logwarn( "Warning this depth can't command")
         else:
             self.control_command.mask = ( False , False , True , False , False , False )
             self.send_command()
