@@ -17,7 +17,7 @@ BOTTOM_HEIGHT = 365.0
 # Constant for filter parameter of buoy mission
 BUOY_SCORE = 10 # Range is 0 - 100
 BUOY_AREA = 0.02 # Range is 0 - 1 but this mission have area lowest
-BUOY_MINIMUM_FOUND = 2
+BUOY_MINIMUM_FOUND = 1
 BUOY_MIN_AREA = 2
 BUOY_MIN_DISTANCE = 6
 BUOY_RATIO_DISTANCE = 0.5 
