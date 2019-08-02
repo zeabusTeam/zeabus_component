@@ -169,6 +169,8 @@ int main( int argv , char** argc )
             zeabus::ros_interfaces::convert::quaternion_tf( 
                     &target_state.data.pose.pose.orientation , &target_quaternion ); 
             tf::Matrix3x3( target_quaternion ).getRPY( buffer[3] , buffer[4] , buffer[5] );
+            buffer[3] = 0;
+            buffer[4] = 0;
             continue;
         } // one time delay
 
@@ -180,6 +182,10 @@ int main( int argv , char** argc )
             {
                 buffer[ run ] = (command.target)[run];
                 (command.mask)[run] = false; // We already known this command
+            }
+            if( run ==  3 || run == 4 )
+            {
+                buffer[run] = 0;
             }
         }
         ptr_mutex_data->unlock();
@@ -199,7 +205,10 @@ int main( int argv , char** argc )
         diff_quaternion = target_quaternion * current_quaternion.inverse();
         tf::Matrix3x3( diff_quaternion ).getRPY( 
                 (error.target)[3] , (error.target)[4] , (error.target)[5] );
-
+        tf::Matrix3x3( current_quaternion ).getRPY( 
+                (error.target)[3] , (error.target)[4] , euler[2] );
+        error.target[4] *= -1;
+        std::cout << error.target[4] << "\n";
         zeabus::radian::bound( &( ( error.target )[3] ) );
         zeabus::radian::bound( &( ( error.target )[4] ) );
         zeabus::radian::bound( &( ( error.target )[5] ) );
@@ -295,13 +304,13 @@ int main( int argv , char** argc )
                     << ptr_target_position->y << " " << ptr_target_position->z
                     << "\nerror potision   : " << (error.target)[0] << " " << (error.target)[1]
                     <<  " " << (error.target)[2] << std::endl;
-    #ifdef _SHOW_RPY_
+//    #ifdef _SHOW_RPY_
         std::cout   << "current RPY: " << euler[0] << " " << euler[1] << " " << euler[2] << "\n";
         tf::Matrix3x3( target_quaternion ).getRPY( euler[0] , euler[1] , euler[2] );
         std::cout   << "target RPY : " << euler[0] << " " << euler[1] << " " << euler[2] << "\n"
                     << "diff RPY   : " << (error.target)[3] << " " << (error.target)[4]
                     << " " << (error.target)[5] << "\n";
-    #else
+//    #else
         std::cout   << "current quaternion : " << current_quaternion.x() << " " 
                     << current_quaternion.y() << " " << current_quaternion.z() << " "
                     << current_quaternion.w() << "\n"
@@ -311,7 +320,7 @@ int main( int argv , char** argc )
                     << "diff quaternion : " << diff_quaternion.x() << " " 
                     << diff_quaternion.y() << " " << diff_quaternion.z() << " "
                     << diff_quaternion.w() << "\n";
-    #endif
+//    #endif
         std::cout   << "STATUS OF STATE " << read_bit_value( current_state.status )
                     << "\nMASK           : " 
                     << read_bool( (error.mask)[0] ) << " " 
