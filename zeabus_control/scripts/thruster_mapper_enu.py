@@ -115,6 +115,7 @@ class ThrusterMapper:
             [0, 0, 1],              # thruster id 2
             [0, 0, 1],              # thruster id 3
             [cos_45, -sin_45, 0],   # thruster id 4
+#            [0, 0, 0],   # thruster id 4
             [cos_45, sin_45, 0],  # thruster id 5
             [-cos_45, -sin_45, 0],    # thruster id 6
             [-cos_45, sin_45, 0]    # thruster id 7
