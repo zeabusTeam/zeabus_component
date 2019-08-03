@@ -40,7 +40,7 @@ class AnalysisBuoy:
         rospy.loginfo( "Waiting service of /vision/buoy" )
         rospy.wait_for_service( "/vision/buoy" )
         self.call_vision_data = rospy.ServiceProxy( "/vision/buoy" , VisionBuoy )
-        self.rate = rospy.Rate( 6 )
+        self.rate = rospy.Rate( 5 )
 
         self.result = {
             'found' : False
