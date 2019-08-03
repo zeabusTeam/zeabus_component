@@ -128,7 +128,9 @@ class ToggleManager:
                     mode = 3
                     self.control.publish_data( "MODE 2 change to mode 3 and active mission" )
                     self.control.activate( ('x', 'y', 'z', 'yaw') )
+                    self.control.sleep()
                     self.control.absolute_z( -0.2 )
+                    self.control.sleep()
                     self.control.publish_data( "MODE 2 command absolute yaw is " + str(target_yaw) )
                     self.control.absolute_yaw( target_yaw )
                     self.control.sleep()
